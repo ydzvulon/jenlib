@@ -15,3 +15,15 @@ tasks:
     desc: _
     cmds:
       - docker build . -t jenmaster
+
+  docker:run:
+    desc: _
+    cmds:
+      - docker rm -f jenmaster_c
+      - |
+        docker run --name jenmaster_c \
+        -p 8880:8880 \
+        -p 58000:58000 \
+        -v /Users/ivanne/jenkins_home:/var/jenkins_home \
+        jenmaster
+
