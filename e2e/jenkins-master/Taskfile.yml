@@ -22,8 +22,25 @@ tasks:
       - docker rm -f jenmaster_c
       - |
         docker run --name jenmaster_c \
-        -p 8880:8880 \
-        -p 58000:58000 \
+        -p 8880:8080 \
+        -p 58000:50000 \
         -v /Users/ivanne/jenkins_home:/var/jenkins_home \
+        -v /var/run/docker.sock:/var/run/docker.sock \
         jenmaster
+
+  docker:clean:data:
+    desc: _
+    cmds:
+      - rm -rf ~/jenkins_home/* ~/jenkins_home/.*
+
+  install:jcli:
+    desc: _
+    cmds:
+      - which brew && brew install jcli || true
+      - |
+        which brew \
+        || curl -L https://github.com/jenkins-zh/jenkins-cli/releases/latest/download/jcli-linux-amd64.tar.gz|tar xzv \
+        && sudo mv jcli /usr/local/bin/
+
+
 

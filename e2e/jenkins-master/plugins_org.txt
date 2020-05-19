@@ -1,4 +1,10 @@
+ace-editor
+ant
+antisamy-markup-formatter
+branch-api
+cloudbees-folder
 credentials
+cvs
 docker
 durable-task
 external-monitor-job
@@ -25,6 +31,7 @@ ssh-credentials
 ssh-slaves
 subversion
 translation
+variant
 windows-slaves
 workflow-aggregator
 workflow-api
