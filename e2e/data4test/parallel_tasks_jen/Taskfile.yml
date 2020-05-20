@@ -44,8 +44,8 @@ tasks:
     desc: _
     # dependancies evaluation are in parllel
     deps:
-      - task: test:suite-a
-      - task: test:suite-b
+      - test:suite-a
+      - test:suite-b
     cmds:
       - echo postprosessing
       - echo "@@[task=stage:multistage][result=pass]"
