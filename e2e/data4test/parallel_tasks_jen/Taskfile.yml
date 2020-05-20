@@ -1,0 +1,85 @@
+# https://taskfile.dev
+
+version: '2'
+
+vars:
+  GREETING: Hello, World!
+
+# test A
+# test1
+# test2
+# ...
+# test suite B
+# test1
+# test2
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - task -l
+    silent: true
+
+  stage:build:
+    desc: _
+    cmds:
+      - echo build ok
+
+
+  test:sanity:
+    desc: _
+    cmds:
+      - echo pytest -n 4 test_suite__sanity
+
+  test:suite-a:
+    desc: _
+    cmds:
+      - echo pytest -n 4 test_suite__sanity
+
+  test:suite-b:
+    desc: _
+    cmds:
+      - echo pytest -n 4 test_suite__sanity
+
+  stage:multistage:task-deps:
+    desc: _
+    # dependancies evaluation are in parllel
+    deps:
+      - task: test:suite-a
+      - task: test:suite-b
+    cmds:
+      - echo postprosessing
+      - echo "@@[task=stage:multistage][result=pass]"
+
+  stage:multistage:task-p:
+    desc: _
+    # dependancies evaluation are in parllel
+    cmds:
+      - task -p test:suite-a test:suite-b
+      - echo postprosessing
+      - echo "@@[task=stage:multistage][result=pass]"
+
+  stage:multistage:xargs-p:
+    desc: _
+    vars:
+      suites: "test:suite-a test:suite-b"
+    cmds:
+      - |
+        echo "{{.suites}}" \
+        | xargs -n 1 | xargs -I {} -P2 \
+        echo task {}
+      - echo postprosessing
+      - echo "@@[task=stage:multistage][result=pass]"
+
+  ci-flow:
+    desc: "[jenkins]"
+    cmds:
+      - task: stage:build
+      - task: test:sanity
+      - task: stage:multistage:task-deps
+      - task: post:prepare:artifacts
+
+  post:prepare:artifacts:
+    desc: _
+    cmds:
+      - echo "Artifacts are:"
+      - echo "TODO; use jenkins xml test reports"
