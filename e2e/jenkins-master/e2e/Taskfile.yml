@@ -1,0 +1,27 @@
+# https://taskfile.dev
+
+version: '2.3'
+
+vars:
+  GREETING: E2E tests with docker-machine
+  jentest_machine: {sh: cat cfg/_machine.name.txt}
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - task -l
+    silent: true
+
+  dm:list:
+    desc: _
+    cmds:
+      - docker-machine ls
+
+  dm:sync:
+    desc: _
+    dir: ..
+    cmds:
+      - |
+        docker-machine scp -r . {{.jentest_machine}}:/home/docker/_jm
+

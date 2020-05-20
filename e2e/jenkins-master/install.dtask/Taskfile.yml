@@ -1,0 +1,40 @@
+# https://taskfile.dev
+
+version: '2'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  show-docker-part:
+    desc: _
+    req:
+      target: string
+    cmds:
+      - tail -n +4 '{{.target}}'
+
+  test:show-docker-part:
+    desc: _
+    cmds:
+      - task: show-docker-part
+        vars: {target: dtask.part.Dockerfile}
+    silent: yes
+
+
+  gen-docker-file:
+    desc: _
+    vars:
+      docker_parts: {sh: ls -1 *.part.Dockerfile | sort}
+      target_dockerfile: auto.Dockerfile
+    cmds:
+      # - echo '{{.docker_parts}}'
+      # - echo '{{.docker_parts}}' | xargs -I {} tail -n +3 {}
+      - echo 'FROM ubuntu:18.04' > '{{.target_dockerfile}}'
+      - |
+        echo '{{.docker_parts}}' \
+        | xargs -I {} task show-docker-part target={} >> auto.Dockerfile
