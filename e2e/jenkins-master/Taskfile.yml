@@ -55,5 +55,10 @@ tasks:
         || curl -L https://github.com/jenkins-zh/jenkins-cli/releases/latest/download/jcli-linux-amd64.tar.gz|tar xzv \
         && sudo mv jcli /usr/local/bin/
 
+  shapshot:update:
+    desc: _
+    cmds:
+      - jcli plugin list > install.snapshots/snapshot_2020-05-20--00-40-45/jcli_plugin_list.org.tsv
+
 
 
