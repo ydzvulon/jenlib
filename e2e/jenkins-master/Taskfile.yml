@@ -79,3 +79,31 @@ tasks:
     cmds:
       - |
         docker-machine ssh {{.jentest_machine}}
+
+  show-plugins-from:
+    desc: _
+    vars:
+      target: install.snapshots/snapshot_2020-05-20--00-40-45
+    cmds:
+      # - |
+      #   cat "{{.target}}/jcli_plugin_list.org.tsv" \
+      #   | python -c "
+      #   import fileinput
+      #   for line in fileinput.input():print(':'.join(line.split()[:2]))
+      #   "
+      - |
+        cat "{{.target}}/jcli_plugin_list.org.tsv" \
+        | python -c "import fileinput; \
+        set(map( \
+          lambda x: print(':'.join(x.split()[:2])), \
+          list(fileinput.input())[1:])) \
+        "
+    silent: yes
+
+  gen-plugins-from:
+    desc: _
+    cmds:
+      - task show-plugins-from > plugins.txt 2>&1
+
+      # - cat "{{.target}}/jcli_plugin_list.org.tsv" | sed 's/ false/blas/'
+      # - cat "{{.target}}/jcli_plugin_list.org.tsv" | python -c "print(x.split()"
