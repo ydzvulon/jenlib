@@ -55,8 +55,8 @@ def step_stages_from_tasks(jg, wd, filename, root_job){
             }
             stage(name){
                 dir(wd){
-                    for (int i = 0; i < content.cmds.size(); i++) {
-                        def s_cmd = content.cmds[i]
+                    for (int j = 0; i < content.cmds.size(); j++) {
+                        def s_cmd = content.cmds[j]
                         sh s_cmd
                     }
                 }

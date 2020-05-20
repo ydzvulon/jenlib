@@ -29,7 +29,7 @@ tasks:
     deps:
       - docker:build:jenconda
 
-  docker:run:
+  docker:run:prod:
     desc: _
     cmds:
       - docker rm -f jenconda_c || true
@@ -44,6 +44,24 @@ tasks:
         -v /opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
         jenconda
+
+  docker:run:dev:
+    desc: _
+    cmds:
+      - docker rm -f jenconda_c_dev || true
+      - test -d /opt/dockers-data || (sudo mkdir -p /opt/dockers-data && sudo chmod -R 777 /opt/dockers-data)
+      - test -d /opt/dockers-data/jenkins_home_dev || (sudo mkdir -p /opt/dockers-data/jenkins_home_dev && sudo chmod -R 777 /opt/dockers-data/jenkins_home_dev)
+      - |
+        docker run \
+        --name jenconda_c_dev \
+        -d \
+        -p 8830:8080 \
+        -p 58300:50000 \
+        -v /opt/dockers-data/jenkins_home_dev:/var/jenkins_home:rw \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $(realpath ~):/var/userhome:ro \
+        jenconda
+
 
   docker:clean:data:
     desc: _
