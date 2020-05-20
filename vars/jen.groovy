@@ -47,7 +47,7 @@ def step_stages_from_tasks(jg, wd, filename, root_job){
             cmd = _cmd
         }
         if (deps) {
-            stage("$name-deps"){
+            stage("deps:$name"){
                 dir(wd){
                     def actors = jinMakeParallel(deps, {dname -> sh "task $dname"})
                     parallel actors
@@ -55,7 +55,10 @@ def step_stages_from_tasks(jg, wd, filename, root_job){
             }
             stage(name){
                 dir(wd){
-                    sh cmd
+                    for (int i = 0; i < content.cmds.size(); i++) {
+                        def s_cmd = content.cmds[i]
+                        sh s_cmd
+                    }
                 }
             }
         } else {
