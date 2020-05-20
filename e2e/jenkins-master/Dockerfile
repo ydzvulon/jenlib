@@ -22,4 +22,10 @@ RUN apt-get update  -qq \
 RUN usermod -aG docker jenkins
 RUN apt-get clean
 RUN curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
+
+# added ny yairvd
+COPY install.scripts/install_taskgo.sh install.scripts/install_taskgo.sh
+RUN chmod +x install.scripts/install_taskgo.sh \
+ && install.scripts/install_taskgo.sh
+
 USER jenkins

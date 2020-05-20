@@ -11,22 +11,35 @@ tasks:
       - echo "{{.GREETING}}"
     silent: true
 
-  docker:build:
+  docker:build:jenmaster:
     desc: _
     cmds:
       - docker build . -t jenmaster
 
+  docker:build:jenconda:
+    desc: _
+    deps:
+      - docker:build:jenmaster
+    cmds:
+      - docker build -f install.scripts/install-conda-in-docker.Dockerfile  -t jenconda install.scripts
+
+  docker:build:
+    desc: _
+    deps:
+      - docker:build:jenconda
+
   docker:run:
     desc: _
     cmds:
-      - docker rm -f jenmaster_c
+      - docker rm -f jenmaster_c jenconda || true
       - |
-        docker run --name jenmaster_c \
+        docker run --name jenconda_c \
+        -d \
         -p 8880:8080 \
         -p 58000:50000 \
         -v /Users/ivanne/jenkins_home:/var/jenkins_home \
         -v /var/run/docker.sock:/var/run/docker.sock \
-        jenmaster
+        jenconda
 
   docker:clean:data:
     desc: _
