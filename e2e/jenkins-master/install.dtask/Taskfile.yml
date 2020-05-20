@@ -25,7 +25,6 @@ tasks:
         vars: {target: dtask.part.Dockerfile}
     silent: yes
 
-
   gen-docker-file:
     desc: _
     vars:
@@ -38,3 +37,36 @@ tasks:
       - |
         echo '{{.docker_parts}}' \
         | xargs -I {} task show-docker-part target={} >> auto.Dockerfile
+    sources:
+      - '*.part.Dockerfile'
+    generates:
+      - auto.Dockerfile
+    method: checksum
+
+  gen-build-sh:
+    desc: _
+    cmds:
+      - task build:dtask --dry >auto.build.sh  2>&1
+      - chmod +x auto.build.sh
+    sources:
+      - Taskfile.yml
+    generates:
+      - auto.build.sh
+    method: checksum
+
+  build:dtask:
+    desc: _
+    cmds:
+      - docker build -f auto.Dockerfile -t dtaskimg .
+
+  rebuild:dtask:
+    desc: _
+    deps:
+      - gen-docker-file
+      - gen-build-sh
+    cmds:
+      - bash auto.build.sh
+
+
+
+

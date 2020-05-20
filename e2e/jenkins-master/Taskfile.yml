@@ -3,12 +3,13 @@
 version: '2'
 
 vars:
-  GREETING: Hello, World!
+  GREETING: JenkinsDockers
 
 tasks:
   default:
     cmds:
       - echo "{{.GREETING}}"
+      - task -l
     silent: true
 
   docker:build:jenmaster:
@@ -60,5 +61,18 @@ tasks:
     cmds:
       - jcli plugin list > install.snapshots/snapshot_2020-05-20--00-40-45/jcli_plugin_list.org.tsv
 
+  dm:sync:
+    desc: _
+    vars:
+      jentest_machine: {sh: cat e2e/cfg/_machine.name.txt}
+    cmds:
+      - |
+        docker-machine scp -r . {{.jentest_machine}}:/home/docker/_jm
 
-
+  dm:ssh:
+    desc: _
+    vars:
+      jentest_machine: {sh: cat e2e/cfg/_machine.name.txt}
+    cmds:
+      - |
+        docker-machine ssh {{.jentest_machine}}

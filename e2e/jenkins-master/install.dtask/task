@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# echo "running with $@"
+
+docker run \
+--rm \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v $(pwd):$(pwd) \
+--workdir $(pwd) \
+dtaskimg \
+task $@
