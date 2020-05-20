@@ -29,17 +29,36 @@ def step_stages_from_tasks(jg, wd, filename, root_job){
         def _cmd = jg.cmds[i]
         def name = ""
         def cmd = ""
+        def deps = []
         try {
             name = _cmd['task']
             cmd = "task ${name}"
+            def content = taskfile['tasks'][name]
+            if (content.deps){
+                deps = content.deps
+            }
         }
         catch(Exception e) {
             name = _cmd
             cmd = _cmd
         }
-        stage(name){
-            dir(wd){
-                sh cmd
+        if (deps) {
+            stage("$name-deps"){
+                dir(wd){
+                    def actors = jinMakeParallel(deps, {dname -> sh "task $dname"})
+                    parallel actors
+                }
+            }
+            stage(name){
+                dir(wd){
+                    sh cmd
+                }
+            }
+        } else {
+            stage(name){
+                dir(wd){
+                    sh cmd
+                }
             }
         }
     }
