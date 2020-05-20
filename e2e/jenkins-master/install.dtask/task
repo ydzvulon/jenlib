@@ -5,7 +5,11 @@
 docker run \
 --rm \
 -v /var/run/docker.sock:/var/run/docker.sock \
--v $(pwd):$(pwd) \
+-v $(pwd):$(pwd):rw \
+-v /opt:/opt:rw \
 --workdir $(pwd) \
 dtaskimg \
 task $@
+
+# -v /home/$USER:/home/$USER \
+# --user $(id -u):$(id -g) \

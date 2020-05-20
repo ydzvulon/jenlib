@@ -18,5 +18,12 @@ tasks:
     cmds:
       - docker-machine ls
 
+  tpa:
+    desc: _
+    cmds:
+      - curl http://192.168.99.100:8880/
+      - curl http://192.168.99.100:8880/ | grep 'Please wait while Jenkins is getting ready to work'
+
+
 
 

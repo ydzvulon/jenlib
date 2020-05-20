@@ -3,7 +3,8 @@ FROM ubuntu:18.04
 
 # --- @@[kind=dockerfile.part][name=install-docker-client][os=ubuntu][act=start]
 RUN apt-get update \
-    && apt-get install -qqy apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    && apt-get install -qqy apt-transport-https ca-certificates curl gnupg2 software-properties-common \
+    sudo git curl wget
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 RUN add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \

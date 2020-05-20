@@ -32,13 +32,16 @@ tasks:
   docker:run:
     desc: _
     cmds:
-      - docker rm -f jenmaster_c jenconda || true
+      - docker rm -f jenconda_c || true
+      - sudo mkdir -p /opt/dockers-data
+      - sudo chmod -R 777 /opt/dockers-data
+      - sudo mkdir -p /opt/dockers-data/jenkins_home
       - |
         docker run --name jenconda_c \
         -d \
         -p 8880:8080 \
         -p 58000:50000 \
-        -v /Users/ivanne/jenkins_home:/var/jenkins_home \
+        -v /opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
         jenconda
 
