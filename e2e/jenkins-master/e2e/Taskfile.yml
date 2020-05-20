@@ -18,10 +18,5 @@ tasks:
     cmds:
       - docker-machine ls
 
-  dm:sync:
-    desc: _
-    dir: ..
-    cmds:
-      - |
-        docker-machine scp -r . {{.jentest_machine}}:/home/docker/_jm
+
 
