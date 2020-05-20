@@ -1,3 +1,7 @@
+#!/usr/bin/env groovy
+
+//  jen.groovy
+
 def set_build_name(_currentBuild, scmvars, more){
     // set build name from scmvars
     _currentBuild.displayName = _currentBuild.displayName + "-" + [
