@@ -1,0 +1,5 @@
+pytest
+termcolor
+mock
+hypothesis
+python-Levenshtein

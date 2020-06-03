@@ -1,5 +1,7 @@
 #!/usr/bin/env groovy
 
+// @@[from_url=https://github.com/gzvulon/mvp_jin_sys_jobs]
+
 //  jinMakeParallel.groovy
 def call(cfgs, Closure clsr) {
     jinEchoMark("jinMakeParallel:${cfgs}")
