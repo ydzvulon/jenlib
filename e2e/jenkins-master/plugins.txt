@@ -138,3 +138,4 @@ workflow-scm-step:2.11
 workflow-step-api:2.22
 workflow-support:3.4
 job-dsl-plugin:1.77
+xml-job-to-job-dsl:0.1.13

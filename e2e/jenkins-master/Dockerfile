@@ -26,8 +26,12 @@ RUN chmod +x install.scripts/install_taskgo.sh \
  && install.scripts/install_taskgo.sh
 
 USER jenkins
+
 COPY plugins.txt /usr/share/jenkins/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
+
 COPY default-user.groovy /usr/share/jenkins/ref/init.groovy.d/
+
+# COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
 
 # https://medium.com/the-devops-ship/custom-jenkins-dockerfile-jenkins-docker-image-with-pre-installed-plugins-default-admin-user-d0107b582577
