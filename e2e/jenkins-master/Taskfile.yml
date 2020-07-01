@@ -62,6 +62,25 @@ tasks:
         -v $(realpath ~):/var/userhome:ro \
         jenconda
 
+  docker:run:test:
+    desc: _
+    vars:
+      VOLUME_NAME: {sh: echo "jenconda_v_dtest"}
+    cmds:
+      - docker volume rm {{.VOLUME_NAME}}|| true
+      - docker rm -f jenconda_c_dtest || true
+      - docker volume create {{.VOLUME_NAME}}
+      # -d \
+      - |
+        docker run \
+        --name jenconda_c_dtest \
+        -p 18808:8080 \
+        -p 18500:50000 \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v {{.VOLUME_NAME}}:/var/jenkins_home:rw \
+        -v $(realpath ~):/var/userhome:ro \
+        jenconda
+      - echo access "http://localhost:18808"
 
   docker:clean:data:
     desc: _

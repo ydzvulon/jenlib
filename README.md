@@ -1,5 +1,7 @@
 # Jenlib. Jenkins Automation Library
 
+Jenlib is Shared
+
 Basic Usage: see [README.md](./var/README.md)
 
 ## Job DSL

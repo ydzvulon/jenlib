@@ -1,0 +1,19 @@
+# https://taskfile.dev
+
+version: '2'
+
+vars:
+  GREETING: Jenlib repo actions
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - task -l
+    silent: true
+
+  readme:
+    desc: _
+    cmds:
+      - cat README.md | less
+
