@@ -3,10 +3,10 @@ import javaposse.jobdsl.plugin.JenkinsJobManagement
 
 
 def workspace = new File('.')
-
 def jobManagement = new JenkinsJobManagement(System.out, [:], workspace)
-def jobDslScript_text = '''
-pipeline
-    params: scm dir jenkinsfile
-'''
+
+def jobDslScript = new File('/usr/share/jenkins/job_sys/_new_ci/_new_ci.jdsl.groovy')
+
+def jobDslScript_text = jobDslScript.text
+
 new DslScriptLoader(jobManagement).runScript(jobDslScript_text)
