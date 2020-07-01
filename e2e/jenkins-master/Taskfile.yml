@@ -60,6 +60,7 @@ tasks:
         -v /opt/dockers-data/jenkins_home_dev:/var/jenkins_home:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v $(realpath ~):/var/userhome:ro \
+        -v $(realpath ../..):/var/jenlib_repo:ro \
         jenconda
 
   docker:run:test:init:
@@ -68,9 +69,9 @@ tasks:
       VOLUME_NAME: {sh: echo "jenconda_v_dtest"}
       DEMONIZE: -d
     cmds:
-      - docker volume rm {{.VOLUME_NAME}}|| true
+      # - docker volume rm {{.VOLUME_NAME}}|| true
       - docker rm -f jenconda_c_dtest || true
-      - docker volume create {{.VOLUME_NAME}}
+      - docker volume create {{.VOLUME_NAME}} || true
       # -d \
       - |
         docker run \
@@ -81,6 +82,7 @@ tasks:
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v {{.VOLUME_NAME}}:/var/jenkins_home:rw \
         -v $(realpath ~):/var/userhome:ro \
+        -v $(realpath ../..):/var/jenlib_repo:ro \
         jenconda
       - ./wait-for-it.sh localhost:18808
       - echo access "http://localhost:18808"

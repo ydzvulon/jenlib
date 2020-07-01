@@ -15,3 +15,9 @@ Hey dude! Help me out for a couple of :beers:!
 ```
 {{task usage}}
 ```
+
+## Spin up Tutorial
+
+http://localhost:18808/script
+http://localhost:18808/manage
+
