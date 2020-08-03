@@ -31,7 +31,7 @@ COPY plugins.txt /usr/share/jenkins/plugins.txt
 RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
 
 COPY default-user.groovy /usr/share/jenkins/ref/init.groovy.d/
-COPY job_sys /usr/share/jenkins/job_sys
+COPY jobs_sys /usr/share/jenkins/job_sys
 # COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
 
 # https://medium.com/the-devops-ship/custom-jenkins-dockerfile-jenkins-docker-image-with-pre-installed-plugins-default-admin-user-d0107b582577

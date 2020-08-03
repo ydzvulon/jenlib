@@ -1,0 +1,2 @@
+job-dsl-plugin:1.77
+xml-job-to-job-dsl:0.1.13
