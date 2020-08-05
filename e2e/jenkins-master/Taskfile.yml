@@ -102,7 +102,7 @@ tasks:
     desc: _
     cmds:
       - task docker:build
-      - task docker:test:full
+      - task docker:run:test:full
 
 
   docker:clean:data:
