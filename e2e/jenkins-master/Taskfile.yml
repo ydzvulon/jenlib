@@ -98,7 +98,11 @@ tasks:
       - task docker:run:test:init
       - task docker:run:test:flow
 
-
+  ci-flow:
+    desc: _
+    cmds:
+      - task docker:build
+      - task docker:test:full
 
 
   docker:clean:data:
