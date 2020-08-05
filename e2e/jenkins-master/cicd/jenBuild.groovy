@@ -1,4 +1,4 @@
-@Library("Jenkins_Task_Lib@master") _
+@Library("Jenkins_Jenlib@master") _
 // ===== /SHARED PART ====
 
 // --- globas vars ---
