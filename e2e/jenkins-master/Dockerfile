@@ -22,8 +22,8 @@ RUN curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-c
 
 # added ny yairvd
 COPY install.scripts/install_taskgo.sh install.scripts/install_taskgo.sh
-RUN chmod +x install.scripts/install_taskgo.sh \
- && install.scripts/install_taskgo.sh
+RUN chmod +x install.scripts/install_taskgo.sh
+RUN  install.scripts/install_taskgo.sh
 
 USER jenkins
 

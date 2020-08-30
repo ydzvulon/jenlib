@@ -39,9 +39,10 @@ tasks:
         docker run \
         --name jenconda_c \
         -d \
-        -p 8880:8080 \
-        -p 58000:50000 \
+        -p 8080:8080 \
+        -p 50000:50000 \
         -v /opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
+        -v $(realpath ~)/.ssh:/var/jenkins_home/.ssh \
         -v /var/run/docker.sock:/var/run/docker.sock \
         jenconda
 
