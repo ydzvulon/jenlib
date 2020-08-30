@@ -29,23 +29,42 @@ tasks:
     deps:
       - docker:build:jenconda
 
-  docker:run:prod:
+  # docker:run:prod:
+  #   desc: _
+  #   cmds:
+  #     - docker rm -f jenconda_c || true
+  #     - test -d /opt/dockers-data || sudo mkdir -p /opt/dockers-data && sudo chmod -R 777 /opt/dockers-data
+  #     - test -d /opt/dockers-data/jenkins_home || sudo mkdir -p /opt/dockers-data/jenkins_home && sudo chmod -R 777 /opt/dockers-data/jenkins_home
+  #     - |
+  #       docker run \
+  #       --name jenconda_c \
+  #       -d \
+  #       -p 8080:8080 \
+  #       -p 50000:50000 \
+  #       -v /opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
+  #       -v $(realpath ~)/.ssh:/var/jenkins_home/.ssh \
+  #       -v /var/run/docker.sock:/var/run/docker.sock \
+  #       jenconda
+        # -v $(realpath ~)/.ssh:/var/jenkins_home/.ssh \
+        # -v $(realpath ~)/.aws:/var/jenkins_home/.aws \
+  docker:run:prod-me:
     desc: _
     cmds:
       - docker rm -f jenconda_c || true
-      - test -d /opt/dockers-data || sudo mkdir -p /opt/dockers-data && sudo chmod -R 777 /opt/dockers-data
-      - test -d /opt/dockers-data/jenkins_home || sudo mkdir -p /opt/dockers-data/jenkins_home && sudo chmod -R 777 /opt/dockers-data/jenkins_home
+      - mkdir -p $(realpath ~)/shared/jenkins_c
+      - test -d ~/_opt/dockers-data || mkdir -p ~/_opt/dockers-data &&  chmod -R 777 ~/_opt/dockers-data
+      - test -d ~/_opt/dockers-data/jenkins_home || mkdir -p ~/_opt/dockers-data/jenkins_home && chmod -R 777 ~/_opt/dockers-data/jenkins_home
       - |
         docker run \
         --name jenconda_c \
         -d \
         -p 8080:8080 \
         -p 50000:50000 \
-        -v /opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
-        -v $(realpath ~)/.ssh:/var/jenkins_home/.ssh \
+        -v $(realpath ~)/_opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
         jenconda
-
+        
   docker:run:dev:
     desc: _
     cmds:
