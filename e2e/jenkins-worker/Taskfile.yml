@@ -12,6 +12,12 @@ tasks:
       - task -l
     silent: true
 
+  get-swarm-agent:
+    desc: _
+    cmds:
+      - mkdir -p _out
+      - cd _out && wget https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/3.23/swarm-client-3.23.jar
+
   run-jenw-on-host:
     desc: running jenkins on host
     cmds:
