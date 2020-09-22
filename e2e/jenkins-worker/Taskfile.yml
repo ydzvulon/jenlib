@@ -1,0 +1,24 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - task -l
+    silent: true
+
+  run-jenw-on-host:
+    desc: running jenkins on host
+    cmds:
+      - |
+        java -jar /data/tools/swarm-client-3.23.jar \
+        -master http://blade2:8080 \
+        -labels 'sw-agent' \
+        -fsroot '.' \
+        -username jenworker \
+        -password jenpassword

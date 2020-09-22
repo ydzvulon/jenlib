@@ -52,7 +52,7 @@ tasks:
     cmds:
       - docker rm -f jenconda_c || true
       - mkdir -p $(realpath ~)/shared/jenkins_c
-      - test -d ~/_opt/dockers-data || mkdir -p ~/_opt/dockers-data &&  chmod -R 777 ~/_opt/dockers-data
+      - test -d ~/_opt/dockers-data || mkdir -p ~/_opt/dockers-data &&  chmod -R 777 ~/_opt/dockers-data || echo oy
       - test -d ~/_opt/dockers-data/jenkins_home || mkdir -p ~/_opt/dockers-data/jenkins_home && chmod -R 777 ~/_opt/dockers-data/jenkins_home
       - |
         docker run \
