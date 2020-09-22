@@ -1,12 +1,14 @@
-FROM jenkins/jenkins:2.237
-
-ENV JENKINS_USER admin
-ENV JENKINS_PASS admin
-
-# Skip initial setup
-ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
+FROM continuumio/conda-ci-linux-64-python3.7
 
 USER root
+
+ENV JENKINS_USER test_user
+ENV JENKINS_PASS test_user
+
+USER root
+RUN curl -sL https://taskfile.dev/install.sh | sh
+RUN chmod +x ./bin/task && mv ./bin/task /usr/bin
+
 RUN apt-get update \
     && apt-get install -qqy apt-transport-https ca-certificates curl gnupg2 software-properties-common
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
@@ -20,18 +22,9 @@ RUN usermod -aG docker jenkins
 RUN apt-get clean
 RUN curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
 
-# added ny yairvd
-COPY install.scripts/install_taskgo.sh install.scripts/install_taskgo.sh
-RUN chmod +x install.scripts/install_taskgo.sh
-RUN  install.scripts/install_taskgo.sh
+RUN /opt/conda/bin/conda install -c anaconda openjdk  -y
 
-USER jenkins
-
-COPY plugins.txt /usr/share/jenkins/plugins.txt
-RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
-
-COPY default-user.groovy /usr/share/jenkins/ref/init.groovy.d/
-COPY jobs_sys /usr/share/jenkins/job_sys
-# COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
-
-# https://medium.com/the-devops-ship/custom-jenkins-dockerfile-jenkins-docker-image-with-pre-installed-plugins-default-admin-user-d0107b582577
+RUN   - mkdir -p /tmp
+      - cd /tmp && wget https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/3.23/swarm-client-3.23.jar
+      - mkdir -p /data/tools/
+      - mv /tmp/swarm-client-3.23.jar /data/tools/
