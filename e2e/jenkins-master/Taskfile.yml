@@ -53,13 +53,14 @@ tasks:
       - docker rm -f jenconda_c || true
       - mkdir -p $(realpath ~)/shared/jenkins_c
       - test -d ~/_opt/dockers-data || mkdir -p ~/_opt/dockers-data &&  chmod -R 777 ~/_opt/dockers-data || echo oy
-      - test -d ~/_opt/dockers-data/jenkins_home || mkdir -p ~/_opt/dockers-data/jenkins_home && chmod -R 777 ~/_opt/dockers-data/jenkins_home
+      - test -d ~/_opt/dockers-data/jenkins_home || mkdir -p ~/_opt/dockers-data/jenkins_home && chmod -R 777 ~/_opt/dockers-data/jenkins_home || echo ai
       - |
         docker run \
         --name jenconda_c \
         -d \
         -p 8080:8080 \
         -p 50000:50000 \
+        -p 5000:5000 \
         -v $(realpath ~)/_opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
@@ -69,8 +70,8 @@ tasks:
     desc: _
     cmds:
       - docker rm -f jenconda_c_dev || true
-      - test -d /opt/dockers-data || (sudo mkdir -p /opt/dockers-data && sudo chmod -R 777 /opt/dockers-data)
-      - test -d /opt/dockers-data/jenkins_home_dev || (sudo mkdir -p /opt/dockers-data/jenkins_home_dev && sudo chmod -R 777 /opt/dockers-data/jenkins_home_dev)
+      - test -d /opt/dockers-data || (sudo mkdir -p /opt/dockers-data && (sudo chmod -R 777 /opt/dockers-data || true))
+      - test -d /opt/dockers-data/jenkins_home_dev || (sudo mkdir -p /opt/dockers-data/jenkins_home_dev && (sudo chmod -R 777 /opt/dockers-data/jenkins_home_dev || true))
       - |
         docker run \
         --name jenconda_c_dev \
