@@ -7,7 +7,7 @@ def set_build_name(_currentBuild, scmvars, more){
     _currentBuild.displayName = _currentBuild.displayName + "-" + [
         scmvars.GIT_BRANCH,
         scmvars.GIT_COMMIT.substring(0, 7),
-        more].join('#')
+        more].join('-#')
 }
 
 
