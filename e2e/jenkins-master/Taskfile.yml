@@ -52,8 +52,8 @@ tasks:
     cmds:
       - docker rm -f jenconda_c || true
       - mkdir -p $(realpath ~)/shared/jenkins_c
-      - test -d ~/_opt/dockers-data || mkdir -p ~/_opt/dockers-data &&  chmod -R 777 ~/_opt/dockers-data || echo oy
-      - test -d ~/_opt/dockers-data/jenkins_home || mkdir -p ~/_opt/dockers-data/jenkins_home && chmod -R 777 ~/_opt/dockers-data/jenkins_home || echo ai
+      - test -d /data/dockers_data || mkdir -p /data/dockers_data &&  chmod -R 777 /data/dockers_data || echo oy
+      - test -d /data/dockers_data/jenkins_home || mkdir -p /data/dockers_data/jenkins_home && chmod -R 777 /data/dockers_data/jenkins_home || echo ai
       - |
         docker run \
         --name jenconda_c \
@@ -61,10 +61,10 @@ tasks:
         -p 8080:8080 \
         -p 50000:50000 \
         -p 5000:5000 \
-        -v $(realpath ~)/_opt/dockers-data/jenkins_home:/var/jenkins_home:rw \
+        -v /data/dockers_data/jenkins_home:/var/jenkins_home:rw \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
-        jenconda
+        artifactory.sddc.mobileye.com/objm-docker-local/jenconda:0.0.1
         
   docker:run:dev:
     desc: _
