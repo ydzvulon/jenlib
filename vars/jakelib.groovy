@@ -54,14 +54,14 @@ def parse_groups(env_file_conf, line){
 
 // --- public ---
 
-def parse_env_file_text(multiline_text){
+def parse_env_file_text(env_file_conf, multiline_text){
     def lines = multiline_text.readLines()
     def mxpack_lines = lines.collectMany {
         (it.trim() =~ /^MXPACK_.*/)
         ? [it.trim()]
         : []
     }
-    def env_file_conf = [
+    def _env_file_conf = [
         full: [:],
         groups: [
             MXPACK: [:]
@@ -69,7 +69,8 @@ def parse_env_file_text(multiline_text){
         vars: [:],
         packs: [:]
     ]
-    mxpack_lines.each { it -> parse_groups(env_file_conf, it)}
+    mxpack_lines.each { it -> parse_groups(_env_file_conf, it)}
+    env_file_conf << _env_file_conf
     return env_file_conf
 }
 
