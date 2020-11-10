@@ -1,5 +1,20 @@
 package org.mkpack_lib
 
+// --- docs ---
+
+// https://itnext.io/jenkins-shared-libraries-part-1-5ba3d072536a
+// http://gitlab.mobileye.com/objm/jenlib
+// https://tomd.xyz/jenkins-shared-library/
+// https://www.jenkins.io/doc/book/pipeline/shared-libraries/
+// https://groovy-playground.appspot.com/
+// https://groovy-lang.gitlab.io/101-scripts/docker/basico-en.html
+// https://github.com/groovy/docker-groovy
+
+
+// --- yaml sample ---
+// @Grab('org.yaml:snakeyaml:1.17')
+// import org.yaml.snakeyaml.Yaml
+
 // --- private ---
 
 def remove_quotes(txt){
@@ -60,7 +75,7 @@ def parse_env_file(multiline_text){
 
 // --- public ---
 
-class jenlib {
+public class jenlib {
   static def parse_env_file_text(env_file_text) {
     return parse_env_file(env_file_text)
   }
