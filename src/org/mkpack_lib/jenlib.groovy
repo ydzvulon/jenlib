@@ -75,7 +75,7 @@ def parse_env_file(multiline_text){
 
 // --- public ---
 
-public class jenlib {
+class jenlib {
   static def parse_env_file_text(env_file_text) {
     return parse_env_file(env_file_text)
   }
