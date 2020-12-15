@@ -14,6 +14,15 @@
 // import org.yaml.snakeyaml.Yaml
 
 // --- private ---
+import org.jenkinsci.plugins.pipeline.utility.steps.shaded.org.yaml.snakeyaml.Yaml
+
+@NonCPS
+def read_yaml(text) {
+  // @url_from=http://jenkins-ci.361315.n4.nabble.com/SnakeYaml-or-why-is-writeYaml-Limited-td4976510.html
+  def yaml_parser = new Yaml()
+  def config = yaml_parser.load(text)
+  return config
+}
 
 def remove_quotes(txt){
     if (txt[0] == txt[-1]){
@@ -73,5 +82,4 @@ def parse_env_file_text(env_file_conf, multiline_text){
     env_file_conf << _env_file_conf
     return env_file_conf
 }
-
 
