@@ -3,6 +3,10 @@
 - <https://medium.com/@ragin/jenkins-jenkins-configuration-as-code-jcasc-together-with-jobdsl-on-kubernetes-2f5a173491ab>
 - <https://github.com/jenkinsci/configuration-as-code-plugin/blob/master/README.md>
 
+## Configuration as a code
+
+- https://www.eficode.com/blog/start-jenkins-config-as-code
+
 ## Worker Allocators
 
 ### ec2-spot-jenkins-plugin
