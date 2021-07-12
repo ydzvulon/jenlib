@@ -1,6 +1,6 @@
 # https://taskfile.dev
 
-version: '3'
+version: "3"
 
 vars:
   GREETING: JenkinsDockers
@@ -57,6 +57,11 @@ tasks:
       - chmod 777 /tmp/GITLAB_HOME
       - docker-compose up -d
 
+  spin:down:
+    desc: _
+    cmds:
+      - docker-compose down
+
   spin:up:dev:
     desc: _
     cmds:
@@ -107,7 +112,7 @@ tasks:
   docker:run:test:init:
     desc: _
     vars:
-      VOLUME_NAME: {sh: echo "jenconda_v_dtest"}
+      VOLUME_NAME: { sh: echo "jenconda_v_dtest" }
       DEMONIZE: -d
     cmds:
       # - docker volume rm {{.VOLUME_NAME}}|| true
@@ -144,7 +149,6 @@ tasks:
     cmds:
       - task docker:build
       - task docker:run:test:full
-
 
   docker:clean:data:
     desc: _
