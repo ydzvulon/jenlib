@@ -3,6 +3,27 @@
   <groupId>com.samjenjava</groupId>
   <artifactId>JenJavaSam</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <!-- https://blog.sonatype.com/maven-deploy-to-nexus -->
+  <!-- https://help.sonatype.com/repomanager2/staging-releases/configuring-your-project-for-deployment -->
+  <distributionManagement>
+    <repository>
+      <id>nexus-first</id>
+      <name>Releases</name>
+      <url>http://localhost:8082/repository/maven-releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-first</id>
+      <name>Snapshot</name>
+      <url>http://localhost:8082/repository/maven-snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <!-- <distributionManagement> -->
+  <!-- <snapshotRepository> -->
+  <!-- <id>maven-snapshots</id> -->
+  <!-- <url>http://localhost:8082/nexus/content/repositories/maven-snapshots</url> -->
+  <!-- <url>http://localhost:8082/repository/maven-snapshots/</url> -->
+  <!-- </snapshotRepository> -->
+  <!-- </distributionManagement> -->
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -37,11 +58,47 @@
     </dependency>
   </dependencies>
   <build>
+
     <plugins>
+      <!-- <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+        <executions>
+          <execution>
+            <id>default-deploy</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin> -->
+      <!-- <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.5.1</version>
+        <executions>
+          <execution>
+            <id>default-deploy</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <serverId>nexus-first</serverId>
+          <nexusUrl>http://localhost:8082/nexus/</nexusUrl>
+          <skipStaging>true</skipStaging>
+        </configuration>
+      </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>${maven-enforcer-plugin.version}</version>
+        <!-- <configuration>
+          <skip>true</skip>
+        </configuration> -->
         <executions>
           <execution>
             <goals>
@@ -163,6 +220,9 @@
       </plugin>
     </plugins>
   </build>
+  <!-- <deploy>
+
+  </deploy> -->
   <reporting>
     <plugins>
       <plugin>
