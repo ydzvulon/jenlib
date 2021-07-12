@@ -1,6 +1,8 @@
 # https://taskfile.dev
 
 version: '3'
+includes:
+  maven: ./tasks/maven.tasks.yml
 
 vars:
   _name_: project tasks
@@ -12,25 +14,4 @@ tasks:
       - task -l
     silent: true
 
-  fetch-maven-arch:
-    desc: fetches maven
-    dir: __tools__
-    cmds:
-      - wget https://downloads.apache.org/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz
-    status:
-      - test -e apache-maven-3.8.1-bin.tar.gz
-
-  unpack-maven-arch:
-    desc: fetches maven
-    dir: __tools__
-    cmds:
-      - tar -xvf apache-maven-3.8.1-bin.tar.gz
-    status:
-      - test -e apache-maven-3.8.1
-
-  clean-maven-install:
-    desc: cleanup installation files
-    dir: __tools__
-    cmds:
-      - rm -rf apache-maven-3.8.1
 

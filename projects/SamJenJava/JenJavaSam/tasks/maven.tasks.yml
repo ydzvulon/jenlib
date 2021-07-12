@@ -1,0 +1,58 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  _name_: maven.tasks.yml
+  MVN_EXE: __tools__/apache-maven-3.8.1/bin/mvn
+
+tasks:
+  default:
+    cmds:
+      - echo "{{._name_}}"
+      - task -l
+    silent: true
+
+  test-maven:
+    desc: _
+    cmds:
+    - |-
+      {{.MVN_EXE}} test -f pom.xml
+
+
+  # ## Resolver Of Tooling
+  #
+  # >
+  resolve-tooling:
+  #
+  # ```yaml
+    desc: update required tooling on system
+    cmds:
+    - task: _fetch-maven-arch
+    - task: _unpack-maven-arch
+    - task: _clean-maven-install
+  # ```
+
+  _fetch-maven-arch:
+    _desc: fetches maven
+    dir: __tools__
+    cmds:
+      - wget https://downloads.apache.org/maven/maven-3/3.8.1/binaries/apache-maven-3.8.1-bin.tar.gz
+    status:
+      - test -e apache-maven-3.8.1-bin.tar.gz
+
+  _unpack-maven-arch:
+    _desc: fetches maven
+    dir: __tools__
+    cmds:
+      - tar -xvf apache-maven-3.8.1-bin.tar.gz
+    status:
+      - test -e apache-maven-3.8.1
+
+  _clean-maven-install:
+    _desc: cleanup installation files
+    dir: __tools__
+    cmds:
+      - rm -rf apache-maven-3.8.1
+
+
