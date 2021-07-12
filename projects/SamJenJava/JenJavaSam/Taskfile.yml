@@ -14,4 +14,12 @@ tasks:
       - task -l
     silent: true
 
+  ci-flow:
+    desc: Run Full Ci Flow for maven app
+    cmds:
+      - task maven:resolve-tooling
+      - task maven:build-maven
+      - task maven:test-maven
+      - task maven:publish-maven
+
 

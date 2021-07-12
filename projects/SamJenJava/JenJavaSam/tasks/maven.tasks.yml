@@ -71,3 +71,11 @@ tasks:
     cmds:
     - |-
       {{.MVN_EXE}} deploy -f pom.xml
+
+  ci-flow:
+    desc: Run Full Ci Flow for maven app
+    cmds:
+      - task: resolve-tooling
+      - task: build-maven
+      - task: test-maven
+      - task: publish-maven
