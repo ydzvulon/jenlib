@@ -1,0 +1,93 @@
+# https://taskfile.dev
+
+version: '3'
+output: interleaved
+vars:
+  GREETING: Task Variables
+  IN_FILE: "def:task:file"
+  _inf: "[info  ]"
+  _err: "[error ]"
+  _wrn: "[warn  ]"
+  _svr: "[severe]"
+  _ntc: "[notice]"
+  _trc: "[trace ]"
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - echo ">> task -l for task list"
+    silent: true
+
+  _print_cmds: &ref__print_cmds
+    desc: "{{.TASK}}"
+    cmds:
+      - echo "{{._inf}} [{{.TASK}}] IN_FILE='{{ .IN_FILE }}'"
+      - echo "{{._inf}} [{{.TASK}}] IN_TASK='{{ .IN_TASK }}'"
+      - echo "{{._inf}} [{{.TASK}}] IN_SHELL='{{ .IN_SHELL }}'"
+    silent: true
+
+  print-clean:
+    <<: *ref__print_cmds
+    desc: No var defined in task
+
+  print-stage-def:
+    <<: *ref__print_cmds
+    vars:
+      IN_TASK: def:task:stage
+    desc: No var defined in task
+
+  print-stage-redefine:
+    <<: *ref__print_cmds
+    desc: tasker var redefined
+    vars:
+      IN_TASK: def:task:stage
+      IN_FILE: def:task:stage
+
+  assert-out:
+    args:
+      cmd: command
+      args: more arguments
+      assert: present/missing required=false
+      out: output
+    vars:
+      v_opt: '{{if eq .assert "missing"}}-v{{else}}{{end}}'
+    cmds:
+      - |
+        {{.cmd}} {{.args}} | grep {{.v_opt}} "{{.out}}"
+
+  flow-show-vars:
+    desc: _
+    cmds:
+      - task: assert-out
+        vars:
+          cmd: task order:print-stage-def
+          args: IN_FILE=redefined:shell
+          assert: present
+          out: IN_FILE='redefined:shell'
+      - task: assert-out
+        vars:
+          cmd: task order:print-stage-def
+          args: IN_TASK=redefined:shell
+          assert: missing
+          out: IN_TASK='redefined:shell'
+
+
+  _flow-show-vars_org:
+    # desc: _
+    cmds:
+      - task order:print-stage-def IN_FILE=sdfsdf grep "IN_FILE='sdfsdf'"
+      - task order:print-stage-def IN_TASK=sdfsdf grep -v "IN_TASK='sdfsdf'"
+
+  multi-print:
+    desc: _
+    vars:
+      raw_items: "$(yq  r order.yml tasks --tojson | jq -r 'keys[]' | grep -e '^print-')"
+      gen_items: "task -l | cut -d'*' -f2 | cut -d' ' -f2 | grep 'print-' | sed -e 's/:$//g'"
+    cmds:
+      - echo "{{.gen_items}}"
+      - "{{.gen_items}}"
+      - echo $({{.gen_items}})
+      - echo "{{._inf}} ---"
+      - task --silent $({{.gen_items}})
+

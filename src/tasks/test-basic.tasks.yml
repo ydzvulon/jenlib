@@ -1,0 +1,216 @@
+# https://taskfile.dev
+
+version: '3'
+
+# includes:
+#   basic: basic.tests.tasks.yml
+vars:
+  GREETING: Hello, World!
+  tasknamepref: tbasic
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  # --- Jenkins Top Level Job Descriptors Tasks ---
+
+  ci:ci_full:
+    desc: imaginary level mapped manually
+    cmds:
+      - task: ci:ci-begin
+      - task: ci:ci-flow
+      - task: ci:ci-over
+
+  ci:ci-begin:
+    desc: preparing tasks
+    jenlib: {cmds_expand: true}
+    cmds:
+      - task: resolve-deps
+
+  ci:ci-over:
+    desc: reporting publishing tasks
+    jenlib: {cmds_expand: true}
+    cmds:
+      - task: publish-arts
+
+  ci:ci-flow:
+    desc: _
+    vars:
+      _jenlib_: expand=all
+    cmds:
+      - task: compile-confs
+      - task: compile-confs2
+
+  resolve-deps:
+    desc: _
+    cmds:
+      - echo {{.TASK}}
+
+  # --- simple commands ----
+  fmt: echo "it={{.item}}"
+
+  compile-confs:
+    desc: _
+    cmds:
+      - task: with-items
+        vars: {taskname: fmt, items: one two three}
+
+
+  compile-confs2:
+    desc: _
+    cmds:
+      - task: with-items
+        vars:
+          taskname: fmt2
+          task_opt: '-o prefixed'
+          items: "$(echo $(seq  7))"
+          jen_multi: true
+
+  compile-confs3:
+    desc: _
+    cmds:
+      - task: multi-bash
+        vars:
+          with_items: "$(echo $(seq  7))"
+          ITEM: '%'
+          cmd: "task {{ .tasknamepref}}:fmt item='%' -o prefixed"
+
+  publish-arts:
+    desc: _
+    cmds:
+      - echo {{.TASK}}
+      - echo asf
+      - echo {{.TASK}}
+
+  fmt2:
+    cmds:
+      - seq  {{.item}} | xargs -I% bash -c 'sleep 1 && echo {{.item}} %'
+      - |-
+        for i in `seq {{.item}}`; do
+          sleep 1
+          echo [{{.item}}:$i]
+        done
+      # - task: sh
+      #   vars: {cmd: ls, _label: open}
+
+      - task resolve-deps
+
+    prefix: "{{.TASK}}:{{.item}}"
+
+
+
+  ci:ci-flow2:
+    desc: _
+    vars:
+      _jenlib_: expand=all
+    cmds:
+      # - task: with-items
+      - task: resolve-stream
+        vars:
+          task: fmt
+          item_from: echo 'one two three'
+          item_type: tokens
+
+      - task: resolve-stream
+        vars:
+          task: fmt
+          item_from: yq read test-basic.tasks.yml tasks
+          item_type: list-entry
+          item_convert: task-vars
+      - task with-items task=fmt items="echo 'one two three'"
+      - |
+        task with-items task=fmt items=echo '
+            "one"
+            "two"
+            "three"
+        '
+      - task: with-items
+        vars:
+          task: fmt
+          item_type: line
+          with_items_lines: |
+            one
+            two
+            three
+          jenlib_expand: expand=full
+      - echo [task={{.TASK}}] [state=DONE]
+
+  # --- Jenkins Top Level Job Descriptors Tasks ---
+
+  prepare: echo ls
+
+  resolve-one: |
+    seq  5 | xargs -I% bash -c 'sleep 1 && echo {{.arg}} %'
+
+  resolve-steps:
+    - echo [1] && sleep 1
+    - echo [2] && sleep 1
+    - echo [3] && sleep 1
+
+  multi:
+    desc: _
+    deps:
+      - task: resolve-one
+        vars: {arg: one}
+      - task: resolve-steps
+        vars: {arg: two}
+      - task: resolve-one
+        vars: {arg: three}
+    cmds:
+      - echo [task={{.TASK}}] [state=DONE]
+
+  multi2:
+    desc: _
+    cmds:
+
+
+
+  report:
+    desc: _
+    cmds:
+      - echo report
+
+  with-items:
+    # jenlib: {multitask: true, items: with_items, parallel: unfold, subseq: unfold}
+    args:
+      taskname: TASK_NAME
+      items: asdf
+    vars:
+      _ITEM: "{}"
+    cmds:
+      - task: multi-bash
+        vars:
+          with_items: "{{.items}}"
+          ITEM: '{{._ITEM}}'
+          cmd: "task {{.task_opt}} {{.taskpath_arg}} {{.tasknamepref}}:{{.taskname}} item='{{._ITEM}}'"
+    # jen_impl: |
+    #   jinMakeParallel
+
+  multi-bash:
+    # taskhub:
+    #   url: http://taswkfile
+    #   global_id: c129484-6e4749c
+    #   version: 8
+
+    _desc: run multiple inputs in parallel
+    args:
+      cmd: command
+      with_items: '[cmd({}) for {} in with_items]'
+      XITEM: required=true suggested='{}'
+    vars:
+      jenlib: support=expand
+      count_intems: "$(echo {{.with_items}} | wc -w)"
+    cmds:
+      - echo {{.with_items}   }
+      - echo "count_intems={{.count_intems}}"
+      - |
+        echo "{{.with_items}}" \
+        | xargs -n 1 \
+        | xargs \
+          -I {{.ITEM}} \
+          -P {{.count_intems}} \
+        bash -c "{{.cmd}}"
+    prefix: "par:{{.count_intems}}"
+    # silent: true

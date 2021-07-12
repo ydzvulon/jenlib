@@ -1,3 +1,5 @@
+package org.jenslib
+
 // --- docs ---
 
 // https://itnext.io/jenkins-shared-libraries-part-1-5ba3d072536a
@@ -13,15 +15,6 @@
 // import org.yaml.snakeyaml.Yaml
 
 // --- private ---
-import org.jenkinsci.plugins.pipeline.utility.steps.shaded.org.yaml.snakeyaml.Yaml
-
-@NonCPS
-def read_yaml(text) {
-  // @url_from=http://jenkins-ci.361315.n4.nabble.com/SnakeYaml-or-why-is-writeYaml-Limited-td4976510.html
-  def yaml_parser = new Yaml()
-  def config = yaml_parser.load(text)
-  return config
-}
 
 def remove_quotes(txt){
     if (txt[0] == txt[-1]){
@@ -60,16 +53,14 @@ def parse_groups(env_file_conf, line){
     env_file_conf.groups[group_name] << ["${pack_name_long}": "${var_content_clean}"]
 }
 
-// --- public ---
-
-def parse_env_file_text(env_file_conf, multiline_text){
+def parse_env_file(multiline_text){
     def lines = multiline_text.readLines()
     def mxpack_lines = lines.collectMany {
         (it.trim() =~ /^MXPACK_.*/)
         ? [it.trim()]
         : []
     }
-    def _env_file_conf = [
+    def env_file_conf = [
         full: [:],
         groups: [
             MXPACK: [:]
@@ -77,8 +68,14 @@ def parse_env_file_text(env_file_conf, multiline_text){
         vars: [:],
         packs: [:]
     ]
-    mxpack_lines.each { it -> parse_groups(_env_file_conf, it)}
-    env_file_conf << _env_file_conf
+    mxpack_lines.each { it -> parse_groups(env_file_conf, it)}
     return env_file_conf
 }
 
+// --- public ---
+
+class jenlib {
+  static def parse_env_file_text(env_file_text) {
+    return parse_env_file(env_file_text)
+  }
+}

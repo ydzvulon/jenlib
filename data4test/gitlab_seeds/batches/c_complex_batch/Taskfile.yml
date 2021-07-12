@@ -1,0 +1,71 @@
+version: "3"
+output: prefixed
+
+tasks:
+
+  build_with_config: &_ref_build_with_config
+    desc: _
+    cmds:
+      - echo build with A={{.A}} B={{.B}} of {{.TASK}}
+
+  build:cfg1:
+    <<: *_ref_build_with_config
+    vars:
+      A: 1
+      B: 2
+
+  build:cfg2:
+    <<: *_ref_build_with_config
+    vars:
+      A: 0
+      B: 555
+
+  build-p:
+    desc: _
+    deps:
+      - build:cfg1
+      - build:cfg2
+    cmds:
+      - echo aggregate
+
+
+  test_with_config: &_ref_test_with_config
+    desc: _
+    cmds:
+      - echo test with A={{.A}} B={{.B}} of {{.TASK}}
+
+  test:cfg1:
+    <<: *_ref_test_with_config
+    vars:
+      A: 0
+      B: 555
+  test:cfg2:
+    <<: *_ref_test_with_config
+    vars:
+      A: 3
+      B: 777777
+  test:cfg3:
+    <<: *_ref_test_with_config
+    vars:
+      A: 3434
+      B: 767
+
+  test-p:
+    desc: _
+    deps:
+      - test:cfg1
+      - test:cfg2
+      - test:cfg3
+    cmds:
+      - echo aggregate
+
+  start: echo start
+  finish: echo finish
+
+  ci-flow:
+    desc: _
+    cmds:
+      - task start
+      - task build-p
+      - task test-p
+      - task finish

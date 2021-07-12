@@ -1,0 +1,55 @@
+# https://taskfile.dev
+
+version: '3'
+
+includes:
+  tbasic: test-basic.tasks.yml
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  try-groovy:
+    desc: _
+    vars:
+      var: A.B.C
+    cmds:
+      - |
+        groovy -e '
+        println "{{.var}}".split("\\.")[1..-1]
+        '
+
+
+  try-py:
+    desc: _
+    vars:
+      var: A.B.C
+    cmds:
+      - |
+        python -c '
+        print("{{.var}}".split(".")[1:])
+        '
+
+
+  try-all:
+    desc: _
+    vars:
+    env:
+      var: A.B.C
+    cmds:
+      - task: bash
+        vars:
+          cmd: ls
+
+      - task: python
+        vars:
+          cmd: print("{{.var}}".split(".")[1:])
+
+      - task: groovy
+        vars:
+          cmd: print("{{.var}}".split(".")[1:])
+

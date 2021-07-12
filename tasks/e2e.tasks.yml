@@ -1,0 +1,51 @@
+version: '3'
+
+tasks:
+  test-plain-groovy-in-docker:
+    desc: _
+    dir: dockers/jendev
+    cmds:
+      - docker run --rm -v $(pwd):/repo --workdir /repo jupconda_img task -d src test
+
+  test-plain-groovy-in-jup:
+    desc: _
+    dir: dockers/jendev
+    cmds:
+      - docker-compose exec  jupcondadev.samexample.com task -d ./repo/src test
+
+  test-new-ci-bootstrap:
+    desc: _
+    dir: dockers/jendev
+    cmds:
+      - sleep 15
+      - docker-compose exec  jupcondadev.samexample.com ./repo/jenpy/jenpy_cli.py test_bootstrap
+
+  test-all:
+    desc: _
+    deps:
+      - task: test-new-ci-bootstrap
+      - task: test-plain-groovy-in-jup
+    cmds:
+      - echo ok
+
+  test-all-clean:
+    desc: _
+    cmds:
+      - task -d dockers/jendev renew
+      - task: test-all
+      # - task -d dockers/jendev stop
+
+  resolve-no-cache:
+    desc: _
+    cmds:
+      - task jenconda:docker:build:jenconda
+
+  ci-flow:
+    desc: _
+    cmds:
+      - task: resolve-no-cache
+      - task: test-all-clean
+      - task -d dockers/jendev stop
+
+# https://stackoverflow.com/questions/2385553/how-can-i-generate-an-html-report-for-junit-results/2969305
+# https://gitlab.com/inorton/junit2html

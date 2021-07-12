@@ -1,0 +1,44 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+  LBUILD_DIR: __localbuild__/sambuild
+  LART_NAME: art.tar
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  prepare:
+    desc: prepare for build
+    cmds:
+      - rm -rf {{.LBUILD_DIR}}
+      - mkdir -p {{.LBUILD_DIR}}/bdir
+      - cp *.yml *.groovy {{.LBUILD_DIR}}/bdir
+
+  build:
+    desc: do the build
+    dir: "{{.LBUILD_DIR}}/bdir"
+    cmds:
+      # - zip -r ../art.zip .
+      - tar -cvf ../{{.LART_NAME}} .
+
+  test:
+    desc: test artifact
+    cmds:
+      - tar -tvf {{.LBUILD_DIR}}/{{.LART_NAME}}
+      # - unzip -vl {{.LBUILD_DIR}}/art.zip
+
+
+  ci-flow:
+    desc: full build cycle
+    jenlib:
+      ci-flow: body
+    cmds:
+      - task prepare
+      - task build
+      - task test

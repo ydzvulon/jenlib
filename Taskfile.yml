@@ -1,6 +1,16 @@
 # https://taskfile.dev
 
-version: '2'
+version: '3'
+
+includes:
+  mkdocs: _infra/mkdocs_pack/mkdocs.tasks.yml
+  jenconda:
+    taskfile: dockers/jenkins-master/Taskfile.yml
+    dir: dockers/jenkins-master
+  e2e: ./tasks/e2e.tasks.yml
+  # docker: _infra/jenlib_lib/tasks/docker.tasks.yml
+  # tests: _infra/jenlib_lib/tasks/tests.tasks.yml
+  # ci: _infra/jenlib_lib/tasks/ci.tasks.yml
 
 vars:
   GREETING: Jenlib repo actions
@@ -12,8 +22,76 @@ tasks:
       - task -l
     silent: true
 
+  info:
+    desc: Information about this dir
+    cmds:
+      - |
+        echo '
+        # Jenlib taskfile
+
+        ## Layout
+
+        - `src` - jenkins shared lib 'jenlib'
+        - `jenpy` (jenlib) - python cli for jenkins, jenlib, gitlab, s3/http access
+
+        ## Command Groups
+
+        This repo is multi product repo
+        Each product have it's own taskfile
+        Taskfiles are copied to tasks dir from different ci-libs
+        Each taskfile express one group
+
+        > Available Groups
+
+        - jenlib - jenkins shared lib tasks
+        - docker - jenconda docker build
+        - mkdocs - documentation
+        - deps - environment tasks
+
+        ## Group Commands
+
+        Most Groups are
+
+
+  build:
+    desc: _
+    cmds:
+      - echo "There is No build, but lot of tests"
+
   readme:
     desc: _
     cmds:
       - cat README.md | less
 
+  build:prepare:
+    desc: _
+    cmds:
+      - rm -rf __localbuild__/jenbuild
+      - mkdir -p __localbuild__/jenbuild/jenlib
+      - rclone copyto vars  __localbuild__/jenbuild/jenlib/vars
+      - rclone copyto version/version_prefix.txt __localbuild__/jenbuild/jenlib/version.txt
+
+  build:do:
+    desc: _
+    dir: __localbuild__/jenbuild/jenlib
+    cmds:
+      - zip -r ../jenlib.zip .
+
+  publish:build:
+    desc: _
+    cmds:
+      - rclone copyto  __localbuild__/jenbuild/jenlib.zip mts3:moneytime-http/buildx/jenlib/jenlib.zip
+
+  build:full:
+    desc: _
+    cmds:
+      - task: build:prepare
+      - task: build:do
+
+  full:cycle:
+    decs: _
+    cmds:
+      - task: build:full
+      - task: publish:build
+    status:
+      - true # prevent accidental run

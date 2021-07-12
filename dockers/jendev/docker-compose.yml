@@ -1,0 +1,43 @@
+# https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
+
+version: "3"
+services:
+  jencondadev.samexample.com:
+    hostname: 'jencondadev.samexample.com'
+    image: jencondadev
+    build:
+      context: .
+      dockerfile: jencondadev.Dockerfile
+
+    # build: jenconda
+    ports:
+      - "5000"
+      - "12080:8080"
+      - "50000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "../..:/repo"
+
+    # network_mode: "host"
+    networks:
+      ntjendev:
+# https://www.sumologic.com/blog/how-to-build-applications-docker-compose/
+  jupcondadev.samexample.com:
+    image: jupconda_img
+    hostname: 'jupcondadev.samexample.com'
+    build:
+      context: .
+      dockerfile: jupconda.Dockerfile
+      # args:
+      #   buildno: 1
+    ports:
+      - "12088:8888"
+    volumes:
+      # - "jupconda.samexample.com"
+      - "../..:/home/jovyan/repo"
+    networks:
+      ntjendev:
+
+networks:
+  ntjendev:
+    driver: bridge

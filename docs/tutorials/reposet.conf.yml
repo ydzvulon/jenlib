@@ -1,0 +1,4 @@
+aguide:
+  branch: master
+  dirname: aguide
+  remote_origin_url: git@github.com:yairdar/aguide.git

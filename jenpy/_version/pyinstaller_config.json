@@ -1,0 +1,7 @@
+{
+    "entry_point": "jenpy_cli.py",
+    "exe_name": "jenpy",
+    "hiddenimports": [
+      "gitlab.v4"
+    ]
+  }

@@ -1,0 +1,46 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  info:
+    desc: Some Info
+    cmds:
+      - echo "Reach Jenkins. http://localhost:12080"
+      - echo "Reach DevLab. http://localhost:12088"
+    silent: true
+
+  build:
+    cmds:
+      - docker-compose build
+  stop:
+    cmds:
+      - docker-compose down || true
+
+  run:
+    cmds:
+      - docker-compose up -d
+
+  rerun:
+    cmds:
+      - task: stop
+      - docker-compose rm
+      - docker-compose up -d
+
+  renew:
+    cmds:
+      - task: stop
+      - task: build
+      - task: rerun
+      - task: info
+
+
+

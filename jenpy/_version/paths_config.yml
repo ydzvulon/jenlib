@@ -1,0 +1,3 @@
+repo_root_dir: ..
+proj_root_dir: jenpy
+proj_deps_dir: jenpy/deps

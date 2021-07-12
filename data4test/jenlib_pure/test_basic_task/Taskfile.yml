@@ -1,0 +1,31 @@
+# https://taskfile.dev
+
+version: '3'
+
+GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  prepare:
+    cmds:
+      - pwd
+
+  report:
+    cmds:
+    - ls -alh
+
+  ci-flow:
+    cmds:
+      - echo ci-flow init
+      - echo ci-flow over
+
+  top-level:
+    desc: _
+    cmds:
+      - task prepare
+      - task ci-flow
+      - task report
