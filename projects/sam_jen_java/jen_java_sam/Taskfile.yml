@@ -3,10 +3,11 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
+  _name_: project tasks
 
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
+      - echo "{{._name_}}"
+      - task -l
     silent: true
