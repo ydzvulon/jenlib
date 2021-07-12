@@ -1,4 +1,4 @@
-package com.sam_jen_java;
+package com.SamJenJava;
 
 import org.junit.jupiter.api.Test;
 
