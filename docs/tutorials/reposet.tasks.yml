@@ -1,0 +1,157 @@
+  #!/usr/local/bin/task --taskfile
+  # https://taskfile.dev
+
+  version: '3'
+  # output: prefixed
+
+  vars:
+    runconf_path: reposet.conf.yml
+    repos: "$(echo $(yq r {{.runconf_path}} --tojson | jq -r '.|keys[]'))"
+    # taskpath_arg: "-t ./rgc.yml"
+    taskpath_arg: ""
+    task_opt: '-o prefixed'
+
+  tasks:
+    # --initial repo creatin
+    init:
+      desc: initialize this dir with current reposet
+      cmds:
+        - task: list-git-repos
+          vars:
+            last_suffix: '| tee > "{{.runconf_path}}" '
+
+    list-git-repos:
+      desc: _
+      arg:
+        last_suffix: default='' desc=''
+      vars:
+        path: "."
+        to_yaml: "| jq -s '.'|  jq  'reduce .[] as $i ({}; .[$i.dirname] = $i)' | yq r - -P"
+        rest_choice: "{{ if .tojson }}{{else}}{{.to_yaml}}{{end}}"
+      cmds:
+        - echo {{.path}}
+        - |
+          ls -1 {{.path}} \
+          | xargs -n1 -I{} bash -c \
+          "test -e {{.path}}/{}/.git && echo {} || true" \
+          | xargs -n1 -I{} bash -c \
+          'echo \
+          -  {"dirname": "{}", \
+            "branch": "$(git -C {{.path}}/{} rev-parse --abbrev-ref HEAD)", \
+            "remote_origin_url": "$(git -C {{.path}}/{} config --get remote.origin.url)", \
+            "commit": "$(git -C {{.path}}/{} rev-parse --short HEAD)"} \
+          ' | yq r - '[*]' \
+          --tojson {{.rest_choice}} {{.last_suffix}}
+
+      silent: true
+
+    # --- multicast task implementation ---
+    multi-bash:
+      _desc: run multiple inputs in parallel
+      args:
+        cmd: command
+        with_items: '[cmd({}) for {} in with_items]'
+      jenlib:
+        parallel: with_items
+        item: '{}'
+      vars:
+        count_intems: "$(echo {{.with_items}} | wc -w)"
+      cmds:
+        - echo "count_intems={{.count_intems}}"
+        - |
+          echo "{{.with_items}}" \
+          | xargs -n 1 \
+          | xargs \
+            -I {} \
+            -P {{.count_intems}} \
+          {{.cmd}}
+      prefix: "par:{{.count_intems}}"
+      silent: true
+
+    do-many:
+      jenlib: {multitask: true, items: with_items, parallel: unfold, subseq: unfold}
+      args:
+        taskname: install-src:one
+      cmds:
+        - task: multi-bash
+          vars:
+            with_items: "{{.repos}}"
+            cmd: "task {{.task_opt}} {{.taskpath_arg}} {{.taskname}} repo='{}'"
+
+    many-by-one: &_ref_many_by_one
+      desc: _
+      cmds:
+        - task: do-many
+          vars: {taskname: "{{.TASK}}:one"}
+      silent: true
+
+    # --- ones ---
+    _repo_vars:one: &_ref_one
+      vars:
+        dirname: "$(yq read {{ .runconf_path }} {{.repo}}.dirname)"
+        remote_origin_url: "$(yq read {{ .runconf_path }} {{.repo}}.remote_origin_url)"
+        branch: "$(yq read {{ .runconf_path }} {{.repo}}.branch)"
+      prefix: "{{.TASK}}:{{.repo}}"
+      silent: true
+
+    install-src:one:
+      <<: *_ref_one
+      cmds:
+        - echo task -d {{.dirname}} dev:install-here
+    install-src: *_ref_many_by_one
+
+    status:one:
+      <<: *_ref_one
+      cmds:
+        - test -e {{.dirname}} && echo "{{.repo}}=present" || echo "{{.repo}}=missing"
+    status: *_ref_many_by_one
+
+    clone:one:
+      <<: *_ref_one
+      cmds:
+        - git clone {{.remote_origin_url}} {{.dirname}}
+      status:
+        - test -d {{.dirname}}
+    clone: *_ref_many_by_one
+
+    checkout:one:
+      <<: *_ref_one
+      cmds:
+        - git -C {{.dirname}} checkout {{.branch}}
+      status:
+        - |
+          [[ "$(git -C {{.dirname}} rev-parse --abbrev-ref HEAD)" == "{{.branch}}" ]]
+    checkout: *_ref_many_by_one
+
+    pull:one:
+      <<: *_ref_one
+      cmds:
+        - git -C {{.dirname}} pull --rebase
+    pull: *_ref_many_by_one
+
+    push:one:
+      <<: *_ref_one
+      cmds:
+        - git -C {{.dirname}} push
+    push: *_ref_many_by_one
+
+    sync:one:
+      <<: *_ref_one
+      env:
+        dirname: "{{.dirname}}"
+      cmds:
+        - task: pull:one
+        - task: push:one
+    sync: *_ref_many_by_one
+
+    resolve:one:
+      <<: *_ref_one
+      env:
+        dirname: "{{.dirname}}"
+      cmds:
+        - task: clone:one
+        - task: checkout:one
+        - task: pull:one
+    resolve: *_ref_many_by_one
+  #   # --- reposet generation ---
+

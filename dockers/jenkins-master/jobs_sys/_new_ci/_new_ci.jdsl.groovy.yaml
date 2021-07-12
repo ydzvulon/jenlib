@@ -1,0 +1,29 @@
+definition:
+	jobname: _new_ci
+	description: _
+	keepDependencies: false
+		parameters:
+			- stringParam: ["jobname_ci", "jenlib_pipe_master_ci_X", "jenlib_pipe_master_ci"]
+			- stringParam: ["github_p", "gzvulon/jenlib", "github_p"]
+			- stringParam: ["jengroovy_p", "data4test/parallel_tasks_jen/build.groovy", "jengroovy_p"]
+		disabled: false
+		concurrentBuild: false
+		steps:
+			dsl:
+				text: "{{.implementation}}"
+				ignoreExisting: false
+				removeAction: "IGNORE"
+				removeViewAction: "IGNORE"
+				lookupStrategy: "JENKINS_ROOT"
+implementation:
+  - pipelineJob: ${jobname_ci}
+	description: _
+	keepDependencies: false
+	definition:
+		cpsScm:
+			scm:
+				git:
+					remote:
+						github: ["${github_p}", "https"]
+					branch: "*/master"
+			scriptPath: "${jengroovy_p}"

@@ -1,0 +1,11 @@
+tasks:
+  ensure:
+    - mamba install
+  create:
+    - mamba creates
+  update:
+    - mamba update
+  activate:
+    - echo conda activate
+
+

@@ -1,0 +1,130 @@
+jenkins:
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: true
+  disableRememberMe: false
+  labelAtoms:
+  - name: "master"
+  markupFormatter: "plainText"
+  mode: NORMAL
+  numExecutors: 2
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: false
+  scmCheckoutRetryCount: 0
+  securityRealm:
+    local:
+      allowsSignup: true
+      enableCaptcha: false
+      users:
+      - id: "master"
+        name: "master"
+        properties:
+        - "apiToken"
+        - favoriting:
+            autofavoriteEnabled: true
+        - "favorite"
+        - preferredProvider:
+            providerId: "default"
+        - "timezone"
+        - mailer:
+            emailAddress: "master@master.master"
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: true
+    tokenGenerationOnCreationEnabled: true
+    usageStatisticsEnabled: true
+  envInject:
+    enableLoadingFromMaster: false
+    enablePermissions: false
+    hideInjectedVars: false
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: false
+  sSHD:
+    port: -1
+unclassified:
+  artifactoryBuilder:
+    jfrogPipelinesServer:
+      bypassProxy: false
+      connectionRetries: 3
+      credentialsConfig:
+        overridingCredentials: false
+        username: "****"
+      timeout: 300
+    useCredentialsPlugin: false
+  bitbucketEndpointConfiguration:
+    endpoints:
+    - bitbucketCloudEndpoint:
+        enableCache: false
+        manageHooks: false
+        repositoriesCacheDuration: 0
+        teamCacheDuration: 0
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+  buildTimestamp:
+    enableBuildTimestamp: true
+    pattern: "yyyy-MM-dd HH:mm:ss z"
+    timezone: "Etc/UTC"
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
+  gitHubConfiguration:
+    apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    hookUrl: "http://localhost:8080/github-webhook/"
+  gitLabConnectionConfig:
+    connections:
+    - clientBuilderId: "autodetect"
+      connectionTimeout: 10
+      ignoreCertificateErrors: false
+      readTimeout: 10
+  gitLabServers:
+    servers:
+    - name: "default"
+      serverUrl: "https://gitlab.com"
+  gitSCM:
+    addGitTagAction: false
+    allowSecondFetch: false
+    createAccountBasedOnEmail: false
+    disableGitToolChooser: false
+    hideCredentials: false
+    showEntireCommitSummaryInChanges: false
+    useExistingAccountWithSameEmail: false
+  ivyBuildTrigger:
+    extendedVersionMatching: false
+  junitTestResultStorage:
+    storage: "file"
+  location:
+    adminAddress: "address not configured yet <nobody@nowhere>"
+  mailer:
+    charset: "UTF-8"
+    useSsl: false
+    useTls: false
+  mavenModuleSet:
+    localRepository: "default"
+  pluginImpl:
+    enableCredentialsFromNode: false
+  pollSCM:
+    pollingThreadCount: 10
+  timestamper:
+    allPipelines: false
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"

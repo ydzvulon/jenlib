@@ -1,0 +1,3 @@
+tool:
+  conda_pm: conda
+  conda_ac: conda activate

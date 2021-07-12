@@ -1,0 +1,35 @@
+# https://taskfile.dev
+
+version: '3'
+
+# includes:
+#   basic: tasks/basic.tests.tasks.yml
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - task -l
+    silent: true
+
+  test:
+    desc: run all tests
+    cmds:
+      - groovy run_tests.groovy tests=all
+
+  test-one:
+    desc: run all tests
+    args:
+      test: str. name of test to run
+    vars:
+      test_val: '{{ default "test_stages_from_task" .test}}'
+    cmds:
+      - groovy run_tests.groovy tests={{.test_val}}
+
+
+  list-tests:
+    desc: run all tests
+    cmds:
+      - groovy run_tests.groovy list-tests

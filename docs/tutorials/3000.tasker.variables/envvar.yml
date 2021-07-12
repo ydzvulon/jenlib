@@ -1,0 +1,36 @@
+# https://taskfile.dev
+
+version: '3'
+output: interleaved
+vars:
+  GREETING: Task Variables
+  IN_FILE: "def:task:file"
+  _inf: "[info  ]"
+  _err: "[error ]"
+  _wrn: "[warn  ]"
+  _svr: "[severe]"
+  _ntc: "[notice]"
+  _trc: "[trace ]"
+
+  JENTOOLS: "$(realpath tools)"
+
+env:
+  PATH: "{{ .JENTOOLS }}:{{.PATH}}"
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - echo ">> task -l for task list"
+    silent: true
+
+  test-path:
+    desc: _
+    cmds:
+     - venv-run which conda
+
+  test-path2:
+    desc: _
+    cmds:
+     - venv-run which conda
+

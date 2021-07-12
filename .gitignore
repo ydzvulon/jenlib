@@ -1,2 +1,10 @@
 .vscode
 .task
+.pytest*
+site
+__localbuild__
+_out*
+_out/*
+*.pyc
+__pycache__
+.cache
