@@ -1,0 +1,38 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  ensure:ns:
+    desc: _
+    cmds:
+      - kubectl create namespace jenkins
+    status:
+      - kubectl get namespaces | cut -d ' ' -f1 | grep  -e '^jenkins$'
+
+  ensure:deployment:
+    desc: _
+    cmds:
+      - kubectl create -f jenkins.yaml --namespace jenkins
+    status:
+      - kubectl get pods -n jenkins | grep 'jenkins-'
+
+  rm:depl:
+    desc: _
+    cmds:
+      - kubectl delete -f jenkins.yaml --namespace jenkins
+
+  ensure:service:
+    desc: _
+    cmds:
+      - kubectl create -f jenkins-service.yaml --namespace jenkins
+    status:
+      - kubectl get services --namespace jenkins | grep 'jenkins'

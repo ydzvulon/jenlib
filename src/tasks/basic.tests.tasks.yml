@@ -1,0 +1,52 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+  _out_dir: _out/grv_tests
+  _read_cfg: yq r basic.tests.tasks.yml ${YQPATH} | sed 's/:[ ]/=/'
+
+confs:
+  check-output:
+    reverse-str:
+        method: reverse_string
+        argstr: "awesome"
+        expected: "emosewa"
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  test-groovy-output: &ref_test_groovy_output
+    desc: _
+    connector: name=groovy
+    args:
+      method: required=true desc=method to run
+      argstr: required=false desc='argument string'
+    vars:
+      run_id: "$(date +'%Y%m%d%H-%M%S-0000-0000')"
+      run_log: "_out/grv_tests/{{.run_id}}-{{.TASK}}.rid.txt"
+    cmds:
+      - echo {{.run_id}} | rclone rcat {{.run_log}}
+      - |
+        groovy ../run_tests.groovy \
+        unit/test_basic.groovy method \
+        {{.method}} {{.argstr}} \
+        | tee {{.run_log}}
+      - cat {{.run_log}} | grep {{.expected}}
+
+
+  test-reverse-string:
+    <<: *ref_test_groovy_output
+    vars:
+      method: reverse_string
+      argstr: "awesome"
+      expected: "emosewa"
+
+  run-all:
+    desc: _
+    cmds:
+      - task: test-reverse-string

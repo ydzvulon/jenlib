@@ -1,0 +1,27 @@
+
+entries:
+  stages_from_task:
+    stages:
+      - stage: task prepare
+        steps:
+        - step: sh
+          mparams: {script: task prepare}
+      - stage: task ci-flow
+        steps:
+        - step: sh
+          mparams: {script: task ci-flow}
+      - stage: task report
+        steps:
+        - step: sh
+          mparams: {script: task report}
+
+  stage_with_steps_from_task:
+    stages:
+      - stage: top-level
+        steps:
+        - step: sh
+          mparams: {script: task prepare}
+        - step: sh
+          mparams: {script: task ci-flow}
+        - step: sh
+          mparams: {script: task report}

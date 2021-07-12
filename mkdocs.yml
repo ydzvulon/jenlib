@@ -1,0 +1,7 @@
+site_name: My Docs
+theme: material
+dev_addr: 0.0.0.0:8690
+site_dir: __localbuild__/site
+nav:
+    - Home: index.md
+    - Release Notes: release_notes.md

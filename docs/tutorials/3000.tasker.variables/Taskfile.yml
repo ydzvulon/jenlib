@@ -1,0 +1,20 @@
+# https://taskfile.dev
+
+version: '3'
+
+output: prefixed
+
+includes:
+  order: order.yml
+  envvar: envvar.yml
+
+vars:
+  GREETING: Task Variables
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - echo ">> task -l for task list"
+    silent: true
+    prefix: "{{.GREETING}}"

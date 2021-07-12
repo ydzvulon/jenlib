@@ -1,0 +1,38 @@
+tasks:
+
+
+  test_with_sources
+
+  build-p:
+    desc: _
+    deps:
+      - task: build-with-config
+        vars:
+          A: 1
+      - task: tests:run-coverage-p
+    cmds:
+      - echo aggregate
+
+  test-p:
+    desc: _
+    deps:
+      - task: build-with-config
+        vars:
+          A: 1
+      - task: build-with-config
+        vars:
+          A: 2
+    cmds:
+      - echo aggregate
+
+  ci-wf:
+    desc: _
+    cmds:
+      - task: jenkins:repo:ensure
+      - task: ensure:deps
+      - task: test:before:build
+      - task: build-p
+      - task: install-build-p
+      - task: test-p
+      - task: finilize
+      - task: report
