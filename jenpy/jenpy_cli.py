@@ -26,7 +26,7 @@ class JenCli:
         server = self.server
         job_name = '_new_ci'
         build_number = server.build_job(job_name, parameters=dict(
-            seed_job_branch='nextrelease.v0.7.6',
+            seed_job_branch='master',
             seed_job_name='_auto_seed')
         )
 
@@ -86,7 +86,7 @@ class JenCli:
         _ret = self.build_job_block(
             '_new_ci',
             parameters=dict(
-                seed_job_branch='nextrelease.v0.7.6',
+                seed_job_branch='master',
                 seed_job_name=seed_job),
             show_log=show_log,
         )

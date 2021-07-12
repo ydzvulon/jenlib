@@ -1,6 +1,6 @@
 
 def kws = [
-	seed_job_branch: 'nextrelease.v0.7.6',
+	seed_job_branch: 'master',
 	root_dir: "samples",
 	seed_job_pipes: [
 		'data4test/gitlab_seeds/batches/a_simple_batch/pipe_500_cmds_minimal.groovy',
