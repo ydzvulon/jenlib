@@ -48,7 +48,7 @@ tasks:
     _desc: cleanup installation files
     dir: __tools__
     cmds:
-      - rm -rf apache-maven-3.8.1
+      - rm -rf aapache-maven-3.8.1-bin.tar.gz
 
 
   # ## Resolver Of Tooling
