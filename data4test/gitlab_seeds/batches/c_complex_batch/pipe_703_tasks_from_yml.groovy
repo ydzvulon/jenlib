@@ -1,7 +1,9 @@
 
-library identifier: 'jenlib@0.7.5', retriever: http(
-credentialsId: 'asd',
-httpURL: 'http://moneytime.yairdar.com/buildx/jenlib/jenlib.zip')
+@Library('JenkinsLib_jenlib') _
+
+// library identifier: 'jenlib@0.7.5', retriever: http(
+// credentialsId: 'asd',
+// httpURL: 'http://moneytime.yairdar.com/buildx/jenlib/jenlib.zip')
 
 def kwj = [
     'scmvars': null,
