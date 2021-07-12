@@ -1,4 +1,4 @@
-package com.SamJenJava;
+package com.samjenjava;
 
 /**
  * Hello world!
