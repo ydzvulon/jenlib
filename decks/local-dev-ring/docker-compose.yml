@@ -16,37 +16,37 @@ services:
     networks:
       test:
 
-  # httpit:
-  #   image: pierrezemb/gostatic
-  #   ports:
-  #     - "8043:8043"
-  #   volumes:
-  #     - ".:/srv/http"
-  #   networks:
-  #     test:
+  httpit:
+    image: pierrezemb/gostatic
+    ports:
+      - "8043:8043"
+    volumes:
+      - ".:/srv/http"
+    networks:
+      test:
 
-  # gitlabit.samexample.com:
-  #   # 10.8.1 12.1.6 13.2.10
-  #   image: 'gitlab/gitlab-ce:12.1.6-ce.0'
-  #   restart: always
-  #   # https://gitlab.example.com/
-  #   # gitlab_rails['initial_root_password'] = 'qwe123'
-  #   hostname: 'gitlabit.samexample.com'
-  #   environment:
-  #     GITLAB_OMNIBUS_CONFIG: |
-  #       external_url 'http://gitlabit.samexample.com:33080'
-  #       gitlab_rails['gitlab_shell_ssh_port'] = 33022
-  #       gitlab_rails['initial_root_password'] = 'qwe123qwe123'
-  #   ports:
-  #     - '33080:33080'
-  #     - '33443:443'
-  #     - '33022:22'
-  #   volumes:
-  #     - '/tmp/GITLAB_HOME/config:/etc/gitlab'
-  #     - '/tmp/GITLAB_HOME/logs:/var/log/gitlab'
-  #     - '/tmp/GITLAB_HOME/data:/var/opt/gitlab'
-  #   networks:
-  #     test:
+  gitlabit.samexample.com:
+    # 10.8.1 12.1.6 13.2.10
+    image: 'gitlab/gitlab-ce:12.1.6-ce.0'
+    restart: always
+    # https://gitlab.example.com/
+    # gitlab_rails['initial_root_password'] = 'qwe123'
+    hostname: 'gitlabit.samexample.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlabit.samexample.com:33080'
+        gitlab_rails['gitlab_shell_ssh_port'] = 33022
+        gitlab_rails['initial_root_password'] = 'qwe123qwe123'
+    ports:
+      - '33080:33080'
+      - '33443:443'
+      - '33022:22'
+    volumes:
+      - '/tmp/GITLAB_HOME/config:/etc/gitlab'
+      - '/tmp/GITLAB_HOME/logs:/var/log/gitlab'
+      - '/tmp/GITLAB_HOME/data:/var/opt/gitlab'
+    networks:
+      test:
 
 networks:
   test:
