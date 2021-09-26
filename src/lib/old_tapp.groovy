@@ -4,7 +4,7 @@ import org.yaml.snakeyaml.Yaml
 
 import lib.Lib
 import org.jenslib.JenApi
-import org.jenslib.Jenapi
+import org.jenslib.Jenapib
 import tests.unit.TestsBasic
 
 def apis = [
@@ -17,7 +17,7 @@ def test_sample(def apis){
     Lib.saySomething();
     println new Lib().sum(37,5)
     println new JenApi().reverse_string("it")
-    def jap = new Jenapi()
+    def jap = new Jenapib()
     println jap.reverse_string("on")
     def tb = new TestsBasic()
 

@@ -1,0 +1,40 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  # --- Docker File Part Blocks ---
+  __dbuild_s00_header: |-
+    FROM jenconda
+
+  __dbuild_s01_setup_deps: |-
+    COPY deps.setup.conda-env.exe.yml /deps/deps.setup.conda-env.exe.yml
+    RUN task install -t /deps/deps.setup.conda-env.exe.yml
+
+  __dbuild_s01_setup_deps__test_e01: |-
+    RUN mkdocs --version
+
+  __dbuild_dockerfile_content: |-
+    {{.__dbuild_s00_header}}
+    {{.__dbuild_s01_setup_deps}}
+    {{.__dbuild_s01_setup_deps__test_e01}}
+  
+  # --- Variables ---
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  gen-dockerfile:
+    desc: generates dockerfile from parts
+    cmds:
+      - |-
+        cat <<EOF > Dockerfile
+        {{.__dbuild_dockerfile_content}}
+        EOF
+        cat Dockerfile
+
+
+

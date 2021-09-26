@@ -38,7 +38,7 @@ tasks:
   resolve-no-cache:
     desc: _
     cmds:
-      - task jenconda:docker:build:jenconda
+      - task -d dockers/jenkins-master docker:build:jenconda
 
   ci-flow:
     desc: _
