@@ -1,0 +1,93 @@
+# https://taskfile.dev
+
+version: "3"
+output: prefixed
+
+vars:
+  BASE_DEPS: >
+    mamba
+
+  LENV_NAME: "tut_jenlib_basic4"
+  LENV_RUN: "mamba run -n {{.LENV_NAME}}"
+  LENV_CREATE: "mamba create -y -n {{.LENV_NAME}} python=3.7 pip"
+  LENV_DEPS: >
+    docker-compose
+    python-gitlab
+
+tasks:
+  env:create:
+    desc: ensure logical environment dependencies
+    cmds:
+      - '{{.LENV_CREATE}}'
+      - echo '{{.LENV_CREATE}}'
+    status:
+      - "{{.LENV_RUN}} which python | grep {{.LENV_NAME}}"
+
+  dc-pull:
+    desc: _
+    cmds:
+      - |
+        DC_IMAGE=$(yq r docker-compose.yml \
+          "services[{{.DC_SERVICE}}].image") \
+        && docker pull ${DC_IMAGE}
+
+  denv:update:
+    desc: _
+    deps:
+      - task: dc-pull
+        vars: {DC_SERVICE: jencondait.samexample.com}
+      # - task: dc-pull
+      #   vars: {DC_SERVICE: gitlabit.samexample.com}
+    cmds:
+      - echo dockers pulled
+
+  env:update:
+    desc: update env with deps
+    cmds:
+      - 'mamba install -y -n {{.LENV_NAME}} {{.LENV_DEPS}}'
+    status:
+      - "{{.LENV_RUN}} which docker-compose | grep {{.LENV_NAME}}"
+
+
+  env:show:activate:
+    desc: activate env with deps
+    cmds:
+      - echo conda activate {{.LENV_NAME}}
+
+  env:ensure:
+    desc: ensure logical environment
+    deps:
+      - env:create
+    cmds:
+      - task: env:update
+
+  spin-up:dev:
+    desc: ensure services are up
+    cmds:
+      - "{{.LENV_RUN}} docker-compose up -d jencondait.samexample.com"
+
+  shutdown:dev:
+    desc: ensure services are down
+    cmds:
+      - "{{.LENV_RUN}} docker-compose down"
+
+  show:urls:
+    desc: _
+    cmds:
+      #     GitLab 'http://localhost:38080'
+      # RepoHttp 'http://localhost:8043'
+      - |
+        echo '
+        click to reach
+          Jenkins 'http://localhost:8080'
+        '
+    silent: yes
+
+  set-me-up:
+    desc: _
+    deps:
+      - task: denv:update
+      - task: env:ensure
+    cmds:
+      - task: spin-up:dev
+      - task: show:urls
