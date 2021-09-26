@@ -56,7 +56,7 @@ tasks:
   build:
     desc: _
     cmds:
-      - echo "There is No build, but lot of tests"
+      - task -d dockers/jenkins-master docker:build:jenconda
 
   readme:
     desc: _

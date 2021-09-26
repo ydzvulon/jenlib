@@ -8,7 +8,7 @@ vars:
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
+      - task -l
     silent: true
 
   info:
@@ -19,28 +19,30 @@ tasks:
     silent: true
 
   build:
+    desc: _
     cmds:
       - docker-compose build
   stop:
+    desc: _
     cmds:
       - docker-compose down || true
 
   run:
+    desc: _
     cmds:
       - docker-compose up -d
 
   rerun:
+    desc: _
     cmds:
       - task: stop
       - docker-compose rm
       - docker-compose up -d
 
   renew:
+    desc: _
     cmds:
       - task: stop
       - task: build
       - task: rerun
       - task: info
-
-
-
