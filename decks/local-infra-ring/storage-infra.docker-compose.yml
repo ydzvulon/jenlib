@@ -3,16 +3,16 @@
 version: "3.9"
 services:
 
-  httpit_infra:
+  httpit.infra:
     image: pierrezemb/gostatic
     ports:
-      - "8643:8043"
+      - "28643:8043"
     volumes:
       - ".:/srv/http"
     networks:
       test:
 
-  minio_infra:
+  minio.infra:
     # https://docs.min.io/docs/minio-docker-quickstart-guide.html
     image: minio/minio
     ports:

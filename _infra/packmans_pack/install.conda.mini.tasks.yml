@@ -69,8 +69,7 @@ tasks:
     vars:
       cmd: 'bash --login -c "conda --version"'
     <<: *ref_one_cmd
-
-
+  
   ze-run-cmd:
     args:
       cmd: command to run
