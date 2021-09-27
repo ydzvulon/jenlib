@@ -8,3 +8,10 @@ ENV PATH /opt/conda/envs/dev-docs-cenv/bin:$PATH
 RUN bash -c "source activate dev-docs-cenv"
 ENV CONDA_DEFAULT_ENV dev-docs-cenv
 RUN mkdocs --version
+COPY ctrl /ctrl
+WORKDIR /ctrl
+
+RUN which task | grep /usr/local/bin/task
+
+ENTRYPOINT ["/usr/local/bin/task", "-d", "/ctrl"]
+CMD ["-l"]

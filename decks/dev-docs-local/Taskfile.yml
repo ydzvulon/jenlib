@@ -12,7 +12,10 @@ vars:
   DIMAGE: dev-docs-dimg
   conda_env_name: dev-docs-cenv
   _repo_root_: '../..'
-
+  MKDOCS_SERVE_PORT: 13765
+  MKDOCS_SERVE_PORT_EXT: 23765
+  _show_url_exp: |-
+    ui-url--docs-live: http://localhost:{{.MKDOCS_SERVE_PORT_EXT}}
 
 tasks:
   default:
@@ -40,6 +43,7 @@ tasks:
           safe_run: 'true'
       - task: spin-up-flow.prepare
       - task: spin-up
+      - task: show-urls
 
   spin-up-flow.prepare:
     desc: _
@@ -122,6 +126,7 @@ tasks:
         {{.__dbuild_s013_setup_deps_task}}
         {{.__dbuild_s017_setup_deps}}
         {{.__dbuild_s017_setup_deps__test_e01}}
+        {{.__dbuild_s019_set_cmd_docker}}
 
       content: '{{.__dbuild_dockerfile_content}}'
 
@@ -149,8 +154,12 @@ tasks:
           dev.docs.com:
             image: {{.DIMAGE}}
             hostname: 'dev.editor.com'
+            restart: always
+            command: ["docs:serve-docs"]
+            environment:
+              - MKDOCS_SERVE_PORT={{.MKDOCS_SERVE_PORT}}
             ports:
-              - "13778:8778"
+              - "{{.MKDOCS_SERVE_PORT_EXT}}:{{.MKDOCS_SERVE_PORT}}"
             volumes:
               - "{{._repo_root_}}:/repo"
             networks:
