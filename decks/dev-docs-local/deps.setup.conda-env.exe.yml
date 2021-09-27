@@ -1,0 +1,97 @@
+#!/usr/local/bin/task --taskfile
+
+version: "3"
+vars:
+  _title_: Conda Env Builder Tasks
+  conda_env_conf_file: deps.setup.conda-env.exe.yml
+  CVENV_NAME: local-docs-env
+name: local-docs-env
+
+tasks:
+
+  install:
+    desc: Install Conda environment {{.CVENV_NAME}}
+    cmds:
+    - |-
+      if conda run -n {{.CVENV_NAME}} pwd &> /dev/null;
+      then
+          echo "Updating Existing conda Environment"
+          conda env update -n {{.CVENV_NAME}} -f {{.conda_env_conf_file}}
+      else
+          echo "Creating New conda Environment"
+          echo "@@@@@@" {{.conda_env_conf_file}}
+          # cat {{.conda_env_conf_file}}
+          conda env create -n {{.CVENV_NAME}} -f {{.conda_env_conf_file}}
+      fi
+    status:
+    - |-
+      conda run -n {{.CVENV_NAME}} pwd
+
+  with-venv:
+    desc: run tasker command within venv
+    dir: '{{default "." .dir}}'
+    cmds:
+    - |-
+      which mkdocs \
+      && {{.cmd}} \
+      || bash --login -c '
+      conda activate {{.CVENV_NAME}}
+        {{.cmd}}
+      '
+
+  run-jupyter:
+    desc: run jupyter notebook
+    cmds:
+    - task: with-venv
+      vars:
+        dir: '..'
+        cmd: jupyter-lab --ip 0.0.0.0
+
+dependencies:
+- "python>=3.7,<3.8"
+- jupyter
+- nb_conda
+- nb_conda_kernels
+# - opencv
+- ipython
+- pytest
+- pytest-xdist
+- pytest-cov
+- pytest-html
+- coverage
+- yapf
+- semver
+- pydantic
+- typing_extensions>=3.7.4
+# - Pyinstaller
+- plotly
+- pyyaml
+- requests
+- pydantic
+
+- pip:
+  - "pip"
+  - fire
+  - fastapi
+  - ipdb
+  
+  - python-gitlab
+  - python-jenkins
+
+  - "mkdocs==1.2.1"
+  - "Markdown>=2.6"
+  - "mkdocs-material"
+  - "mkdocs-simple-plugin"
+  - "mkdocs-awesome-pages-plugin"
+
+  - "pymdown-extensions"
+  - "mkdocstrings"
+  - "mkdocs-jupyter"
+  - "python-markdown-math"
+
+  - "mkdocs-material-extensions"
+  - "mkdocs-mermaid2-plugin"
+  - "mdx_truly_sane_lists"
+  - "mkdocs-macros-plugin"
+  - "mkdocs-versioning"
+

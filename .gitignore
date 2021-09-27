@@ -8,3 +8,4 @@ _out/*
 *.pyc
 __pycache__
 .cache
+.minio.sys

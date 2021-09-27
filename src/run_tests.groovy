@@ -4,7 +4,7 @@ import org.yaml.snakeyaml.Yaml
 
 import lib.Lib
 import org.jenslib.JenApi
-import org.jenslib.Jenapi
+import org.jenslib.Jenapib
 import tests.unit.TestsBasic
 
 
@@ -70,7 +70,7 @@ def get_data4test_dir(){
 def tenv = [
     lib: new Lib(),
     jenapi: get_jenapi(),
-    jenapi_alt: new Jenapi(),
+    jenapi_alt: new Jenapib(),
     test_suits: [
         basic: new TestsBasic()
     ],

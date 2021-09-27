@@ -1,0 +1,32 @@
+# https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
+
+version: "3.9"
+services:
+# --- services ---
+  httpit.infra:
+    image: pierrezemb/gostatic
+    ports:
+      - "28646:8043"
+    volumes:
+      - "../..:/srv/http"
+    networks:
+      local-dev-ring_test:
+
+  minio.infra:
+    # https://docs.min.io/docs/minio-docker-quickstart-guide.html
+    image:   quay.io/minio/minio
+    command: server /data --console-address ":19001"
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minio123
+    ports:
+      - "29606:9000"
+      - "19001:19001"
+    volumes:
+      - "../..:/data"
+    networks:
+      local-dev-ring_test:
+# --- networks:test ---
+networks:
+  local-dev-ring_test:
+    external: true

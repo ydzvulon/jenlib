@@ -1,0 +1,22 @@
+# https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
+
+version: "3.9"
+services:
+# --- services ---
+  dev.docs.com:
+    image: dev-docs-dimg
+    hostname: 'dev.editor.com'
+    restart: always
+    command: ["docs:serve-docs"]
+    environment:
+      - MKDOCS_SERVE_PORT=13765
+    ports:
+      - "23765:13765"
+    volumes:
+      - "../..:/repo"
+    networks:
+      local-dev-ring_test:
+# --- networks:test ---
+networks:
+  local-dev-ring_test:
+    external: true

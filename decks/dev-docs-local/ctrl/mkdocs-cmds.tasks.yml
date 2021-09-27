@@ -1,0 +1,17 @@
+version: "3"
+
+vars:
+  _desc: |-
+    Used only with include
+
+tasks:
+
+  build-docs:
+    desc: build docs in current direction
+    cmds:
+      - mkdocs build
+
+  serve-docs:
+    desc: build docs in current direction
+    cmds:
+      - mkdocs serve -a 0.0.0.0:{{.MKDOCS_SERVE_PORT}}

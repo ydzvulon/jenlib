@@ -1,0 +1,187 @@
+# https://taskfile.dev
+
+version: '3'
+env:
+  _vcomment: '#'
+
+vars:
+  # --- Tasker Variables ---
+  _dcomment_: "$(echo '$_vcomment')"
+  docker_compose_yaml: docker-compose.yml
+  network_name: local-dev-ring_test
+  DIMAGE: dev-docs-dimg
+  conda_env_name: dev-docs-cenv
+  _repo_root_: '../..'
+  MKDOCS_SERVE_PORT: 13765
+  MKDOCS_SERVE_PORT_EXT: 23765
+  _show_url_exp: |-
+    ui-url--docs-live: http://localhost:{{.MKDOCS_SERVE_PORT_EXT}}
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  build:
+    desc: build docker
+    deps:
+      - task: generate/Dockerfile
+    cmds:
+      - docker build -t {{.DIMAGE}} .
+
+  show-urls:
+    desc: shows urls of services
+    silent: true
+    cmds: ['echo "{{._show_url_exp}}" ']
+
+  spin-up-flow:
+    desc: _
+    cmds:
+      - task: spin-down
+        vars:
+          safe_run: 'true'
+      - task: spin-up-flow.prepare
+      - task: spin-up
+      - task: show-urls
+
+  spin-up-flow.prepare:
+    desc: _
+    deps:
+      - task: generate/docker-compose.yml
+    cmds: 
+      - echo "{{.TASK}} done deps"
+
+  spin-up:
+    desc: _
+    cmds: 
+      - docker-compose -f {{.docker_compose_yaml}} up  -d
+  
+  spin-down:
+    desc: _
+    vars:
+      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
+    cmds: 
+      - docker-compose -f {{.docker_compose_yaml}} down {{.rest_suff}}
+
+
+  write-to-file:
+    desc: _
+    args:
+      file: ''
+      content: ''
+      src_file: sourcefile
+    vars:
+      show_written: '{{default "" .show_written}}'
+    sources:
+      - '{{.src_file}}'
+    generates:
+      - '{{.file}}'
+    cmds:
+      - |-
+        cat <<EOF > {{.file}}
+        {{.content}}
+        EOF
+        if [[ "{{.show_written}}" != "" ]]; then
+          cat {{.file}}
+        fi
+
+
+  Dockerfile_parts: &ref_Dockerfile_parts_task
+    vars:
+      # --- Docker File Part Blocks ---
+      __dbuild_s000_header: |-
+        FROM continuumio/miniconda3
+
+      __dbuild_s011_setup_deps_apt: |-
+        RUN apt update -y && apt install -y curl git
+
+      __dbuild_s013_setup_deps_task: |-
+        {{._dcomment_}} https://taskfile.dev/#/installation?id=get-the-binary
+        RUN sh -c "\$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+
+      __dbuild_s017_setup_deps: |-
+        COPY deps.setup.conda-env.exe.yml /deps/deps.setup.conda-env.exe.yml
+        RUN task install -t /deps/deps.setup.conda-env.exe.yml CVENV_NAME={{.conda_env_name}}
+        ENV PATH /opt/conda/envs/{{.conda_env_name}}/bin:\$PATH
+        RUN bash -c "source activate {{.conda_env_name}}"
+        ENV CONDA_DEFAULT_ENV {{.conda_env_name}}
+
+
+      __dbuild_s017_setup_deps__test_e01: |-
+        RUN mkdocs --version
+
+      __dbuild_s019_set_cmd_docker: |-
+        COPY ctrl /ctrl
+        WORKDIR /ctrl
+        
+        RUN which task | grep /usr/local/bin/task
+        
+        ENTRYPOINT ["/usr/local/bin/task", "-d", "/ctrl"]
+        CMD ["-l"]
+
+      __dbuild_dockerfile_content: |-
+        {{.__dbuild_s000_header}}
+        {{.__dbuild_s011_setup_deps_apt}}
+        {{.__dbuild_s013_setup_deps_task}}
+        {{.__dbuild_s017_setup_deps}}
+        {{.__dbuild_s017_setup_deps__test_e01}}
+        {{.__dbuild_s019_set_cmd_docker}}
+
+      content: '{{.__dbuild_dockerfile_content}}'
+
+  generate/Dockerfile:
+    desc: generates dockerfile from parts
+    <<: *ref_Dockerfile_parts_task
+    cmds:
+      - task: write-to-file
+        vars:
+          src_file: Taskfile.yml
+          file: 'Dockerfile'
+          content: '{{.content}}'
+
+
+  docker_compose_yml_parts: &ref_docker_compose_yml_parts
+    vars: 
+    # --- docker-compose part ---
+      _p_01_header: |-
+        # https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
+
+        version: "3.9"
+        services:
+      _p_02_body: |-  
+        # --- services ---
+          dev.docs.com:
+            image: {{.DIMAGE}}
+            hostname: 'dev.editor.com'
+            restart: always
+            command: ["docs:serve-docs"]
+            environment:
+              - MKDOCS_SERVE_PORT={{.MKDOCS_SERVE_PORT}}
+            ports:
+              - "{{.MKDOCS_SERVE_PORT_EXT}}:{{.MKDOCS_SERVE_PORT}}"
+            volumes:
+              - "{{._repo_root_}}:/repo"
+            networks:
+              {{.network_name}}:
+      
+      _p_14_networks: |-
+        # --- networks:test ---
+        networks:
+          {{.network_name}}:
+            external: true
+      _p_docker_compose_content: |-
+        {{._p_01_header}}
+        {{._p_02_body}}
+        {{._p_14_networks}}
+      content: '{{._p_docker_compose_content}}'
+
+  generate/docker-compose.yml:
+    desc: generates dockerfile from parts
+    <<: *ref_docker_compose_yml_parts
+    cmds:
+      - task: write-to-file
+        vars:
+          src_file: Taskfile.yml
+          file: '{{.docker_compose_yaml}}'
+          content: '{{.content}}'
