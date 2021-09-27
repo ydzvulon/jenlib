@@ -5,7 +5,9 @@
 ## jenlib-v0.8.1-2021.09.rc0
 
 - add changelog instead of release_notes
-- add tutorial docker-compose 
+- add tutorial docker-compose
+- add documentation builders
+- creted dev decks
 
 ## jenlib-0.5.1-rc.20202312.rc
 
