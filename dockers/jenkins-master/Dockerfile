@@ -25,6 +25,7 @@ COPY install.scripts/install_taskgo.sh install.scripts/install_taskgo.sh
 RUN chmod +x install.scripts/install_taskgo.sh
 RUN  install.scripts/install_taskgo.sh
 
+# or 3.4.1
 RUN cd /tmp \
     && wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 \
     && mv yq_linux_amd64 /usr/bin/yq
