@@ -1,0 +1,14 @@
+version: "3"
+vars:
+  dep_rclone: |-
+    curl https://rclone.org/install.sh | sudo bash
+  dep_zip: |-
+    apt install -y zip
+
+tasks:
+  install-deps:
+    desc: _
+    cmds:
+      - |-
+        {{.dep_rclone}}
+        {{.dep_zip}}

@@ -1,6 +1,27 @@
 # https://taskfile.dev
 
 version: "3"
+vars:
+  target_dest_file: docker-compose.yml
 includes:
   tut: "tut.tasks.yml"
-
+tasks:
+  spin-up:
+    desc: _
+    cmds: 
+      - docker-compose -f {{.target_dest_file}} up  -d
+  respin:
+    desc: _
+    cmds:
+      - docker-compose -f {{.target_dest_file}} restart
+  show:urls:
+    desc: prints services ui urls
+    silent: yes
+    cmds:
+      - |
+        echo '
+        click.to.reach:
+           Jenkins: 'http://localhost:8080'
+           GitLab: 'http://localhost:38080'
+           RepoHttp: 'http://localhost:8043'
+        '

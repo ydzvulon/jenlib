@@ -4,14 +4,14 @@ version: "3.9"
 services:
   jencondait.samexample.com:
     hostname: 'jencondait.samexample.com'
-    image: artifactory.sddc.mobileye.com/me-conda-docker-local/jenconda:v0.7.5
+    image: jenconda
     ports:
       - "5000:5000"
       - "8080:8080"
       - "50000:50000"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - ".:/repo"
+      - "../..:/repo"
     # network_mode: "host"
     networks:
       test:
@@ -21,7 +21,7 @@ services:
     ports:
       - "8043:8043"
     volumes:
-      - ".:/srv/http"
+      - "../..:/srv/http"
     networks:
       test:
 
