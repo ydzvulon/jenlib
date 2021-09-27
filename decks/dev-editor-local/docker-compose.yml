@@ -14,10 +14,10 @@ services:
     ports:
       - "13088:8888"
     volumes:
-      - ":/home/jovyan/repo"
+      - "../..:/home/jovyan/repo"
     networks:
-      :
+      local-dev-ring_test:
 # --- networks:test ---
 networks:
-  :
+  local-dev-ring_test:
     external: true

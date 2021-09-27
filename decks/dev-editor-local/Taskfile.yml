@@ -5,10 +5,12 @@ env:
   _vcomment: '#'
 
 vars:
-  _dcomment_: "$(echo '$_vcomment')"
-
   # --- Tasker Variables ---
+  _dcomment_: "$(echo '$_vcomment')"
+  docker_compose_yaml: docker-compose.yml
+  network_name: local-dev-ring_test
   DIMAGE: dev-editor-dimg
+  _repo_root_: '../..'
 
 
 tasks:
@@ -16,6 +18,47 @@ tasks:
     cmds:
       - task -l
     silent: true
+
+  build:
+    desc: build docker
+    deps:
+      - task: generate/Dockerfile
+    cmds:
+      - docker build -t {{.DIMAGE}} .
+
+  show-urls:
+    desc: shows urls of services
+    silent: true
+    cmds: ['echo "{{._show_url_exp}}" ']
+
+  spin-up-flow:
+    desc: _
+    cmds:
+      - task: spin-down
+        vars:
+          safe_run: 'true'
+      - task: spin-up-flow.prepare
+      - task: spin-up
+
+  spin-up-flow.prepare:
+    desc: _
+    deps:
+      - task: generate/docker-compose.yml
+    cmds: 
+      - echo "{{.TASK}} done deps"
+
+  spin-up:
+    desc: _
+    cmds: 
+      - docker-compose -f {{.docker_compose_yaml}} up  -d
+  
+  spin-down:
+    desc: _
+    vars:
+      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
+    cmds: 
+      - docker-compose -f {{.docker_compose_yaml}} down {{.rest_suff}}
+
 
   write-to-file:
     desc: _
@@ -166,47 +209,5 @@ tasks:
       - task: write-to-file
         vars:
           src_file: Taskfile.yml
-          file: 'docker-compose.yml'
+          file: '{{.docker_compose_yaml}}'
           content: '{{.content}}'
-
-  build:
-    desc: build docker
-    deps:
-      - task: generate/Dockerfile
-    cmds:
-      - docker build -t {{.DIMAGE}} .
-
-  show-urls:
-    desc: shows urls of services
-    silent: true
-    cmds: ['echo "{{._show_url_exp}}" ']
-
-  spin-up-flow:
-    desc: _
-    cmds:
-      - task: spin-down
-        vars:
-          safe_run: 'true'
-      - task: spin-up-flow.prepare
-      - task: spin-up
-
-
-  spin-up-flow.prepare:
-    desc: _
-    deps:
-      - task: gen-docker-compose-file
-    cmds: 
-      - echo "{{.TASK}} done deps"
-
-  spin-up:
-    desc: _
-    cmds: 
-      - docker-compose -f {{.target_dest_file}} up  -d
-  
-  spin-down:
-    desc: _
-    vars:
-      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
-    cmds: 
-      - docker-compose -f {{.target_dest_file}} down {{.rest_suff}}
-
