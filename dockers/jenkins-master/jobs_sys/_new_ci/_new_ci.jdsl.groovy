@@ -34,6 +34,9 @@ pipelineJob("\${seed_job_name}") {
 			scriptPath("\${seed_job_pipe}")
 		}
 	}
+	parameters {
+		stringParam('seed_job_branch','${seed_job_branch}', 'seed_job_branch')
+	}
 	environmentVariables {
 		envs(jobs_def_dir: "\${jobs_def_dir}")
 		keepBuildVariables(true)
