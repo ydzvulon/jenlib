@@ -2,82 +2,47 @@
 
 version: '3'
 env:
-  _comment: '#'
+  _vcomment: '#'
 
 vars:
+  _dcomment_: "$(echo '$_vcomment')"
+
   # --- Tasker Variables ---
   DIMAGE: dev-editor-dimg
 
-  # --- Docker File Part Blocks ---
-  __dbuild_s000_header: |-
-    ARG BASE_CONTAINER=jupyter/pyspark-notebook
-    FROM $BASE_CONTAINER
+  # --- docker-compose part ---
 
-  __dbuild_s011_setup_deps_apt: |-
-    \$_comment Install task rclone yq jq
-    \$_comment https://taskfile.dev/#/installation
-    USER root
-    RUN apt update && apt install -y curl
-    RUN sh -c "\$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
-    RUN echo "\${NB_USER}   ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+  _p_01_header: |-
+    # https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
 
-    USER \$NB_USER
-    ENV IN_DOCKER_BUILD 1
-
-  __dbuild_s013_setup_deps_vs_code: |-
-    \$_comment __dbuild_install
-    \$_comment ------@@init:stage=prephook section=task.docker.cmds task=mxsh:install:zsh:kubeflow
-    COPY deps/tasks.vscode.deps.yml deps/tasks.vscode.deps.yml
-    RUN task -t deps/tasks.vscode.deps.yml install
-    
-    $_comment Install jupyter proxies for VS Code and RStudio
-    RUN pip install --no-cache-dir jupyter-server-proxy && \
-    pip install --no-cache-dir jupyter-vscode-proxy
-
-    RUN jupyter labextension install @jupyterlab/server-proxy
-    \$_comment ------@@over:stage=prephook section=task.docker.cmds task=mxsh:install:zsh:kubeflow
-
-
-  __dbuild_s014_setup_asdf: |-
-    ENV PATH /home/\${NB_USER}/.asdf/bin:/home/\${NB_USER}/.asdf/shims:\$PATH
-    RUN /bin/bash -c "git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0 && \
-                      asdf plugin-add groovy https://github.com/weibemoura/asdf-groovy.git && \
-                      asdf install groovy 3.0.7 && \
-                      asdf global groovy 3.0.7"
-    RUN \
-        echo -e '\n. \$HOME/.asdf/asdf.sh' >> ~/.bashrc \
-        && echo -e '\n. \$HOME/.asdf/completions/asdf.bash' >> ~/.bashrc  
-        
-  __dbuild_s017_setup_deps: |-
-    COPY deps/pip.deps.list.txt deps/pip.deps.list.txt
-    RUN pip install -r deps/pip.deps.list.txt
-
-
-  __dbuild_s017_setup_deps__test_e01: |-
-    RUN pip freeze | grep waiting
-
-  __dbuild_s018_finishes: |-
-    ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
-
-    EXPOSE 8888
-
-    WORKDIR ${HOME}
-    # mount point for kubeflow
-    VOLUME /home/jovyan
-
-    # Configure container startup
-    ENV NB_PREFIX /
-    CMD ["sh","-c", "jupyter lab --notebook-dir=/home/jovyan --ip=0.0.0.0 --no-browser --allow-root --port=8888 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*' --NotebookApp.base_url=${NB_PREFIX}"]
-
-  __dbuild_dockerfile_content: |-
-    {{.__dbuild_s000_header}}
-    {{.__dbuild_s011_setup_deps_apt}}
-    {{.__dbuild_s013_setup_deps_vs_code}}
-    {{.__dbuild_s014_setup_asdf}}
-    {{.__dbuild_s017_setup_deps}}
-    {{.__dbuild_s017_setup_deps__test_e01}}
-    {{.__dbuild_s018_finishes}}
+    version: "3.9"
+    services:
+  _p_02_body: |-  
+    # --- services ---
+      dev.editor.com:
+        image: dev-editor-dimg
+        hostname: 'dev.editor.com'
+        build:
+          context: .
+          dockerfile: Dockerfile
+          # args:
+          #   buildno: 1
+        ports:
+          - "13088:8888"
+        volumes:
+          - "{{._repo_root_}}:/home/jovyan/repo"
+        networks:
+          {{.network_name}}:
   
+  _p_14_networks: |-
+    # --- networks:test ---
+    networks:
+      {{.network_name}}:
+        external: true
+  _p_docker_compose_content: |-
+    {{._p_01_header}}
+    {{._p_02_body}}
+    {{._p_14_networks}}
 
 tasks:
   default:
@@ -85,8 +50,115 @@ tasks:
       - task -l
     silent: true
 
+  write-to-file:
+    desc: _
+    args:
+      file: ''
+      content: ''
+    vars:
+      show_written: '{{default "" .show_written}}'
+    cmds:
+      - |-
+        cat <<EOF > {{.file}}
+        {{.content}}
+        EOF
+        if [[ "{{.show_written}}" != "" ]]; then
+          cat {{.file}}
+        fi
+
+  Dockerfile_parts:
+    vars: &ref_Dockerfile_parts
+      # --- Docker File Part Blocks ---
+      __dbuild_s000_header: |-
+        ARG BASE_CONTAINER=jupyter/pyspark-notebook
+        FROM \$BASE_CONTAINER
+
+      __dbuild_s011_setup_deps_apt: |-
+        {{._dcomment_}} Install task rclone yq jq
+        {{._dcomment_}} https://taskfile.dev/#/installation
+        USER root
+        RUN apt update && apt install -y curl
+        RUN sh -c "\$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+        RUN echo "\${NB_USER}   ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+        USER \$NB_USER
+        ENV IN_DOCKER_BUILD 1
+
+      __dbuild_s013_setup_deps_vs_code: |-
+        {{._dcomment_}} __dbuild_install
+        {{._dcomment_}} ------@@init:stage=prephook section=task.docker.cmds task=mxsh:install:zsh:kubeflow
+        COPY deps/tasks.vscode.deps.yml deps/tasks.vscode.deps.yml
+        RUN task -t deps/tasks.vscode.deps.yml install
+        
+        {{._dcomment_}} Install jupyter proxies for VS Code and RStudio
+        RUN pip install --no-cache-dir jupyter-server-proxy && \
+        pip install --no-cache-dir jupyter-vscode-proxy
+
+        RUN jupyter labextension install @jupyterlab/server-proxy
+        {{._dcomment_}} ------@@over:stage=prephook section=task.docker.cmds task=mxsh:install:zsh:kubeflow
+
+
+      __dbuild_s014_setup_asdf: |-
+        ENV PATH /home/\${NB_USER}/.asdf/bin:/home/\${NB_USER}/.asdf/shims:\$PATH
+        RUN /bin/bash -c "git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0 && \
+                          asdf plugin-add groovy https://github.com/weibemoura/asdf-groovy.git && \
+                          asdf install groovy 3.0.7 && \
+                          asdf global groovy 3.0.7"
+        RUN \
+            echo -e '\n. \$HOME/.asdf/asdf.sh' >> ~/.bashrc \
+            && echo -e '\n. \$HOME/.asdf/completions/asdf.bash' >> ~/.bashrc  
+            
+      __dbuild_s017_setup_deps: |-
+        COPY deps/pip.deps.list.txt deps/pip.deps.list.txt
+        RUN pip install -r deps/pip.deps.list.txt
+
+
+      __dbuild_s017_setup_deps__test_e01: |-
+        RUN pip freeze | grep waiting
+
+      __dbuild_s018_finishes: |-
+        ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+
+        EXPOSE 8888
+
+        WORKDIR ${HOME}
+        # mount point for kubeflow
+        VOLUME /home/jovyan
+
+        # Configure container startup
+        ENV NB_PREFIX /
+        CMD ["sh","-c", "jupyter lab --notebook-dir=/home/jovyan --ip=0.0.0.0 --no-browser --allow-root --port=8888 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*' --NotebookApp.base_url=${NB_PREFIX}"]
+
+      __dbuild_dockerfile_content: |-
+        {{.__dbuild_s000_header}}
+        {{.__dbuild_s011_setup_deps_apt}}
+        {{.__dbuild_s013_setup_deps_vs_code}}
+        {{.__dbuild_s014_setup_asdf}}
+        {{.__dbuild_s017_setup_deps}}
+        {{.__dbuild_s017_setup_deps__test_e01}}
+        {{.__dbuild_s018_finishes}}
+
   gen-dockerfile:
     desc: generates dockerfile from parts
+    vars:
+      <<: *ref_Dockerfile_parts
+      file: Dockerfile
+      content: '{{.__dbuild_dockerfile_content}}'
+    source:
+      - Taskfile.yml
+    cmds:
+      - task: write-to-file
+        vars:
+          file: '{{.file}}'
+          content: '{{.content}}'
+    generates:
+      - '{{.file}}'
+
+
+  
+
+  gen-docker-compose-file:
+    desc: generates docker-compose-file
     cmds:
       - |-
         cat <<EOF > Dockerfile
