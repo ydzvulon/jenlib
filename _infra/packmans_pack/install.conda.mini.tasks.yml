@@ -1,0 +1,89 @@
+#!/usr/local/bin/task --taskfile
+
+# https://taskfile.dev
+
+version: '3'
+vars:
+  ___the_taskfile_path__: install.conda.mini.tasks.yml
+  __required_cli_tools__: >-
+    wget bash
+  remote_source: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  local_source: ~/miniconda.sh
+  target_dest: ~/miniconda3
+
+tasks:
+  default:
+    cmds:
+      - echo "use {{.___the_taskfile_path__}} install"
+    silent: true
+
+  install:
+    desc: install all
+    cmds:
+      - task: install-miniconda-local
+
+  install-miniconda-local:
+    desc: Install conda
+    cmds: 
+      - task: install-miniconda-local.prepare-local-storage
+      - task: install-miniconda-local.sync-remote-to-local
+      - task: install-miniconda-local.install-silent
+      - task: iinstall-miniconda-local.init-bash
+      - task: install-miniconda-local.test-install
+
+  ref_one_cmd: &ref_one_cmd
+    _desc: "helper task to define steps"
+    desc: "task {{.TASK}} runs {{.cmd}}"
+    cmds:
+      - task: ze-run-cmd
+        vars: 
+          name: '{{.TASK}}'
+          cmd: '{{.cmd}}'
+
+  install-miniconda-local.prepare-local-storage:
+    vars:
+      cmd: rm -rf {{.target_dest}}
+    <<: *ref_one_cmd
+
+  install-miniconda-local.sync-remote-to-local:
+    vars:
+      cmd: wget --timestamping {{.remote_source}}  -O {{.local_source}}
+    <<: *ref_one_cmd
+
+  install-miniconda-local.install-silent:
+    vars:
+      cmd: bash {{.local_source}} -b -p {{.target_dest}}
+    <<: *ref_one_cmd
+
+  install-miniconda-local.init-bash:
+    vars:
+      cmd: '{{.target_dest}}/condabin/conda init bash'
+    <<: *ref_one_cmd
+
+  install-miniconda-local.init-zsh:
+    vars:
+      cmd: '{{.target_dest}}/condabin/conda init zsh'
+    <<: *ref_one_cmd
+
+  install-miniconda-local.test-install:
+    vars:
+      cmd: 'bash --login -c "conda --version"'
+    <<: *ref_one_cmd
+
+
+  ze-run-cmd:
+    args:
+      cmd: command to run
+      name: command name
+    vars:
+      __cmd_init__: |-
+        echo "@@act=init akind=cmd cmd.name='{{.name}}' cmd.line='{{.cmd}} '"
+      __cmd_over__: |-
+        echo "@@act=over akind=cmd cmd.name='{{.name}}' cmd.line='{{.cmd}} '"
+    cmds:
+      - |-
+        {{.__cmd_init__}}
+        {{.cmd}}
+        {{.__cmd_over__}}
+  
+

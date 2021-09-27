@@ -1,0 +1,14 @@
+# https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
+
+version: "3.9"
+services:
+# --- services ---
+  portainer:
+    image: portainer/portainer-ce
+    restart: always
+    ports: 
+    - "29005:9000"
+    - "28005:8000"
+    volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock"
+    # - "portainer_data:/data"

@@ -4,8 +4,8 @@ version: "3"
 vars:
   _title_: Conda Env Builder Tasks
   conda_env_conf_file: deps.setup.conda-env.exe.yml
-  CVENV_NAME: local-ci-config-cenv
-name: local-ci-config-cenv
+  CVENV_NAME: local-docs-env
+name: local-docs-env
 
 tasks:
 
@@ -52,8 +52,7 @@ dependencies:
 - jupyter
 - nb_conda
 - nb_conda_kernels
-- opencv
-- ipdb
+# - opencv
 - ipython
 - pytest
 - pytest-xdist
@@ -63,19 +62,19 @@ dependencies:
 - yapf
 - semver
 - pydantic
-- loguru
 - typing_extensions>=3.7.4
-- Pyinstaller
-- fire
+# - Pyinstaller
 - plotly
 - pyyaml
-- orjson
 - requests
 - pydantic
-- fastapi
 
 - pip:
   - "pip"
+  - fire
+  - fastapi
+  - ipdb
+  
   - python-gitlab
   - python-jenkins
 

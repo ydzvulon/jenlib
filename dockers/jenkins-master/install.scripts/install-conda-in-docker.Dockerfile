@@ -31,5 +31,7 @@ RUN conda install -y conda-build \
 # ENV CONDA_AUTO_UPDATE_CONDA=false
 
 RUN conda install -y ipython
-
+RUN chown jenkins:jenkins -R /root/miniconda3
+# ENV CONDA_DEFAULT_ENV 
 USER jenkins
+ENV PATH="/root/miniconda3/bin:${PATH}"
