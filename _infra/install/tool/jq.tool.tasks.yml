@@ -1,0 +1,63 @@
+#!/usr/local/bin/task --taskfile
+
+version: "3"
+
+tasks:
+  _install_exe_:
+    vars:
+      usr_local_bin: /usr/local/bin
+    cmds:
+      - |-
+        {{.intro}}
+      - wget - N {{.url}} -O {{.name}}
+      - chmod +x {{.name}}
+      - sudo mv {{.name}} {{.usr_local_bin}}
+      # support alias (two names)
+      - |-
+        if [[ "{{.alias}}" != "" ]]; then
+          pushd {{.usr_local_bin}}
+            sudo cp {{.name}} {{.alias}}
+          popd
+        fi
+
+  __install_exe: &__install_exe
+    cmds:
+    - task: _install_exe_
+      vars:
+        url: '{{.url}}'
+        name: '{{.name}}'
+
+  install/jq:
+    desc: install jq tool
+    vars: 
+      name: jq, 
+      version: "1.6",
+      url: 'https://github.com/stedolan/jq/releases/download/jq-{{.version}}/jq-linux64'}
+    <<: __install_exe
+
+  install/yq3:
+    desc: install jq tool
+    vars: 
+      name: yq, 
+      version: "3.13.2" # "3.0.1",
+      url: https://github.com/mikefarah/yq/releases/download/{{.version}}/yq_linux_amd64
+    <<: __install_exe
+
+  install/yq4:
+    desc: install yq4 tool
+    vars: 
+      name: yq
+      version: "4.13.2"
+      url: https://github.com/mikefarah/yq/releases/download/{{.version}}/yq_linux_amd64
+    <<: __install_exe
+
+  install/rclone:
+    desc: install yq4 tool
+    vars: 
+      name: rclone
+      version: "1.56.1"
+      url: https://downloads.rclone.org/v{{.version}}/rclone-v{{.version}}-linux-amd64.zip
+    # <<: __install_exe
+    cmds:
+      - echo {{.url}}
+
