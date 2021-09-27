@@ -3,7 +3,7 @@
 version: '3'
 
 includes:
-  pyinst: ../tools/pyinst.tasks.yml
+  pyinst: pyinst.tasks.yml
 
 vars:
   GREETING: Hello, World!
