@@ -35,7 +35,7 @@ pipelineJob("\${seed_job_name}") {
 		}
 	}
 	parameters {
-		stringParam('seed_job_branch','${seed_job_branch}', 'seed_job_branch')
+		stringParam('seed_job_branch',"${seed_job_branch}", 'seed_job_branch')
 	}
 	environmentVariables {
 		envs(jobs_def_dir: "\${jobs_def_dir}")
