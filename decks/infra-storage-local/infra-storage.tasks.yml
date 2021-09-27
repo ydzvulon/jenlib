@@ -10,12 +10,14 @@ vars:
   
   http_infra__PORT: '28646'
   minio_infra__PORT: '29606'
+  minio_console__PORT: '19001'
   network_name: local-dev-ring_test
   _repo_root_: '../..'
 
   _show_url_exp: |-
     ui-url--http-infra: http://localhost:{{.http_infra__PORT}}
     ui-url--minio-infra: http://localhost:{{.minio_infra__PORT}}
+    ui-url--minio-ctrl: http://localhost:{{.minio_console__PORT}}
 
   _p_01_header: |-
     # https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
@@ -36,12 +38,13 @@ vars:
       minio.infra:
         # https://docs.min.io/docs/minio-docker-quickstart-guide.html
         image:   quay.io/minio/minio
-        command: server /data --console-address ":9001"
+        command: server /data --console-address ":19001"
         environment:
           - MINIO_ROOT_USER=minio
           - MINIO_ROOT_PASSWORD=minio123
         ports:
           - "{{.minio_infra__PORT}}:9000"
+          - "{{.minio_console__PORT}}:19001"
         volumes:
           - "{{._repo_root_}}:/data"
         networks:
@@ -62,16 +65,20 @@ tasks:
 
   spin-up-flow:
     desc: _
-    deps:
-      - task: gen-docker-compose-file
+    cmds:
+      - task: spin-down
+        vars:
+          safe_run: 'true'
       - task: spin-up-flow.prepare
-    cmds: 
       - task: spin-up
+
 
   spin-up-flow.prepare:
     desc: _
+    deps:
+      - task: gen-docker-compose-file
     cmds: 
-      - echo "Not Implemented Yet"
+      - echo "{{.TASK}} done deps"
 
   spin-up:
     desc: _
@@ -80,8 +87,10 @@ tasks:
   
   spin-down:
     desc: _
+    vars:
+      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
     cmds: 
-      - docker-compose -f {{.target_dest_file}} up  -d
+      - docker-compose -f {{.target_dest_file}} down {{.rest_suff}}
 
   gen-docker-compose-file:
     desc: _

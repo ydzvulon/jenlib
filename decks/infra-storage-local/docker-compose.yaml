@@ -15,12 +15,13 @@ services:
   minio.infra:
     # https://docs.min.io/docs/minio-docker-quickstart-guide.html
     image:   quay.io/minio/minio
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":19001"
     environment:
       - MINIO_ROOT_USER=minio
       - MINIO_ROOT_PASSWORD=minio123
     ports:
       - "29606:9000"
+      - "19001:19001"
     volumes:
       - "../..:/data"
     networks:
