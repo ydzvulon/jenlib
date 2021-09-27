@@ -77,6 +77,11 @@ tasks:
     desc: _
     cmds: 
       - docker-compose -f {{.target_dest_file}} up  -d
+  
+  spin-down:
+    desc: _
+    cmds: 
+      - docker-compose -f {{.target_dest_file}} up  -d
 
   gen-docker-compose-file:
     desc: _
