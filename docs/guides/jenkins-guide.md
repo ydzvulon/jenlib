@@ -15,3 +15,7 @@
 
 - [source](https://github.com/awslabs/ec2-spot-jenkins-plugin)
 - [store](https://plugins.jenkins.io/ec2-fleet/)
+
+### k8s
+
+- https://devopscube.com/setup-jenkins-on-kubernetes-cluster/
