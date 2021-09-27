@@ -23,11 +23,11 @@ services:
       ntjendev:
 # https://www.sumologic.com/blog/how-to-build-applications-docker-compose/
   jupcondadev.samexample.com:
-    image: jupconda_img
+    image: dev-editor-dimg
     hostname: 'jupcondadev.samexample.com'
-    build:
-      context: .
-      dockerfile: jupconda.Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: jupconda.Dockerfile
       # args:
       #   buildno: 1
     ports:

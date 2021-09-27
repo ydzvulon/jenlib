@@ -4,13 +4,9 @@ version: '3'
 
 includes:
   mkdocs: _infra/mkdocs_pack/mkdocs.tasks.yml
-  # jenconda:
-  #   taskfile: dockers/jenkins-master/Taskfile.yml
-  #   dir: dockers/jenkins-master
-  e2e: ./tasks/e2e.tasks.yml
-  # docker: _infra/jenlib_lib/tasks/docker.tasks.yml
-  # tests: _infra/jenlib_lib/tasks/tests.tasks.yml
-  # ci: _infra/jenlib_lib/tasks/ci.tasks.yml
+  e2e-test: 
+    taskfile: decks/e2e-tests-local/e2e.test.tasks.yml
+    dir: decks/e2e-tests-local
 
 vars:
   GREETING: Jenlib repo actions

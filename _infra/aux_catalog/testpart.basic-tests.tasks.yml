@@ -1,0 +1,113 @@
+version: "3"
+vars:
+  ### _title_: tests taskpart ###
+
+  # step properties
+  step_init: '{{ if .quite }}      {{else}} echo @[task]@ act=init step=${__block_key__} {{end}}'
+  step_over: '{{ if .quite }} echo {{else}} echo @[task]@ act=over step=${__block_key__} {{end}}'
+
+tasks:
+#  md
+# ```yaml
+
+  test-task-run-sample:
+    desc: test that run-sample task is working
+    dir: ..
+    vars:
+      input_img_path: 'Backchannel-Lena-Soderberg-FA.jpg'
+      output_img_path: '{{.input_img_path}}.run-sample._out.jpg'
+    cmds:
+      - task: run-as-step-sh
+        vars:
+          name: s1.ArangeStep.check.that.input.exists
+          body: |-
+            python -c '
+            from pathlib import Path
+            img_path = Path("{{.input_img_path}}")
+            assert img_path.exists(), f"Missing File {img_path.resolve()}"
+            '
+      - task: run-as-step-sh
+        vars:
+          name: s2.ActStep.run.filepper.on.sample
+          body: |-
+            task run-sample \
+              input_img_path={{.input_img_path}} \
+              output_img_path={{.output_img_path}}
+
+      - task: run-as-step-py
+        vars:
+          name: s3.AssertStep.check.that.output.is.correct
+          script: |-
+            img_path = Path("{{.output_img_path}}").resolve()
+            assert img_path.exists(), f"Missing File. {img_path}."
+            assert img_path.stat().st_size > 0, "Empty File. {img_path}."
+            ret_info = {
+              "size": img_path.stat().st_size,
+              "inp_src": "{{.input_img_path}}",
+              "out_dst": str(img_path.name)
+            }
+# ```
+# /md
+
+
+  # --utility tasks
+
+  run-as-step-sh:
+    desc: runs provided shell command as step
+    dir: ..
+    args:
+      name: block id key token. sample="s1.ArangeStep.check.that.input.exists"
+      body: step commands text. sample='ls -alh'
+    vars:
+      step_header: __block_key__="{{.name}}"
+      step_body: "{{.body}}"
+    cmds:
+      - |-
+        {{.step_header}}
+        {{.step_init}}
+        {{.step_body}}
+        {{.step_over}}
+
+  run-as-step-py:
+    desc: runs provided python command as step reports result
+    dir: ..
+    args:
+      name: block id key token. sample="s3.AssertStep.check.that.output.is.correct"
+      script: python script with no single] inside. sample. script=print("Hello world")
+    vars:
+      step_header: __block_key__="{{.name}}"
+    cmds:
+      - |-
+        {{.step_header}}
+        {{.step_init}}
+        RESULT_KEYTOK=$(python -c '
+
+        import json
+        from pathlib import Path
+
+        {{.script}}
+
+        _info_record__ = dict(name="{{.name}}", info=ret_info )
+        print(json.dumps(_info_record__))
+
+        ')
+        {{.step_over}} result=${RESULT_KEYTOK}
+
+  wait-for-host-up:
+    desc: try to reach host untill timeout
+    cmds:
+      - |-
+        #!/bin/bash
+        set -eux
+
+        declare HOST=$1
+        declare STATUS=$2
+        declare TIMEOUT=$3
+
+        HOST=$HOST STATUS=$STATUS timeout --foreground -s TERM $TIMEOUT bash -c \
+            'while [[ ${STATUS_RECEIVED} != ${STATUS} ]];\
+                do STATUS_RECEIVED=$(curl -s -o /dev/null -L -w ''%{http_code}'' ${HOST}) && \
+                echo "received status: $STATUS_RECEIVED" && \
+                sleep 1;\
+            done;
+            echo success with status: $STATUS_RECEIVED'
