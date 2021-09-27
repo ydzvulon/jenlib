@@ -4,8 +4,8 @@ version: '3'
 
 includes:
   docs:
-    dir: 
-    docs: mkdocs-api.tasks.yml
+    dir: /repo
+    taskfile: mkdocs-api.tasks.yml
 
 tasks:
   default:

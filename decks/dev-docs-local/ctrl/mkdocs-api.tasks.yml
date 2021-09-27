@@ -14,4 +14,4 @@ tasks:
   serve-docs:
     desc: build docs in current direction
     cmds:
-      - mkdocs build
+      - mkdocs serve

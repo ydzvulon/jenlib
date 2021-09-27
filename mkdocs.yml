@@ -1,7 +1,54 @@
-site_name: My Docs
-theme: material
-dev_addr: 0.0.0.0:8690
-site_dir: __localbuild__/site
-nav:
-    - Home: index.md
-    - Release Notes: release_notes.md
+#!/usr/local/bin/task --taskfile
+
+site_name: Jenlib
+site_dir: __localbuild__/__site__
+# site_url: https://athackst.github.io/mkdocs-simple-plugin
+# repo_url: https://github.com/athackst/mkdocs-simple-plugin
+# edit_uri: ''
+docs_dir: docs
+# extra_css:
+#   - https://unpkg.com/mermaid@8.12.0/dist/mermaid.css
+extra_javascript:
+    - https://unpkg.com/mermaid/dist/mermaid.min.js
+plugins:
+  - search
+  - mermaid2
+  # - mermaid2:
+  #     version: 8.12.0
+  - simple:
+      include_extensions:
+        - .yml
+        - .png
+        - .pages
+        - .bats
+        - .sh
+        - .ipynb
+  - macros
+  - awesome-pages
+  # - mermaid2
+  - mkdocs-jupyter
+theme:
+  name: material
+  features:
+    - toc.integrate
+  palette:
+    primary: green
+    accent: green
+markdown_extensions:
+  - admonition
+  - pymdownx.magiclink
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          # format: !!python/name:pymdownx.superfences.fence_code_format
+          format: !!python/name:mermaid2.fence_mermaid
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji ''
+      emoji_generator: !!python/name:materialx.emoji.to_svg ''
+
+# version: "3"
+# includes:
+#   mkdocs: taskapis/mkdocs.tasks.yml
