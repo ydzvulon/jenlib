@@ -1,112 +1,109 @@
-#!/usr/local/bin/task --taskfile
+# https://taskfile.dev
 
-# https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
-
-version: "3"
+version: '3'
+env:
+  _comment: '#'
 
 vars:
-  __the_taskfile_path__: infra-storage.tasks.yml
-  target_dest_file: docker-compose.yaml
+  # --- Tasker Variables ---
+  DIMAGE: dev-editor-dimg
+
+  # --- Docker File Part Blocks ---
+  __dbuild_s000_header: |-
+    ARG BASE_CONTAINER=jupyter/pyspark-notebook
+    FROM $BASE_CONTAINER
+
+  __dbuild_s011_setup_deps_apt: |-
+    \$_comment Install task rclone yq jq
+    \$_comment https://taskfile.dev/#/installation
+    USER root
+    RUN apt update && apt install -y curl
+    RUN sh -c "\$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+    RUN echo "\${NB_USER}   ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+    USER \$NB_USER
+    ENV IN_DOCKER_BUILD 1
+
+  __dbuild_s013_setup_deps_vs_code: |-
+    \$_comment __dbuild_install
+    \$_comment ------@@init:stage=prephook section=task.docker.cmds task=mxsh:install:zsh:kubeflow
+    COPY deps/tasks.vscode.deps.yml deps/tasks.vscode.deps.yml
+    RUN task -t deps/tasks.vscode.deps.yml install
+    
+    $_comment Install jupyter proxies for VS Code and RStudio
+    RUN pip install --no-cache-dir jupyter-server-proxy && \
+    pip install --no-cache-dir jupyter-vscode-proxy
+
+    RUN jupyter labextension install @jupyterlab/server-proxy
+    \$_comment ------@@over:stage=prephook section=task.docker.cmds task=mxsh:install:zsh:kubeflow
+
+
+  __dbuild_s014_setup_asdf: |-
+    ENV PATH /home/\${NB_USER}/.asdf/bin:/home/\${NB_USER}/.asdf/shims:\$PATH
+    RUN /bin/bash -c "git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0 && \
+                      asdf plugin-add groovy https://github.com/weibemoura/asdf-groovy.git && \
+                      asdf install groovy 3.0.7 && \
+                      asdf global groovy 3.0.7"
+    RUN \
+        echo -e '\n. \$HOME/.asdf/asdf.sh' >> ~/.bashrc \
+        && echo -e '\n. \$HOME/.asdf/completions/asdf.bash' >> ~/.bashrc  
+        
+  __dbuild_s017_setup_deps: |-
+    COPY deps/pip.deps.list.txt deps/pip.deps.list.txt
+    RUN pip install -r deps/pip.deps.list.txt
+
+
+  __dbuild_s017_setup_deps__test_e01: |-
+    RUN pip freeze | grep waiting
+
+  __dbuild_s018_finishes: |-
+    ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+
+    EXPOSE 8888
+
+    WORKDIR ${HOME}
+    # mount point for kubeflow
+    VOLUME /home/jovyan
+
+    # Configure container startup
+    ENV NB_PREFIX /
+    CMD ["sh","-c", "jupyter lab --notebook-dir=/home/jovyan --ip=0.0.0.0 --no-browser --allow-root --port=8888 --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.allow_origin='*' --NotebookApp.base_url=${NB_PREFIX}"]
+
+  __dbuild_dockerfile_content: |-
+    {{.__dbuild_s000_header}}
+    {{.__dbuild_s011_setup_deps_apt}}
+    {{.__dbuild_s013_setup_deps_vs_code}}
+    {{.__dbuild_s014_setup_asdf}}
+    {{.__dbuild_s017_setup_deps}}
+    {{.__dbuild_s017_setup_deps__test_e01}}
+    {{.__dbuild_s018_finishes}}
   
-  http_infra__PORT: '28646'
-  minio_infra__PORT: '29606'
-  minio_console__PORT: '19001'
-  network_name: local-dev-ring_test
-  _repo_root_: '../..'
-
-  _show_url_exp: |-
-    ui-url--http-infra: http://localhost:{{.http_infra__PORT}}
-    ui-url--minio-infra: http://localhost:{{.minio_infra__PORT}}
-    ui-url--minio-ctrl: http://localhost:{{.minio_console__PORT}}
-
-  _p_01_header: |-
-    # https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
-
-    version: "3.9"
-    services:
-  _p_02_body: |-  
-    # --- services ---
-      httpit.infra:
-        image: pierrezemb/gostatic
-        ports:
-          - "{{.http_infra__PORT}}:8043"
-        volumes:
-          - "{{._repo_root_}}:/srv/http"
-        networks:
-          {{.network_name}}:
-  
-      minio.infra:
-        # https://docs.min.io/docs/minio-docker-quickstart-guide.html
-        image:   quay.io/minio/minio
-        command: server /data --console-address ":19001"
-        environment:
-          - MINIO_ROOT_USER=minio
-          - MINIO_ROOT_PASSWORD=minio123
-        ports:
-          - "{{.minio_infra__PORT}}:9000"
-          - "{{.minio_console__PORT}}:19001"
-        volumes:
-          - "{{._repo_root_}}:/data"
-        networks:
-          {{.network_name}}:
-  
-  _p_14_networks: |-
-    # --- networks:test ---
-    networks:
-      {{.network_name}}:
-        external: true
-
 
 tasks:
-  show-urls:
-    desc: shows urls of services
-    silent: true
-    cmds: ['echo "{{._show_url_exp}}" ']
-
-  spin-up-flow:
-    desc: _
+  default:
     cmds:
-      - task: spin-down
-        vars:
-          safe_run: 'true'
-      - task: spin-up-flow.prepare
-      - task: spin-up
+      - task -l
+    silent: true
 
-
-  spin-up-flow.prepare:
-    desc: _
-    deps:
-      - task: gen-docker-compose-file
-    cmds: 
-      - echo "{{.TASK}} done deps"
-
-  spin-up:
-    desc: _
-    cmds: 
-      - docker-compose -f {{.target_dest_file}} up  -d
-  
-  spin-down:
-    desc: _
-    vars:
-      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
-    cmds: 
-      - docker-compose -f {{.target_dest_file}} down {{.rest_suff}}
-
-  gen-docker-compose-file:
-    desc: _
+  gen-dockerfile:
+    desc: generates dockerfile from parts
     cmds:
       - |-
-        cat << EOF > {{.target_dest_file}}
-        {{._p_01_header}}
-        {{._p_02_body}}
-        {{._p_14_networks}}
+        cat <<EOF > Dockerfile
+        {{.__dbuild_dockerfile_content}}
         EOF
-    sources:
-      - '{{.__the_taskfile_path__}}'
+        cat Dockerfile
+    source:
+      - Taskfile.yml
     generates:
-      - '{{.target_dest_file}}'
-
-
+      - Dockerfile
+  
+  build:
+    desc: build docker
+    deps:
+      - task: gen-dockerfile
+    cmds:
+      - docker build -t {{.DIMAGE}} .
 
 
 
