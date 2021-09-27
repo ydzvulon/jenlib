@@ -1,0 +1,23 @@
+# https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
+
+version: "3.9"
+services:
+# --- services ---
+  dev.editor.com:
+    image: dev-editor-dimg
+    hostname: 'dev.editor.com'
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # args:
+      #   buildno: 1
+    ports:
+      - "13088:8888"
+    volumes:
+      - ":/home/jovyan/repo"
+    networks:
+      :
+# --- networks:test ---
+networks:
+  :
+    external: true

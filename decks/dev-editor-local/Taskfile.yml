@@ -10,39 +10,6 @@ vars:
   # --- Tasker Variables ---
   DIMAGE: dev-editor-dimg
 
-  # --- docker-compose part ---
-
-  _p_01_header: |-
-    # https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
-
-    version: "3.9"
-    services:
-  _p_02_body: |-  
-    # --- services ---
-      dev.editor.com:
-        image: dev-editor-dimg
-        hostname: 'dev.editor.com'
-        build:
-          context: .
-          dockerfile: Dockerfile
-          # args:
-          #   buildno: 1
-        ports:
-          - "13088:8888"
-        volumes:
-          - "{{._repo_root_}}:/home/jovyan/repo"
-        networks:
-          {{.network_name}}:
-  
-  _p_14_networks: |-
-    # --- networks:test ---
-    networks:
-      {{.network_name}}:
-        external: true
-  _p_docker_compose_content: |-
-    {{._p_01_header}}
-    {{._p_02_body}}
-    {{._p_14_networks}}
 
 tasks:
   default:
@@ -55,8 +22,13 @@ tasks:
     args:
       file: ''
       content: ''
+      src_file: sourcefile
     vars:
       show_written: '{{default "" .show_written}}'
+    sources:
+      - '{{.src_file}}'
+    generates:
+      - '{{.file}}'
     cmds:
       - |-
         cat <<EOF > {{.file}}
@@ -66,8 +38,9 @@ tasks:
           cat {{.file}}
         fi
 
-  Dockerfile_parts:
-    vars: &ref_Dockerfile_parts
+
+  Dockerfile_parts: &ref_Dockerfile_parts_task
+    vars:
       # --- Docker File Part Blocks ---
       __dbuild_s000_header: |-
         ARG BASE_CONTAINER=jupyter/pyspark-notebook
@@ -137,45 +110,103 @@ tasks:
         {{.__dbuild_s017_setup_deps}}
         {{.__dbuild_s017_setup_deps__test_e01}}
         {{.__dbuild_s018_finishes}}
-
-  gen-dockerfile:
-    desc: generates dockerfile from parts
-    vars:
-      <<: *ref_Dockerfile_parts
-      file: Dockerfile
       content: '{{.__dbuild_dockerfile_content}}'
-    source:
-      - Taskfile.yml
+
+  generate/Dockerfile:
+    desc: generates dockerfile from parts
+    <<: *ref_Dockerfile_parts_task
     cmds:
       - task: write-to-file
         vars:
-          file: '{{.file}}'
+          src_file: Taskfile.yml
+          file: 'Dockerfile'
           content: '{{.content}}'
-    generates:
-      - '{{.file}}'
 
 
-  
+  docker_compose_yml_parts: &ref_docker_compose_yml_parts
+    vars: 
+    # --- docker-compose part ---
+      _p_01_header: |-
+        # https://stackoverflow.com/questions/48379107/how-can-i-ping-other-containers-in-a-docker-network-through-their-hostname
 
-  gen-docker-compose-file:
-    desc: generates docker-compose-file
+        version: "3.9"
+        services:
+      _p_02_body: |-  
+        # --- services ---
+          dev.editor.com:
+            image: dev-editor-dimg
+            hostname: 'dev.editor.com'
+            build:
+              context: .
+              dockerfile: Dockerfile
+              # args:
+              #   buildno: 1
+            ports:
+              - "13088:8888"
+            volumes:
+              - "{{._repo_root_}}:/home/jovyan/repo"
+            networks:
+              {{.network_name}}:
+      
+      _p_14_networks: |-
+        # --- networks:test ---
+        networks:
+          {{.network_name}}:
+            external: true
+      _p_docker_compose_content: |-
+        {{._p_01_header}}
+        {{._p_02_body}}
+        {{._p_14_networks}}
+      content: '{{._p_docker_compose_content}}'
+
+  generate/docker-compose.yml:
+    desc: generates dockerfile from parts
+    <<: *ref_docker_compose_yml_parts
     cmds:
-      - |-
-        cat <<EOF > Dockerfile
-        {{.__dbuild_dockerfile_content}}
-        EOF
-        cat Dockerfile
-    source:
-      - Taskfile.yml
-    generates:
-      - Dockerfile
-  
+      - task: write-to-file
+        vars:
+          src_file: Taskfile.yml
+          file: 'docker-compose.yml'
+          content: '{{.content}}'
+
   build:
     desc: build docker
     deps:
-      - task: gen-dockerfile
+      - task: generate/Dockerfile
     cmds:
       - docker build -t {{.DIMAGE}} .
 
+  show-urls:
+    desc: shows urls of services
+    silent: true
+    cmds: ['echo "{{._show_url_exp}}" ']
 
+  spin-up-flow:
+    desc: _
+    cmds:
+      - task: spin-down
+        vars:
+          safe_run: 'true'
+      - task: spin-up-flow.prepare
+      - task: spin-up
+
+
+  spin-up-flow.prepare:
+    desc: _
+    deps:
+      - task: gen-docker-compose-file
+    cmds: 
+      - echo "{{.TASK}} done deps"
+
+  spin-up:
+    desc: _
+    cmds: 
+      - docker-compose -f {{.target_dest_file}} up  -d
+  
+  spin-down:
+    desc: _
+    vars:
+      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
+    cmds: 
+      - docker-compose -f {{.target_dest_file}} down {{.rest_suff}}
 
