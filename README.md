@@ -1,22 +1,13 @@
-# Jenlib. Jenkins Automation Library
+# About Jenlib
 
-Jenlib is Shared
+Jenlib is a bridge to top-level automation
 
-Basic Usage: see docs
+## Content
 
-- [index.md](./docs/index.md)
+Get Started With Local Development
 
-## Parallel Execution
+### Links
 
-- <https://joostvdg.github.io/jenkins-pipeline/jenkins-parallel-pipeline/>
-- <https://joostvdg.github.io/jenkinsx/build-packs/>
+- [see more live](./links.html)
+- [see more stale](./docs/links.md)
 
-## latest version
-
-- <https://www.digitalocean.com/community/tutorials/how-to-migrate-a-docker-compose-workflow-to-kubernetes>
-
-- <https://medium.com/@karansingh010/running-kubernetes-in-docker-a26f4311fae1>
-- <https://callistaenterprise.se/blogg/teknik/2017/12/20/kubernetes-on-docker-in-docker/>
-
-- <https://leetcode.com/problems/longest-word-in-dictionary/>
-- https://min.io/resources/docs/Spark-S3Select.pdf

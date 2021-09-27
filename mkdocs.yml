@@ -23,6 +23,9 @@ plugins:
         - .bats
         - .sh
         - .ipynb
+      ignore_folders: 
+        - __localbuild__
+      
   - macros
   - awesome-pages
   # - mermaid2
