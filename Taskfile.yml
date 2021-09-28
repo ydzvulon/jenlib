@@ -3,7 +3,7 @@
 version: '3'
 
 includes:
-  mkdocs: _infra/mkdocs_pack/mkdocs.tasks.yml
+  mkdocs: tasks/mkdocs.tasks.yml
   # jenconda: tasks/jenconda.product.tasks.yml
   jenlib: tasks/jenlib.product.tasks.yml
 
@@ -48,7 +48,7 @@ tasks:
   jenconda:build-jenconda:
     desc: _
     cmds:
-      - task -d dockers/jenkins-master build
+      - task -d decks/jenkins-master build
 
   tests-flow:
     desc: test new product

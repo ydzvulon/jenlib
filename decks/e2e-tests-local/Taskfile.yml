@@ -78,7 +78,7 @@ tasks:
       - echo "resolved jenconda,dev-editor"
 
   build-jenconda: |-
-    task -d {{._repo_root_}}/dockers/jenkins-master \
+    task -d {{._repo_root_}}/decks/jenkins-master \
       docker:build:jenconda
   build-dev-editor: |-
     task -d {{._repo_root_}}/decks/dev-editor-local \
