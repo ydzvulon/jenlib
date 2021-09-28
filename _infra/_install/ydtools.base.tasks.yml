@@ -50,7 +50,8 @@ tasks:
             sudo cp {{.name}} {{.alias}}
           popd
         fi
-
+      - |-
+        {{.outro}}
 
   __install_exe: &__install_exe
     cmds:

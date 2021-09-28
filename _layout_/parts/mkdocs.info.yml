@@ -1,0 +1,22 @@
+apiVersion: projects/v1
+kind: ProjectPartDescriptor
+
+metadata:
+  name: jenlib
+spec:
+  layout:
+    required:
+      mkdocs_yml:
+        path: mkdocs_yml.yml
+        desc: mkdocs configuration file
+
+      docs:
+        path: docs
+        desc: |
+          plain documentaion dir
+
+      mkdocs_tasks_yml:
+        path: _infra/mkdocs_pack/mkdocs.tasks.yml
+        desc: |
+          project public name
+

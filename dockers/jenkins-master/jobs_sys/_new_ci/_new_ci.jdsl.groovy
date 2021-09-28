@@ -18,7 +18,7 @@ job("_new_ci") {
 // https://code-maven.com/jenkins-pipeline-environment-variables
 // https://www.iditect.com/how-to/51308400.html
 
-path_parts = seed_job_name.split('/')
+path_parts = "\${seed_job_name}".split('/')
 nparts = path_parts.size()
 if( nparts == 0 ){
 	println("Should Provide Jobname")

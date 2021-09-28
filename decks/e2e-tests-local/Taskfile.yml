@@ -44,6 +44,7 @@ tasks:
       - docker-compose rm
       - docker-compose up -d
 
+
   renew:
     desc: _
     cmds:
@@ -56,15 +57,14 @@ tasks:
     desc: _
     cmds:
       - task: resolve-dimgs
-      - task: tests:test-all-clean
+      - task: test-all-clean
       - task: stop
   
   test-all-clean:
     desc: _
     cmds:
       - task: renew
-      - sleep 5
-      - task: test-all
+      - task: tests:test-all
 
   resolve-dimgs:
     desc: _
@@ -80,3 +80,24 @@ tasks:
   build-dev-editor: |-
     task -d {{._repo_root_}}/decks/dev-editor-local \
       build
+
+
+# === aux tasks ===
+  wait-for-host-up:
+    desc: try to reach host untill timeout
+    cmds:
+      - |-
+        #!/bin/bash
+        set -eux
+
+        declare HOST={{.host}}
+        declare STATUS=$2
+        declare TIMEOUT=$3
+
+        HOST=$HOST STATUS=$STATUS timeout --foreground -s TERM $TIMEOUT bash -c \
+            'while [[ ${STATUS_RECEIVED} != ${STATUS} ]];\
+                do STATUS_RECEIVED=$(curl -s -o /dev/null -L -w ''%{http_code}'' ${HOST}) && \
+                echo "received status: $STATUS_RECEIVED" && \
+                sleep 1;\
+            done;
+            echo success with status: $STATUS_RECEIVED'

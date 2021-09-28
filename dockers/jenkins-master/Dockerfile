@@ -41,7 +41,7 @@ RUN jenkins-plugin-cli -f /usr/share/jenkins/plugins.txt
 
 # COPY jenkins.yaml /usr/share/jenkins/jenkins.yaml
 # COPY jenkins.yaml /usr/share/jenkins/ref/jenkins.yaml
-COPY jenkins.yaml /usr/share/stuff/jenkins.yaml
+# COPY jenkins.yaml /usr/share/stuff/jenkins.yaml
 
 
 # COPY plugins_manual.txt /usr/share/jenkins/ref/plugins_manual.txt
