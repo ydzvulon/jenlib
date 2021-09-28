@@ -1,8 +1,17 @@
 #!/usr/local/bin/task --taskfile
 
+
 version: "3"
 
 tasks:
+
+  test-all:
+    desc: _
+    cmds:
+      - |-
+        echo '{ "a" : {"b":"r"}}' | jq .a | grep '"b"'
+        echo '{ "a" : {"b":"r"}}' | jq .a.b | grep r
+
   install-all:
     desc: install all tools
     cmds:
@@ -31,7 +40,9 @@ tasks:
           mv {{.local_path}} {{.name}}
         fi
       - chmod +x {{.name}}
-      - sudo mv {{.name}} {{.usr_local_bin}}
+      - |-
+        _SUDO=$(which sudo &> /dev/null && echo "sudo" || echo "")
+        {{._SUDO}} mv {{.name}} {{.usr_local_bin}}
       # support alias (two names)
       - |-
         if [[ "{{.alias}}" != "" ]]; then

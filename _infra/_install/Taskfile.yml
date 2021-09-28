@@ -1,0 +1,39 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  DIMAGE: test-install-base:latest
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  build-dimg:
+    desc: build image as test
+    vars:
+      _part__header: |-
+        FROM ubuntu:20.04
+        ENV IN_DOCKER 1
+      _part_body: |-
+        COPY _init_tools.sh /_install/_init_tools.sh
+        RUN bash /_install/_init_tools.sh install-all
+
+        COPY _taskgo-install.sh /_install/_taskgo-install.sh
+        RUN bash /_install/_taskgo-install.sh install-all
+
+        COPY ydtools.base.tasks.yml /_install/ydtools.base.tasks.yml
+        RUN task -t /_install/ydtools.base.tasks.yml install-all
+
+      _content: |-
+        {{._part__header}}
+        {{._part_body}}
+    cmds:
+      - |-
+        # build an image using the current directory as context, 
+        # and a Dockerfile passed through stdin
+        docker build {{.opt}} -t {{.DIMAGE}} -f- . <<EOF
+        {{._content}}
+        EOF

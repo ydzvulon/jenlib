@@ -48,6 +48,12 @@ tasks:
 
         Most Groups are
 
+  e2e-test:ci-flow:
+    desc: Run E2E tests with build
+    cmds:
+      - task -d decks apply task=e2e-test:ci-flow targets='e2e-tests-local'
+      - task -d deck/e2e-tests-local e2e-test:ci-flow
+
 
   build:
     desc: _

@@ -5,42 +5,17 @@ vars:
 
 tasks:
 
-  ci-flow:
-    desc: _
-    cmds:
-      - task: resolve-dimgs
-      - task: test-all-clean
-      - task stop
-
-  resolve-dimgs:
-    desc: _
-    deps:
-      - task: build-jenconda
-      - task: build-dev-editor
-    cmds:
-      - echo "resolved jenconda,dev-editor"
-  # === tests section ===
-
-  build-jenconda: |-
-    task -d {{._repo_root_}}/dockers/jenkins-master docker:build:jenconda
-
-  build-dev-editor: |-
-    task -d {{._repo_root_}}/decks/dev-editor-local build
-
   # === tests section ===
   # --- top-level stages ---
-  test-all-clean:
-    desc: _
-    cmds:
-      - task renew
-      - task: test-all
+
       # - task -d dockers/jendev stop
 
   test-all:
     desc: run all test sets in parallel
     deps:
-      - task: test-new-ci-bootstrap
+      # - task: test-new-ci-bootstrap
       - task: test-plain-groovy-in-jup
+      - task: test-plain-groovy-in-docker
     cmds:
       - echo ok
   # --- steps ---
@@ -58,6 +33,4 @@ tasks:
   test-new-ci-bootstrap:
     desc: use jenpy cli to trigger builds
     cmds:
-      - sleep 15
       - docker-compose exec  jupcondadev.samexample.com python /home/jovyan/repo/jenpy/jenpy_cli.py test_bootstrap
-  # /=== tests section ===

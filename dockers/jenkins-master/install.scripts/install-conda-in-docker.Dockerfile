@@ -34,4 +34,9 @@ RUN conda install -y ipython
 RUN chown jenkins:jenkins -R /root/miniconda3
 # ENV CONDA_DEFAULT_ENV 
 USER jenkins
+
+# tell the jenkins config-as-code plugin where to find the yaml file
+COPY jenkins-casc.yaml /usr/local/jenkins-casc.yaml
+ENV CASC_JENKINS_CONFIG /usr/local/jenkins-casc.yaml
+
 ENV PATH="/root/miniconda3/bin:${PATH}"

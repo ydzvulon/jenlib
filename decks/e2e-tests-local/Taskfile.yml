@@ -2,11 +2,12 @@
 
 version: '3'
 includes:
-  e2e-test: 
+  tests: 
     taskfile: e2e.test.tasks.yml
     dir: .
 
 vars:
+  _repo_root_: "$(realpath ../..)"
 
 tasks:
   default:
@@ -50,3 +51,32 @@ tasks:
       - task: build
       - task: rerun
       - task: info
+
+  ci-flow:
+    desc: _
+    cmds:
+      - task: resolve-dimgs
+      - task: tests:test-all-clean
+      - task: stop
+  
+  test-all-clean:
+    desc: _
+    cmds:
+      - task: renew
+      - sleep 5
+      - task: test-all
+
+  resolve-dimgs:
+    desc: _
+    deps:
+      - task: build-jenconda
+      - task: build-dev-editor
+    cmds:
+      - echo "resolved jenconda,dev-editor"
+
+  build-jenconda: |-
+    task -d {{._repo_root_}}/dockers/jenkins-master \
+      docker:build:jenconda
+  build-dev-editor: |-
+    task -d {{._repo_root_}}/decks/dev-editor-local \
+      build
