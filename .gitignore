@@ -10,3 +10,4 @@ __pycache__
 .cache
 .minio.sys
 __tmp__
+__build_info

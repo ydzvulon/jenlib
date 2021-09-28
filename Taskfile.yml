@@ -5,6 +5,9 @@ version: '3'
 includes:
   mkdocs: tasks/mkdocs.tasks.yml
   jenlib: tasks/jenlib.product.tasks.yml
+  decks: 
+    dir: decks
+    taskfile: decks
   # jenconda: tasks/jenconda.product.tasks.yml
 vars:
 

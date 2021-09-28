@@ -1,0 +1,34 @@
+kind: mxk.docker-build.info
+version: "3"
+
+vars: &_vars_
+  tool: docker
+  local_key:  jenconda:v0.8.2rc-2021.09.27rc  # <<<@ :fulltag:
+  remote_repo: yairdar
+  remote_key: '{{.remote_repo}}/{{.local_key}}'
+  meta: |-
+    user: yairdar
+    host: macbook
+    ts: 1632829075
+  events: |-
+    - { act: init, name: build, state: started.ok, ts.init: 1632829075 }
+    - { act: over, name: build, state: finished.ok, ts.over: 1632839075, 
+        duration: 10000, size="30Mb", rescost: "12cpu*0.2h"}
+
+env: *_vars_
+
+tasks:
+  pull: 
+    desc: '{{.TASK}}'
+    cmds: ['docker pull {{.fulltag}}']
+
+  pull:docker.pull/@remote_key: &name2cmd
+    desc: '{{.TASK}}'
+    cmds:
+      - echo {{.TASK | splitList ":" | last | replace "." " " | replace "/@" " $" }}
+
+  tag.local.remote:docker.tag/@local_key/@remote_key: *name2cmd
+  tag.remote.local:docker.tag/@remote_key/@local_key: *name2cmd
+  push:docker.push/@remote_key: *name2cmd
+  
+

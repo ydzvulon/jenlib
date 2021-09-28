@@ -23,18 +23,38 @@ tasks:
     desc: _
     deps:
       - docker:build:jenmaster
+    vars:
+      ts: {sh: date +"%s"}
+      vers: '$(cat ../../version/version_prefix.txt)'
+      fulltag: '{{.DIMAGE}}:{{.vers}}-{{.ts}}'
     cmds:
-      - docker build -f install.scripts/install-conda-in-docker.Dockerfile  -t {{.DIMAGE}} install.scripts
-
+      - mkdir -p __build_info/docker-build/jenconda
+      - |-
+        cat <<EOF > __build_info/docker-build/jenconda/{{.fulltag}}
+        kind: docker.build.info
+        version: "3"
+        vars:
+          schema: |-
+            dict: str
+          spec: |-
+            build_id: fdasdf
+            git_src: url@commit
+            docker_dst: repo:tag
+        includes:
+          docker-info: ../../_infra/
+        EOF
+      # - |-
+      #   docker build \
+      #     -f install.scripts/install-conda-in-docker.Dockerfile  \
+      #     -t {{.fulltag}} \
+      #     install.scripts
   docker:build:
     desc: _
-    deps:
-      - docker:build:jenconda
+    deps: [docker:build:jenconda]
 
   build:
     desc: _
-    deps:
-      - docker:build
+    deps: [docker:build]
 
   spin:up:bash:
     desc: _
