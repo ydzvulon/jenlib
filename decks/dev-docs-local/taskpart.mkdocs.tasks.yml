@@ -1,0 +1,13 @@
+version: "3"
+vars:
+  dimg: dev-docs-dimg
+  
+tasks:
+
+  with-denv:
+    cmds:
+      - |-
+        docker run --rm {{.dimg}} \
+        {{cmd}}
+  
+  

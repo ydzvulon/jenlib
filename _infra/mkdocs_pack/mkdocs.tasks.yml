@@ -2,9 +2,9 @@
 version: '3'
 
 vars:
-  DIMAGE: "squidfunk/mkdocs-material"
+  DIMAGE: "dev-docs-dimg"
   DSERVE_PORT: 8690:8690
-  DARGS: "-v ${PWD}:/docs"
+  DARGS: "-v ${PWD}:/repo"
 
 tasks:
   _denv: &_ref__denv
@@ -18,12 +18,12 @@ tasks:
   build:
     <<: *_ref__denv
     vars:
-      DCMD: build
+      DCMD: docs:build-docs
 
   serve:
     <<: *_ref__denv
     vars:
-      DCMD: serve
+      DCMD: docs:serve-docs
       DMORE: -p {{.DSERVE_PORT}}
 
   shell:

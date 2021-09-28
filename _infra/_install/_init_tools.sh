@@ -19,7 +19,7 @@ installed:
   transfer: [wget, curl, git]
   archive: [tar, unzip]
   interface: [vim, tmux, tig]
-  query: [bc]
+  query: [bc    ]
 '
 
 if [[ "$1" == "test-all" ]]; then

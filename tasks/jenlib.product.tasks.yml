@@ -1,0 +1,41 @@
+version: "3"
+
+vars: 
+  src_place: var
+  tmp_place: __tmp__/jenbuild/jenlib
+  version: "$(cat version/version_prefix.txt)"
+  arc_name: "jenlib_v{{.version}}_{{OS}}_{{ARCH}}.zip"
+  local_dest: __localbuild__/jenbuild/{{.arc_name}}
+  remote_dest_def: "/tmp/{{.local_dest}}"
+  remote_dest: '{{default .remote_dest_def .remote_dest}}'
+
+tasks:
+
+  build-jenlib:
+    desc: _
+    source: 
+      - '{{.src_place}}/**/*'
+    generates:
+      - '{{.local_dest}}'
+    cmds:
+      - |-
+        echo @@act=init step=build.prepare task={{.TASK}}
+        rm -rf {{.tmp_place}} mkdir -p {{.tmp_place}}
+        rclone copyto vars  {{.tmp_place}}/vars
+        rclone copyto version/version_prefix.txt {{.tmp_place}}/version.txt
+        echo @@act=over step=build.prepare task={{.TASK}}
+      - |-
+        echo @@act=init step=build.perform task={{.TASK}}
+        pushd {{.tmp_place}}
+          zip -r ../{{.arc_name}} .
+        popd
+        echo @@act=over step=build.perform task={{.TASK}}
+      - |-
+        echo @@act=init step=build.local.publish task={{.TASK}}
+        rclone copyto {{.tmp_place}}/../{{.arc_name}} {{.local_dest}}
+        echo @@act=over step=build.local.publish task={{.TASK}}
+
+  publish-jenbuild:
+    desc: publish to {{.remote_dest}}
+    cmds:
+      - rclone copyto {{.local_dest}} {{.remote_dest}}

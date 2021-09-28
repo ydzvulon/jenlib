@@ -6,6 +6,7 @@ site_dir: __localbuild__/__site__
 # repo_url: https://github.com/athackst/mkdocs-simple-plugin
 # edit_uri: ''
 docs_dir: docs
+dev_addr: "0.0.0.0:8690"
 # extra_css:
 #   - https://unpkg.com/mermaid@8.12.0/dist/mermaid.css
 extra_javascript:
@@ -23,6 +24,7 @@ plugins:
         - .bats
         - .sh
         - .ipynb
+        - .groovy
       ignore_folders: 
         - __localbuild__
       
