@@ -1,59 +1,134 @@
-#!/usr/local/bin/task --taskfile
-
 site_name: Jenlib
 site_dir: __localbuild__/__site__
 # site_url: https://athackst.github.io/mkdocs-simple-plugin
-# repo_url: https://github.com/athackst/mkdocs-simple-plugin
+repo_url: https://github.com/ydzvulon/jenlib
 # edit_uri: ''
 docs_dir: docs
 dev_addr: "0.0.0.0:8690"
-# extra_css:
-#   - https://unpkg.com/mermaid@8.12.0/dist/mermaid.css
-extra_javascript:
-    - https://unpkg.com/mermaid/dist/mermaid.min.js
+
 plugins:
-  - search
-  - mermaid2
-  # - mermaid2:
-  #     version: 8.12.0
-  - simple:
+  - simple: # https://athackst.github.io/mkdocs-simple-plugin
+      ignore_folders:
+        - "__localbuild__"
+        - "__blobs__"
+        - "__blob__"
+        - "data4tests"
+        - "tests"
+        - "src"
+        - "docs/course"
+        - "decks"
+        - "dockers"
+        - "projects"
+        - "jenpy"
+        - "__tmp__"
+      merge_docs_dir: true
       include_extensions:
-        - .yml
-        - .png
-        - .pages
-        - .bats
-        - .sh
-        - .ipynb
-        - .groovy
-      ignore_folders: 
-        - __localbuild__
-      
-  - macros
-  - awesome-pages
-  # - mermaid2
+        - ".txt"
+        - ".yaml"
+        - ".yml"
+        - ".ico"
+        - ".png"
+        - ".json"
+        - ".xml"
+        - ".coverage"
+        - "coverage"
+        - ".html"
+        - ".js"
+        - ".css"
+        - ".py"
+  
+  - mkdocstrings
+  - autorefs
   - mkdocs-jupyter
-theme:
-  name: material
-  features:
-    - toc.integrate
-  palette:
-    primary: green
-    accent: green
+  # - mkdocs-jupyter:
+  #     execute: True
+  #     kernel_name: python3
+  #     include_source: True
+
+  - search
+  - awesome-pages:
+      # to change all pages partial settings:
+      #   find -name '.pages' | xargs -I% bash -c 'mv % $(dirname %)/.mkdocs.pages.yaml'
+      filename: .mkdocs.pages.yaml
+  # ref-uri: https://github.com/fralau/mkdocs-mermaid2-plugin/issues/10
+  - macros:
+      include_dir: docs
+  # - mermaid2:
+  #     version: 8.7.0
+
 markdown_extensions:
   - admonition
+  - attr_list
+  - def_list
+  - mdx_truly_sane_lists
+  - mdx_math:
+      use_gitlab_delimiters: True # for $`...`$ style math
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
   - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.tilde
+  - pymdownx.mark
+  - pymdownx.highlight
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.superfences:
+      # KEEP it commented.  Those lines break mermaid
       custom_fences:
         - name: mermaid
           class: mermaid
-          # format: !!python/name:pymdownx.superfences.fence_code_format
-          format: !!python/name:mermaid2.fence_mermaid
-  - pymdownx.highlight:
-      use_pygments: true
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji ''
-      emoji_generator: !!python/name:materialx.emoji.to_svg ''
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.betterem:
+      smart_enable: all
 
-# version: "3"
-# includes:
-#   mkdocs: taskapis/mkdocs.tasks.yml
+theme:
+  name: material
+  logo: assests/jake_blue_grey.ico
+  favicon: assests/jake_blue_grey.ico
+  features:
+    # - navigation.expand
+    # - navigation.tabs
+    - navigation.instant
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: blue grey
+      # accent: teal
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: blue grey
+      # accent: teal
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra_javascript:
+  - "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" # for math
+  -  https://unpkg.com/mermaid@8.9.0/dist/mermaid.min.js # for mermaid graphs
+
+nav:
+  - README.md
+  - vars/README.md
+  - get-started.md
+  - ...
+
+  # - release_notes.md
+  # - ... | **/*__release_notes.md
+  # - ... | structure/**/*.md
+
