@@ -5,6 +5,7 @@ version: "3"
 vars:
   GREETING: JenkinsDockers
   jentest_machine: jentest
+  DIMAGE: jenconda
 
 tasks:
   default:
@@ -23,7 +24,7 @@ tasks:
     deps:
       - docker:build:jenmaster
     cmds:
-      - docker build -f install.scripts/install-conda-in-docker.Dockerfile  -t jenconda install.scripts
+      - docker build -f install.scripts/install-conda-in-docker.Dockerfile  -t {{.DIMAGE}} install.scripts
 
   docker:build:
     desc: _
@@ -38,18 +39,18 @@ tasks:
   spin:up:bash:
     desc: _
     cmds:
-      - docker rm -f jenconda_lc || true
+      - docker rm -f {{.DIMAGE}}_lc || true
       - mkdir -p $(realpath ~)/shared/jenkins_c
       - |
         docker run \
-        --name jenconda_lc \
+        --name {{.DIMAGE}}_lc \
         -d \
         -p 8080:8080 \
         -p 50000:50000 \
         -p 5000:5000 \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
-        jenconda
+        {{.DIMAGE}}
 
   spin:up:
     desc: _
@@ -76,31 +77,28 @@ tasks:
   docker:run:local:
     desc: _
     cmds:
-      - docker rm -f jenconda_lc || true
+      - docker rm -f {{.DIMAGE}}
       - mkdir -p $(realpath ~)/shared/jenkins_c
-        # -v /data/dockers_data/jenkins_home:/var/jenkins_home:rw \
-      # - test -d /data/dockers_data || mkdir -p /data/dockers_data &&  chmod -R 777 /data/dockers_data || echo oy
-      # - test -d /data/dockers_data/jenkins_home || mkdir -p /data/dockers_data/jenkins_home && chmod -R 777 /data/dockers_data/jenkins_home || echo ai
       - |
         docker run \
-        --name jenconda_lc \
+        --name {{.DIMAGE}}
         -d \
         -p 8080:8080 \
         -p 50000:50000 \
         -p 5000:5000 \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
-        jenconda
+        {{.DIMAGE}}
 
   docker:run:dev:
     desc: _
     cmds:
-      - docker rm -f jenconda_c_dev || true
+      - docker rm -f {{.DIMAGE}}
       - test -d /opt/dockers-data || (sudo mkdir -p /opt/dockers-data && (sudo chmod -R 777 /opt/dockers-data || true))
       - test -d /opt/dockers-data/jenkins_home_dev || (sudo mkdir -p /opt/dockers-data/jenkins_home_dev && (sudo chmod -R 777 /opt/dockers-data/jenkins_home_dev || true))
       - |
         docker run \
-        --name jenconda_c_dev \
+        --name {{.DIMAGE}}
         -d \
         -p 8830:8080 \
         -p 58300:50000 \
@@ -113,16 +111,17 @@ tasks:
   docker:run:test:init:
     desc: _
     vars:
-      VOLUME_NAME: { sh: echo "jenconda_v_dtest" }
+      VOLUME_NAME: 
+        sh: echo '{{.DIMAGE}}'
       DEMONIZE: -d
     cmds:
       # - docker volume rm {{.VOLUME_NAME}}|| true
-      - docker rm -f jenconda_c_dtest || true
+      - docker rm -f jenconda
       - docker volume create {{.VOLUME_NAME}} || true
       # -d \
       - |
         docker run \
-        --name jenconda_c_dtest \
+        --name jenconda
         -d \
         -p 18808:8080 \
         -p 18500:50000 \

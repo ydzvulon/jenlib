@@ -4,53 +4,61 @@ version: '3'
 
 includes:
   mkdocs: tasks/mkdocs.tasks.yml
-  # jenconda: tasks/jenconda.product.tasks.yml
   jenlib: tasks/jenlib.product.tasks.yml
-
+  # jenconda: tasks/jenconda.product.tasks.yml
 vars:
-  GREETING: Jenlib repo actions
 
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
       - task -l
+      - echo "for more info use 'task info'"
     silent: true
 
   info:
     desc: Information about this dir
-    cmds:
-      - |
-        echo '
+    silent: true
+    vars:
+      title: Jenlib repo actions
+      content: |
 
-
-  ci-full-flow:
-    decs: 0-level block. build and publish. requires --force
+        --- usefull tasklist ---
+        * task info            * show info about this project
+        * task mkdocs:serve    * start live docs server (serve-bg for deattached mode)
+        * task ci-flow         * run ci pipeline [build, test, local_publish]
+        ------------------------
+        {{.title}}
+        
     cmds:
-      - task: ci-flow
-      - task: publish-flow
+      - echo '{{.content}}'
+        
+  ci-full:
+    desc: 0-level block. build and publish. requires --force flag.
+    cmds:
+    - task: ci-flow
+    - task: publish-flow
     status:
-      - true # prevent accidental run
+    - true # -prevent accidental run-
 
   ci-flow:
-    desc: 1-level block. main entry point
+    desc: 1-level block. main entry point.
     cmds:
-      - task build-flow
-      - task tests-flow
-      - task report-flow
+      - task build-stage
+      - task test-stage
+      - task report-stage
 
-  build-flow:
+  build-stage:
     desc: 2-level block. build phase
     deps:
       - task: jenlib:build-jenlib
       - task: jenconda:build-jenconda
   
   jenconda:build-jenconda:
-    desc: _
+    desc: 3-level block. build jenconda docker image
     cmds:
       - task -d decks/jenkins-master build
 
-  tests-flow:
+  test-stage:
     desc: test new product
     cmds:
       - task test-e2e
@@ -60,7 +68,7 @@ tasks:
     cmds:
       - task -d decks apply task=ci-flow targets=e2e-tests-local
 
-  report-flow:
+  report-stage:
     desc: 2-level block. produces stam report about a build
     cmds:
       - echo "Not Yet Implemented"

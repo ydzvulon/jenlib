@@ -78,11 +78,13 @@ tasks:
       - echo "resolved jenconda,dev-editor"
 
   build-jenconda: |-
-    task -d {{._repo_root_}}/decks/jenkins-master \
-      docker:build:jenconda
+    task build \
+    -d {{._repo_root_}}/decks/jenkins-master
+      
   build-dev-editor: |-
-    task -d {{._repo_root_}}/decks/dev-editor-local \
-      build
+    task build \
+    -d {{._repo_root_}}/decks/dev-editor-local 
+      
 
 # 200
 # === aux tasks ===

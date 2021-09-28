@@ -124,8 +124,9 @@ tasks:
       # - |
       #   {{.VENV_RUN}} {{.MXPACK_EXE}} pyinstaller-build info-dump
       - |
-        bash --login -c '
-        conda activate {{.VENV_NAME}};
+        bash -c '
+        source ~/.bashrc
+        #conda activate {{.VENV_NAME}}
           pyinstaller pyinstaller.spec \
             --log-level=INFO \
             --onefile \
