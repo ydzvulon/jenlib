@@ -1,10 +1,10 @@
 ARG BASE_CONTAINER=jenconda
 FROM $BASE_CONTAINER
 
-COPY deps/jenkins.yaml /usr/share/jenkins/jenkins.yaml
-COPY deps/jenkins.yaml /usr/share/jenkins/ref/jenkins.yaml
+# COPY deps/jenkins.yaml /usr/share/jenkins/jenkins.yaml
+# COPY deps/jenkins.yaml /usr/share/jenkins/ref/jenkins.yaml
 
-COPY deps/default-test-user.groovy /usr/share/jenkins/ref/init.groovy.d/
+# COPY deps/default-test-user.groovy /usr/share/jenkins/ref/init.groovy.d/
 
 
 # RUN cd /tmp \

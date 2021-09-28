@@ -20,16 +20,16 @@ job("_new_ci") {
 
 path_parts = "\${seed_job_name}".split('/')
 nparts = path_parts.size()
-if( nparts == 0 ){
+if( nparts == 1 ){
 	println("Should Provide Jobname")
 } else {
-	folder("\${path_parts[0]}"){
-	if ( nparts > 1 ){
-		folder("\${path_parts[1]}"){
-		if ( nparts > 2 ){	
-	   		folder("\${path_parts[2]}"){
-			if ( nparts > 3 ){	
-	   			folder("\${path_parts[3]}"){
+	folder("\${path_parts[1]}"){
+	if ( nparts > 2 ){
+		folder("\${path_parts[2]}"){
+		if ( nparts > 3 ){	
+	   		folder("\${path_parts[3]}"){
+			if ( nparts > 4 ){	
+	   			folder("\${path_parts[4]}"){
 				}
 			}
 			}
@@ -56,7 +56,7 @@ pipelineJob("\${seed_job_name}") {
 		}
 	}
 	parameters {
-		stringParam('seed_job_branch',"${seed_job_branch}", 'seed_job_branch')
+		stringParam('seed_job_branch',"\${seed_job_branch}", 'seed_job_branch')
 	}
 	environmentVariables {
 		envs(jobs_def_dir: "\${jobs_def_dir}")

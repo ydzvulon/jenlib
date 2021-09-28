@@ -8,6 +8,7 @@ includes:
 
 vars:
   _repo_root_: "$(realpath ../..)"
+  jenkins_url: http://localhost:12080
 
 tasks:
   default:
@@ -18,7 +19,7 @@ tasks:
   info:
     desc: Some Info
     cmds:
-      - echo "Reach Jenkins. http://localhost:12080"
+      - echo "Reach Jenkins. {{.jenkins_url}}"
       - echo "Reach DevLab. http://localhost:12088"
     silent: true
 
@@ -36,13 +37,15 @@ tasks:
     desc: _
     cmds:
       - docker-compose up -d
-
+      - task: wait-for-host-up
+        vars:
+          host: '{{.jenkins_url}}'
   rerun:
     desc: _
     cmds:
       - task: stop
       - docker-compose rm
-      - docker-compose up -d
+      - task: run
 
 
   renew:
@@ -81,23 +84,43 @@ tasks:
     task -d {{._repo_root_}}/decks/dev-editor-local \
       build
 
-
+# 200
 # === aux tasks ===
   wait-for-host-up:
     desc: try to reach host untill timeout
+    vars:
+      timeout: '{{ default "640" .timeout }}'
     cmds:
       - |-
-        #!/bin/bash
-        set -eux
+        python3 -c '
 
-        declare HOST={{.host}}
-        declare STATUS=$2
-        declare TIMEOUT=$3
+        import urllib.request
+        import urllib.error
+        import time
 
-        HOST=$HOST STATUS=$STATUS timeout --foreground -s TERM $TIMEOUT bash -c \
-            'while [[ ${STATUS_RECEIVED} != ${STATUS} ]];\
-                do STATUS_RECEIVED=$(curl -s -o /dev/null -L -w ''%{http_code}'' ${HOST}) && \
-                echo "received status: $STATUS_RECEIVED" && \
-                sleep 1;\
-            done;
-            echo success with status: $STATUS_RECEIVED'
+        def check_response():
+          req = urllib.request.Request("{{.host}}")
+          try:
+            urllib.request.urlopen(req)
+            return True
+          except urllib.error.HTTPError as e:
+            print(e.code)
+          except Exception as e:
+            print(e)
+          return False
+        
+        def wait_until(somepredicate, timeout, period=1.25, *args, **kwargs):
+          print(f"staring timeout={timeout}")
+          mustend = time.time() + timeout
+          while time.time() < mustend:
+            if somepredicate(*args, **kwargs): return True
+            time.sleep(period)
+          return False
+
+        ok = wait_until(check_response, int("{{.timeout}}"))
+        if not ok:
+          print("false")
+          exit(1)
+        print("host is back. {{.host}}")
+        '
+        echo --

@@ -1,4 +1,5 @@
 FROM jenkins/jenkins:2.272
+# https://medium.com/the-devops-ship/custom-jenkins-dockerfile-jenkins-docker-image-with-pre-installed-plugins-default-admin-user-d0107b582577
 
 ENV JENKINS_USER admin
 ENV JENKINS_PASS admin
@@ -39,20 +40,19 @@ USER jenkins
 COPY plugins.txt /usr/share/jenkins/plugins.txt
 RUN jenkins-plugin-cli -f /usr/share/jenkins/plugins.txt
 
-# COPY jenkins.yaml /usr/share/jenkins/jenkins.yaml
-# COPY jenkins.yaml /usr/share/jenkins/ref/jenkins.yaml
-# COPY jenkins.yaml /usr/share/stuff/jenkins.yaml
-
-
 # COPY plugins_manual.txt /usr/share/jenkins/ref/plugins_manual.txt
 
 # ENV JENKINS_UC_DOWNLOAD=${JENKINS_UC_EXPERIMENTAL}/download
-# RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins_manual.txt
 
+# create new jobs
+COPY init.groovy.d/default-newci-job.groovy /usr/share/jenkins/ref/init.groovy.d/
 
+# disable security
+COPY init.groovy.d/configure-job-dsl-security.groovy /usr/share/jenkins/ref/init.groovy.d/
 
-COPY default-newci-job.groovy /usr/share/jenkins/ref/init.groovy.d/
+# tell the jenkins config-as-code plugin where to find the yaml file
+COPY init.groovy.d/jenkins-casc.yaml /usr/local/jenkins-casc.yaml
+ENV CASC_JENKINS_CONFIG /usr/local/jenkins-casc.yaml
+
 COPY jobs_sys /usr/share/jenkins/job_sys
-# COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
 
-# https://medium.com/the-devops-ship/custom-jenkins-dockerfile-jenkins-docker-image-with-pre-installed-plugins-default-admin-user-d0107b582577

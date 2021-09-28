@@ -4,9 +4,9 @@ version: '3'
 
 includes:
   mkdocs: _infra/mkdocs_pack/mkdocs.tasks.yml
-  e2e-test: 
-    taskfile: decks/e2e-tests-local/e2e.test.tasks.yml
-    dir: decks/e2e-tests-local
+  # e2e-test: 
+  #   taskfile: decks/e2e-tests-local/e2e.test.tasks.yml
+  #   dir: decks/e2e-tests-local
 
 vars:
   GREETING: Jenlib repo actions
@@ -51,8 +51,7 @@ tasks:
   e2e-test:ci-flow:
     desc: Run E2E tests with build
     cmds:
-      - task -d decks apply task=e2e-test:ci-flow targets='e2e-tests-local'
-      - task -d deck/e2e-tests-local e2e-test:ci-flow
+      - task -d decks apply task=ci-flow targets=e2e-tests-local
 
 
   build:
@@ -82,7 +81,7 @@ tasks:
   publish:build:
     desc: _
     cmds:
-      - rclone copyto  __localbuild__/jenbuild/jenlib.zip mts3:moneytime-http/buildx/jenlib/jenlib.zip
+      - rclone copyto  __localbuild__/jenbuild/jenlib.zip __tmp__/mts3:moneytime-http/buildx/jenlib/jenlib.zip
 
   build:full:
     desc: _

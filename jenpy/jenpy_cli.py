@@ -34,7 +34,7 @@ class JenCli:
         # https://stackoverflow.com/questions/24313471/python-jenkins-get-job-info-how-do-i-get-info-on-more-than-100-builds
         server = self.server
         ps = {}
-        if parameters:
+        if parameters is not None:
             ps['parameters'] = parameters
 
         next_build_number = server.get_job_info(j_name)['nextBuildNumber']
@@ -99,8 +99,8 @@ class JenCli:
             expected_exceptions=(jenkins.JenkinsException,)
         )
         print("@@act=wait stage=over topic='job created'")
-        # time.sleep(15)
-        _ret = self.build_job_block(seed_job, show_log=show_log)
+        time.sleep(3)
+        _ret = self.build_job_block(seed_job, parameters={"con": "w"}, show_log=show_log)
         print(_ret)
 
 
