@@ -15,7 +15,7 @@ tasks:
     cmds:
       - mkdir -p __localbuild__/site && chmod 777 __localbuild__/site
       - |-
-        docker run --rm \
+        docker run {{default "--rm" .restart_rm}} \
         {{ .DARGS }} {{.flags}} {{ .DIMAGE }} \
         {{.cmd}}
 
@@ -42,9 +42,9 @@ tasks:
     desc: serve docs, keep container in background.
     vars:
       cmd: docs:serve-docs
-      flags: >
+      restart_rm: --restart=always 
+      flags: >-
         -p {{.DSERVE_PORT}} 
-        --restart=always 
         -d
 
   shell:

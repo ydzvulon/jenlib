@@ -23,12 +23,20 @@ vars:
   _taskfile_: reposet.info.yml
   # reposet__conf_map: __subrepos:reposet.info.yml@vars.reposet_items_yaml
   reposet_items_yaml: |-
-    _layout__sample:
+    ci-config-jenlib:
       name: ci-config-jenlib
-      subdir: ci-config-jenlib
-      dirname: ci-config-jenlib
+      subdir: .
+      dirname: ./ci-config-jenlib
+      branch: main
       remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
-
+    
+    jencoda_dimg:
+      name: jencoda_dimg
+      subdir: .
+      dirname: ./jencoda_dimg
+      branch: main
+      remote_origin_url: git@github.com:ydzvulon/jencoda.dimg.git
+  
 tasks:
   default:
     silent: true
