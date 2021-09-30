@@ -2,6 +2,7 @@
 FROM jenmaster
 
 USER root
+
 # install basics
 RUN apt-get update -y \
  && apt-get install -y apt-utils git curl ca-certificates bzip2 cmake tree htop bmon iotop g++ \

@@ -8,5 +8,5 @@ jenkins:
       allowsSignup: false
       users:
       - id: tester
-        password: ${tester_password:-tester}
+        password: ${tester_password:-tester123}
           

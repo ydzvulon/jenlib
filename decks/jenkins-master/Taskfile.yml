@@ -6,6 +6,9 @@ vars:
   GREETING: JenkinsDockers
   jentest_machine: jentest
   DIMAGE: jenconda
+  _l: '{'
+  _r: '}'
+  # Size: '"{{._l}}{{._l}} .Size {{._r}}{{._r}}"'
 
 tasks:
   default:
@@ -14,40 +17,69 @@ tasks:
       - task -l
     silent: true
 
+  info:
+    desc: show info about this project
+    silent: true
+    vars:
+      info_bar: |-
+        * task info               * show info
+        * task build              * build docker jenconda
+        * task test               * test jenconda bootstrap (outside repo with tester)
+    cmds:
+      - echo "{{.info_bar}}"
+
+  docker:publish:
+    desc: publish jenconda
+    cmds:
+      - task: docker-retag-local-remote
+      - task: docker-push-remote
+
+  docker-retag-local-remote:
+    
   docker:build:jenmaster:
     desc: _
     cmds:
-      - docker build . -t jenmaster
+      - docker build -f Dockerfile.jenmaster.Dockerfile -t jenmaster .
 
   docker:build:jenconda:
     desc: _
     deps:
       - docker:build:jenmaster
     vars:
-      ts: {sh: date +"%s"}
+      requested_ts: {sh: date +"%s"}
       vers: '$(cat ../../version/version_prefix.txt)'
-      fulltag: '{{.DIMAGE}}:{{.vers}}-{{.ts}}'
+      fulltag: '{{.DIMAGE}}:{{.vers}}-{{.requested_ts}}'
     cmds:
       - mkdir -p __build_info/docker-build/jenconda
       - |-
-        cat <<EOF > __build_info/docker-build/jenconda/{{.fulltag}}
-        kind: docker.build.info
-        version: "3"
-        vars:
-          schema: |-
-            dict: str
-          spec: |-
-            build_id: fdasdf
-            git_src: url@commit
-            docker_dst: repo:tag
-        includes:
-          docker-info: ../../_infra/
+        cat <<EOF > __build_info/docker-build/jenconda.build.init.info.yml
+        ---
+        key: docker-build.{{.fulltag}}-init
+        act: init
+        stage: build
+        part: docker
+        fulltag: {{.fulltag}}
         EOF
-      # - |-
-      #   docker build \
-      #     -f install.scripts/install-conda-in-docker.Dockerfile  \
-      #     -t {{.fulltag}} \
-      #     install.scripts
+      - |-
+        docker build \
+          -f Dockerfile.jenconda.Dockerfile  \
+          -t {{.fulltag}} \
+          .
+      - |-
+        # size=docker image inspect -f "{{._l}}{{._l}} .Size {{._r}}{{._r}}" {{.fulltag}}
+        over_ts=$(date +"%s")
+        cat <<EOF > __build_info/docker-build/jenconda.build.over.info.yml
+        ---
+        key: docker-build.{{.fulltag}}-over
+        act: init
+        stage: build
+        part: docker
+        fulltag: {{.fulltag}}
+        init_ts: {{.requested_ts}}
+        over_ts: $over_ts
+        duration: $(echo "$over_ts - {{.requested_ts}}" | bc)
+        EOF
+        cat __build_info/docker-build/jenconda.build.over.info.yml
   docker:build:
     desc: _
     deps: [docker:build:jenconda]

@@ -22,9 +22,9 @@ RUN apt-get clean
 RUN curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
 
 # added ny yairvd
-COPY install.scripts/install_taskgo.sh install.scripts/install_taskgo.sh
-RUN chmod +x install.scripts/install_taskgo.sh
-RUN  install.scripts/install_taskgo.sh
+COPY context/install.base.tools /context/install.base.tools
+RUN chmod +x /context/install.base.tools/*.sh; chmod +x /context/install.base.tools/*.yml || true;
+RUN  /context/install.base.tools/install_taskgo.sh
 
 # or 3.4.1
 RUN cd /tmp \
@@ -45,14 +45,14 @@ RUN jenkins-plugin-cli -f /usr/share/jenkins/plugins.txt
 # ENV JENKINS_UC_DOWNLOAD=${JENKINS_UC_EXPERIMENTAL}/download
 
 # create new jobs
-COPY init.groovy.d/default-newci-job.groovy /usr/share/jenkins/ref/init.groovy.d/
+COPY context/init.groovy.d/default-newci-job.groovy /usr/share/jenkins/ref/init.groovy.d/
 
 # disable security
-COPY init.groovy.d/configure-job-dsl-security.groovy /usr/share/jenkins/ref/init.groovy.d/
+COPY context/init.groovy.d/configure-job-dsl-security.groovy /usr/share/jenkins/ref/init.groovy.d/
 
 # tell the jenkins config-as-code plugin where to find the yaml file
-COPY init.groovy.d/jenkins-casc.yaml /usr/local/jenkins-casc.yaml
+COPY context/jenkins-casc.yaml /usr/local/jenkins-casc.yaml
 ENV CASC_JENKINS_CONFIG /usr/local/jenkins-casc.yaml
 
-COPY jobs_sys /usr/share/jenkins/job_sys
+COPY context/jobs_sys /usr/share/jenkins/job_sys
 
