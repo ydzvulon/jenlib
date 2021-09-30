@@ -22,8 +22,7 @@ parts:
 vars:
   # reposet__conf_map: __subdirs:Taskfile.yml@parts.reposet.items
   # reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
-  reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
-_layout_/parts/reposet.info.yml
+  reposet__conf_map: __subrepos:_layout_/parts/reposet.info.yml@vars.reposet_items_yaml
 tasks:
   default:
     cmds:

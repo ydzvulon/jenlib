@@ -37,7 +37,7 @@ vars:
   repos_root: '{{splitList ":" .reposet__conf_map | first }}'
   repos_root_pref: "{{.repos_root}}:"
   items_addr_token: '{{trimPrefix  .repos_root_pref .reposet__conf_map }}'
-  _items_exp: 'yq read {{ .items_addr_token | replace "@" " " }}'
+  _items_exp: 'yq read {{ .items_addr_token | replace "@" " " }} | yq read - '
   repos_conf_file: '{{splitList "@" .items_addr_token | first }}'
   reposet__parallel_exp: 'yq read {{.repos_conf_file}} vars.reposet__parallel || echo ""'
   repos: "$(echo $({{._items_exp}} | yq r - --tojson | jq -r '. | keys[]'))"
@@ -78,6 +78,7 @@ tasks:
         echo "\
         file_key: {{.repos_conf_file}}
         place_key: {{.items_addr_token}} 
+        items_key: '{{._items_exp}}'
         items: 
         $(echo {{.repos}} | xargs -I% echo '-' %: mkx:repo.key.name)
         "
@@ -159,10 +160,10 @@ tasks:
   # --- ones ---
   _repo_vars:one: &_ref_one
     vars:
-      var_dirname: "$({{._items_exp}}.{{.repo}}.dirname)"
+      var_dirname: "$({{._items_exp}} {{.repo}}.dirname)"
       dirname: '{{.repos_root}}/{{.var_dirname}}'
-      remote_origin_url: "$({{._items_exp}}.{{.repo}}.remote_origin_url)"
-      branch: "$({{._items_exp}}.{{.repo}}.branch)"
+      remote_origin_url: "$({{._items_exp}} {{.repo}}.remote_origin_url)"
+      branch: "$({{._items_exp}} {{.repo}}.branch)"
     prefix: "{{.TASK}}:{{.repo}}"
     cmds:
       - echo var_dirname={{.var_dirname}}
