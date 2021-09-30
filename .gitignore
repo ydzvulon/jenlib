@@ -11,3 +11,5 @@ __pycache__
 .minio.sys
 __tmp__
 __build_info
+__subrepos
+__subdirs

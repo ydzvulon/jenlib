@@ -1,0 +1,28 @@
+apiVersion: projects/v1
+kind: mxk:ydt.reposet.items
+
+metadata:
+  name: reposet
+spec:
+  layout:
+    items:
+      ci-config_-enlib:
+        name: ci-config-jenlib
+        subdir: _cicd/
+        dirname: __subrepos/ci-config-jenlib
+        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
+
+# --- task include part
+version: "3"
+
+vars:
+  reposet__: s
+
+includes:
+  reposet: ../../_infra/reposet_pack/reposet.tasks.yml
+
+tasks:
+
+  default:
+    silent: true
+    cmds: [task -l]

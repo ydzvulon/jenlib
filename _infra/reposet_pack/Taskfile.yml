@@ -1,0 +1,36 @@
+# https://taskfile.dev
+
+version: '3'
+includes:
+  reposet: reposet.tasks.yml
+  # - ydtask: ydpack.tasks.yml
+
+parts:
+  reposet:
+    items:
+      ci-config_-enlib:
+        name: ci-config-jenlib
+        subdir: _cicd/
+        dirname: __subrepos/ci-config-jenlib
+        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
+
+vars:
+  reposet__conf_map__def: __subdirs:Taskfile.yml@parts.reposet.items
+
+tasks:
+  default:
+    silent: true
+    cmds: [task info]
+
+  info:
+    desc: info about the reposet
+    cmds:
+      - task -l
+      - task reposet:info
+
+  update-this-pack:
+    desc: update this pack by copy full new version of the pack
+    # cmds:
+    #   - task: ydpack:update
+    #     vars:
+          

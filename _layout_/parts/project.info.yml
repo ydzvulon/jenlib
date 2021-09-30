@@ -5,7 +5,7 @@ metadata:
   name: jenlib
 spec:
   layout:
-    required:
+    itemsd:
       descriptor:
         path: version/descriptor.yml
         desc: |
@@ -28,11 +28,3 @@ spec:
         desc: |
           prefix for git tags
           existed for monorepos with multiple projects
-
-    optional:
-
-      mkdocs_settings:
-        path: mkdocs.yml
-        desc: |
-          settings for mkdocs build
-

@@ -3,24 +3,36 @@
 
 version: '3'
 ## url_from=https://mohitgoyal.co/2019/01/20/checkout-only-selected-paths-from-git-repository/
-
-args:
-  reposet__parallel:
-    desc: limit parallelisation to specific expression
-    examples:
-      - 4
-  reposet__conf_map:
-    desc: install in TARGETDIR repos from REPOSET-CONFIG-YML at YPATH
-    pattern: TARGETDIR:REPOSET-CONFIG-YML@YPATH
-    examples:
-      - ..:_layout_/subrepos.conf.yml@items: |-
-          will read repos config from file _layout_/subrepos.conf.yml at key items
-          repos will be sibblings of current repo
-      - subrepos:_layout_/reposet.conf.yml@items: |-
-          will read repos config from file _layout_/subrepos.conf.yml at key items
-          repos will be placed under subrepos dir of current repo
-
+parts:
+  reposet:
+    items:
+      jenlib_main:
+        name: jenlib_main
+        branch: main.ydzvulon
+        subdir: __subrepos
+        dirname: __subrepos/jenlib_main
+        remote_origin_url: git@github.com:ydzvulon/jenlib.git
 vars:
+  __args__:
+    reposet__parallel: |-
+      desc: limit parallelisation to specific expression
+      examples:
+        - 4
+    reposet__conf_map: |-
+      desc: install in TARGETDIR repos from REPOSET-CONFIG-YML at YPATH
+      pattern: TARGETDIR:REPOSET-CONFIG-YML@YPATH
+      examples:
+        - ..:_layout_/subrepos.conf.yml@items: |-
+            will read repos config from file _layout_/subrepos.conf.yml at key items
+            repos will be sibblings of current repo
+        - subrepos:_layout_/reposet.conf.yml@items: |-
+            will read repos config from file _layout_/subrepos.conf.yml at key items
+            repos will be placed under subrepos dir of current repo
+  
+  reposet__conf_map__def: |-
+    __subdirs:reposet.tasks.yml@parts.reposet.items
+
+  reposet__conf_map: '{{ default .reposet__conf_map__def .reposet__conf_map}}'
   repos_root: '{{splitList ":" .reposet__conf_map | first }}'
   repos_root_pref: "{{.repos_root}}:"
   items_addr_token: '{{trimPrefix  .repos_root_pref .reposet__conf_map }}'
@@ -40,7 +52,7 @@ tasks:
      - echo "_expected_args='{{._expected_args}}'"
      - echo "repos_conf_file='{{.repos_conf_file}}'"
      - echo "reposet__parallel_exp='{{.reposet__parallel_exp}}'"
-     - echo '@@act=report kind=actual repos_root="{{.repos_root}}" repos="{{.repos}}" _items_exp={{._items_exp}}'
+     - echo '@@act=report kind=actual repos_root="{{.repos_root}}" repos="{{.repos}}" _items_exp="{{._items_exp}}"'
     silent: true
 
   # init:
