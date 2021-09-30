@@ -3,8 +3,9 @@ kind: ProjectPartDescriptor
 
 metadata:
   name: jenlib
-spec:
-  layout:
+
+parts:
+  mkdocs:
     items:
       mkdocs_yml:
         path: mkdocs_yml.yml

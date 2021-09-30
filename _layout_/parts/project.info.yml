@@ -3,9 +3,9 @@ kind: ProjectDescriptor
 
 metadata:
   name: jenlib
-spec:
-  layout:
-    itemsd:
+parts:
+  project:
+    items:
       descriptor:
         path: version/descriptor.yml
         desc: |

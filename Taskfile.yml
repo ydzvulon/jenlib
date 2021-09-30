@@ -3,6 +3,8 @@
 version: '3'
 
 includes:
+  reposet: reposet.tasks.yml
+
   mkdocs: tasks/mkdocs.tasks.yml
   jenlib: tasks/jenlib.product.tasks.yml
   decks: 
@@ -10,6 +12,7 @@ includes:
     taskfile: decks
   # jenconda: tasks/jenconda.product.tasks.yml
 vars:
+  reposet__conf_map__def: __subdirs:_layout__@parts/reposet.info.yml@parts.reposet.items
 
 tasks:
   default:

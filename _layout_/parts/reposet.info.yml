@@ -3,8 +3,8 @@ kind: mxk:ydt.reposet.items
 
 metadata:
   name: reposet
-spec:
-  layout:
+parts:
+  reposet:
     items:
       ci-config_-enlib:
         name: ci-config-jenlib
