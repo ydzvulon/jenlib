@@ -1,0 +1,59 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+  format: '{{ default "yaml" .format }}'
+  pretty: '{{ default "false" .format }}'
+  to_file: '{{ default "" .to_file }}'
+
+  _write_suff: |-
+    {{if eq "json" .format }} | yq read - --tojson {{else}}{{end}} \
+    {{if eq "true" .pretty }} | jq . {{else}}{{end}} \
+    {{if .to_file}} > {{.to_file}}{{else}}{{end}}
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  write-git-info:
+    desc: _
+    vars:
+      _suff: '{{._write_suff}}'
+      _info: |-
+        git_remote_url: $(echo $(git remote -v | head -n 1 | sed 's@origin@@g') | cut -d' ' -f1)
+        git_current_branch: $(git rev-parse --abbrev-ref HEAD)
+    cmds:
+      - echo "{{._info}}" {{._suff}}
+
+  write-version-info:
+    desc: _
+    vars:
+      version_dir: '{{ default "." .version_dir}}'
+      format: '{{ default "yaml" .format}}'
+      _suff: '{{._write_suff}}'
+      _info: |-
+        version_prefix_txt: $(cat {{.version_dir}}/version_prefix.txt)
+        project_name: $(cat {{.version_dir}}/project_prefix.txt)
+    cmds:
+      - echo "{{._info}}" {{._suff}}
+
+  write-product-stamp:
+    desc: _
+    # silent: true
+    vars:
+      _suff: '{{._write_suff}}'
+      task_seq: |-
+        write-version-info format=yaml \
+        write-git-info
+    env:
+      _pretty: '{{._pretty}}'
+    cmds:
+      - echo '{{._suff}}'
+      - |-
+        task -s {{.task_seq}} {{._suff}}
+    
