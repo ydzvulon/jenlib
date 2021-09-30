@@ -1,0 +1,6 @@
+tasks:
+
+  windows.install/docker: oh my god
+  linux.install/docker: apt install docker
+
+  
