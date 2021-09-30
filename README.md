@@ -29,3 +29,8 @@ Each taskfile express one group
 - `jenconda` - jenkins with conda docker build
 - `mkdocs`  - documentation
 - `deps` - dependancy resolution
+
+
+## More Distributions
+
+- https://github.com/odavid/my-bloody-jenkins
