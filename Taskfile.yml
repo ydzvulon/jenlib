@@ -21,8 +21,9 @@ parts:
         remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
 vars:
   # reposet__conf_map: __subdirs:Taskfile.yml@parts.reposet.items
+  # reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
   reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
-
+_layout_/parts/reposet.info.yml
 tasks:
   default:
     cmds:

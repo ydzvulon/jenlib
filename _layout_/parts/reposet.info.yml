@@ -1,28 +1,27 @@
+#!/usr/local/bin/task --taskfile
+
 apiVersion: projects/v1
 kind: mxk:ydt.reposet.items
 
 metadata:
   name: reposet
-parts:
-  reposet:
-    items:
-      config.ci:
-        name: ci-config-jenlib
-        subdir: _cicd/
-        dirname: __subrepos/ci-config-jenlib
-        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
 
 # --- task include part
 version: "3"
-
-vars:
-  reposet__: s
-
 includes:
   reposet: ../../_infra/reposet_pack/reposet.tasks.yml
 
-tasks:
+vars:
+  _taskfile_: reposet.info.yml
+  reposet__conf_map: __subdirs:reposet.info.yml@vars.reposet_items_yaml
+  reposet_items_yaml: |-
+    _layout__sample:
+      name: ci-config-jenlib
+      subdir: _cicd/
+      dirname: __subrepos/ci-config-jenlib
+      remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
 
+tasks:
   default:
     silent: true
-    cmds: [task -l]
+    cmds: [{task: reposet:info}]
