@@ -11,14 +11,6 @@ version: "3"
 includes:
   reposet: ../../_infra/reposet_pack/reposet.tasks.yml
 
-# misc:
-#   reposet_items_yaml: |-
-#     _layout__sample:
-#       name: ci-config-jenlib
-#       subdir: ci-config-jenlib
-#       dirname: ci-config-jenlib
-#       remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
-
 vars:
   _taskfile_: reposet.info.yml
   # reposet__conf_map: __subrepos:reposet.info.yml@vars.reposet_items_yaml
