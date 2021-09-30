@@ -35,7 +35,28 @@ tasks:
       - task: docker-push-remote
 
   docker-retag-local-remote:
-    
+    desc: _
+    vars:
+      remote_prefix: yairdar
+      local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+    cmds:
+      - |-
+        local_fulltag=$({{.local_fulltag}})
+        local_tag=$(echo :${local_fulltag} | sed 's@.*:@@g')
+        docker tag ${local_fulltag} {{.remote_prefix}}/${local_fulltag}
+        docker images | grep {{.remote_prefix}} | grep ${local_tag}
+
+  docker-push-remote:
+    decs:
+    vars:
+      remote_prefix: yairdar
+      local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+    cmds:
+      - |-
+        local_fulltag=$({{.local_fulltag}})
+        local_tag=$(echo :${local_fulltag} | sed 's@.*:@@g')
+        docker push {{.remote_prefix}}/${local_fulltag}
+
   docker:build:jenmaster:
     desc: _
     cmds:
