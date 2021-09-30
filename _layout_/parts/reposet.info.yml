@@ -6,7 +6,7 @@ metadata:
 parts:
   reposet:
     items:
-      ci-config_-enlib:
+      config.ci:
         name: ci-config-jenlib
         subdir: _cicd/
         dirname: __subrepos/ci-config-jenlib

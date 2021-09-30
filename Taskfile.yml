@@ -3,23 +3,41 @@
 version: '3'
 
 includes:
-  reposet: reposet.tasks.yml
-
+  reposet: _infra/reposet_pack/reposet.tasks.yml
   mkdocs: tasks/mkdocs.tasks.yml
   jenlib: tasks/jenlib.product.tasks.yml
   decks: 
     dir: decks
     taskfile: decks
   # jenconda: tasks/jenconda.product.tasks.yml
+
+parts:
+  reposet:
+    items:
+      jenlib.config.ci:
+        name: ci-config-jenlib
+        subdir: _cicd/
+        dirname: __subrepos/ci-config-jenlib
+        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
 vars:
-  reposet__conf_map__def: __subdirs:_layout__@parts/reposet.info.yml@parts.reposet.items
+  # reposet__conf_map: __subdirs:Taskfile.yml@parts.reposet.items
+  reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
 
 tasks:
   default:
     cmds:
-      - task -l
-      - echo "for more info use 'task info'"
+      - task info
+      - echo "for task list use 'task list' "
     silent: true
+
+  list:
+    desc: list of avilable tasks. filter with [part=reposet part=mkdocs part=PROJ_PART]]
+    vars:
+      part: '{{ default "" .part}}'
+      part_opt: '{{if .part}}| grep {{.part}} {{else}}{{end}}'
+    cmds: 
+      - |-
+        task -l {{.part_opt}}
 
   info:
     desc: Information about this dir
@@ -27,17 +45,24 @@ tasks:
     vars:
       title: Jenlib repo actions
       content: |
-
         --- usefull tasklist ---
         * task info            * show info about this project
+        * task resolve         * resolve dependancies
         * task mkdocs:serve    * start live docs server (serve-bg for deattached mode)
         * task ci-flow         * run ci pipeline [build, test, local_publish]
+        * task list            * list public tasks
+        for more tasks:        * task list #desc:# list public tasks
         ------------------------
         {{.title}}
         
     cmds:
       - echo '{{.content}}'
-        
+  
+  resolve:
+    desc: resolve dependancies
+    cmds:
+      - task: reposet:resolve
+          
   ci-full:
     desc: 0-level block. build and publish. requires --force flag.
     cmds:
