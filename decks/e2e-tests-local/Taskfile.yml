@@ -46,14 +46,6 @@ tasks:
       - task: stop
       - docker-compose rm
       - task: run
-
-
-  renew:
-    desc: _
-    cmds:
-      - task: stop
-      - task: build
-      - task: rerun
       - task: info
 
   ci-flow:
@@ -66,7 +58,7 @@ tasks:
   test-all-clean:
     desc: _
     cmds:
-      - task: renew
+      - task: rerun
       - task: tests:test-all
 
   resolve-dimgs:
