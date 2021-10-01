@@ -7,7 +7,7 @@
 
 - https://www.eficode.com/blog/start-jenkins-config-as-code
 - https://verifa.io/insights/getting-started-with-jenkins-config-as-code/
-
+- https://cloud.google.com/architecture/managing-infrastructure-as-code-with-terraform-jenkins-and-gitops
 ## Worker Allocators
 
 ### ec2-spot-jenkins-plugin

@@ -42,6 +42,14 @@ vars:
       dirname: ./jenlib_public_repo
       branch: main
       remote_origin_url: https://github.com/ydzvulon/jenlib_public_repo.git
+    
+    sample-cicd-jenlib:
+      name: sample-cicd-jenlib
+      subdir: .
+      dirname: ./sample-cicd-jenlib
+      branch: main
+      remote_origin_url: https://gitlab.com/metapath/sample-cicd-jenlib
+      
       
 tasks:
   default:
