@@ -1,5 +1,7 @@
 # Docker Build Options
 
+- https://mauilion.dev/posts/kind-pvc/
+
 ## Build from a local build context, using a Dockerfile from stdin
 
 ```dockerfile

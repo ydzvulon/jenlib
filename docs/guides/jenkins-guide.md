@@ -26,3 +26,4 @@
 ### docker
 - https://github.com/jenkinsci/docker/issues/263
 - https://www.insanity.org.uk/2017/04/03/giving-jenkins-access-to-docker/
+- https://adamtheautomator.com/jenkins-agent/

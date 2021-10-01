@@ -11,9 +11,9 @@ tasks:
       - echo "{{.GREETING}}"
     silent: true
 
-  wait-for-event:
-    desc: _
-    source:
-      - __tmp__/new-event/*.event.yml
-    generates:
-      - 
+  # wait-for-event:
+  #   desc: _
+  #   source:
+  #     - __tmp__/new-event/*.event.yml
+  #   generates:
+  #     - 
