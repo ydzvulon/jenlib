@@ -83,9 +83,10 @@ class JenCli:
             expected_exceptions=(jenkins.JenkinsException,)
         )
 
-        seed_job_branch = subprocess.check_output(
-            "git rev-parse --abbrev-ref HEAD".split()
-            ).decode().strip() 
+        # seed_job_branch = subprocess.check_output(
+        #     "git -C /home/jovyan/repo rev-parse --abbrev-ref HEAD".split()
+        #     ).decode().strip() 
+        seed_job_branch = 'yairdar.v0.8.3.pushes'
         seed_job = f'_test_seed_{dt}'
         seed_job_path = 'file:///repo'
 
@@ -107,7 +108,10 @@ class JenCli:
         )
         print("@@act=wait stage=over topic='job created'")
         time.sleep(3)
-        _ret = self.build_job_block(seed_job, parameters={"con": "w"}, show_log=show_log)
+        _ret = self.build_job_block(seed_job, parameters={
+            "seed_job_repo": seed_job_path,
+            "seed_job_branch": seed_job_branch,
+        }, show_log=show_log)
         print(_ret)
 
         print("@@act=init stage=build.samples")

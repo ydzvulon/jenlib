@@ -11,7 +11,7 @@ node() {
 properties([
     parameters([
         string(name: 'seed_job_repo', defaultValue: 'file:///repo'),
-        string(name: 'seed_job_branch', defaultValue: 'main')
+        string(name: 'seed_job_branch', defaultValue: 'yairdar.v0.8.3.pushes')
     ])
 ])
 

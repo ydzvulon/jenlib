@@ -7,7 +7,8 @@ def kws = [
 	jenlib_version: "${seed_job_branch}",
 	// jenlib_remote: 'https://github.com/ydzvulon/jenlib.git',
 	jenlib_remote: "file:///repo",
-	repo_path: "${seed_job_repo}",
+	// repo_path: "${seed_job_repo}",
+	repo_path: "file:///repo",
 	seed_job_branch: "${seed_job_branch}",
 	root_dir: "samples",
 	seed_job_pipes: [
