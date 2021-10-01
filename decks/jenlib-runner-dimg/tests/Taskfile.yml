@@ -1,0 +1,66 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+
+  test-jenrunner-portable-minimal:
+    desc: '{{.TASK}}'
+    cmds:
+      - |-
+        rm -rf $(pwd)/__tmp__/jenkinsHome
+        docker run --rm \
+        -v $(pwd)/pipe_500_cmds_minimal.groovy:/workspace/Jenkinsfile \
+        -v $(pwd)/__tmp__/jenkinsHome:/jenkinsHome  \
+        jenlib-runner-dimg:latest --runHome /jenkinsHome --httpPort 8080
+  test-jenrunner-portable-jenlib:
+    desc: '{{.TASK}}'
+    cmds:
+      - |-
+        rm -rf $(pwd)/__tmp__/jenkinsHome
+        docker run --rm \
+        -v $(pwd):/workspace \
+        -v $(pwd)/__tmp__/jenkinsHome:/jenkinsHome  \
+        jenlib-runner-dimg:latest \
+          --runHome /jenkinsHome \
+          --httpPort 8080
+
+
+
+  prepare: &use_vars_ci
+    desc: prepare for build
+    vars:
+        LBUILD_DIR: __localbuild__/sambuild
+        LART_NAME: art.tar
+    cmds:
+      - rm -rf {{.LBUILD_DIR}}
+      - mkdir -p {{.LBUILD_DIR}}/bdir
+      - cp *.yml *.groovy {{.LBUILD_DIR}}/bdir
+
+  build:
+    desc: do the build
+    <<: *use_vars_ci
+    dir: "{{.LBUILD_DIR}}/bdir"
+    cmds:
+      # - zip -r ../art.zip .
+      - tar -cvf ../{{.LART_NAME}} .
+
+  test:
+    desc: test artifact
+    <<: *use_vars_ci
+    cmds:
+      - tar -tvf {{.LBUILD_DIR}}/{{.LART_NAME}}
+      # - unzip -vl {{.LBUILD_DIR}}/art.zip
+
+
+  ci-flow:
+    desc: full build cycle
+    jenlib:
+      ci-flow: body
+    cmds:
+      - task prepare
+      - task build
+      - task test

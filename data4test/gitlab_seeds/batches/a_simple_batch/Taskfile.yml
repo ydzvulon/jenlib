@@ -42,3 +42,26 @@ tasks:
       - task prepare
       - task build
       - task test
+
+  test-jenrunner-portable-minimal:
+    desc: '{{.TASK}}'
+    cmds:
+      - |-
+        rm -rf $(pwd)/__tmp__/jenkinsHome
+        # mkdir -p  $(pwd)/__tmp__/jenkinsHome/userContent/
+        # echo "asdfa sd" > $(pwd)/__tmp__/jenkinsHome/userContent/readme.txt
+        # echo "asdfa sd" > $(pwd)/__tmp__/jenkinsHome/userContent/readme2.txt
+        docker run --rm \
+        -v $(pwd)/pipe_500_cmds_minimal.groovy:/workspace/Jenkinsfile \
+        -v $(pwd)/__tmp__/jenkinsHome:/jenkinsHome  \
+        jenkins/jenkinsfile-runner --runHome /jenkinsHome --httpPort 8080
+
+
+  shell-jenrunner-portable-minimal:
+    desc: '{{.TASK}}'
+    cmds:
+      - |-
+        docker run --rm \
+        -v $(pwd)/pipe_500_cmds_minimal.groovy:/workspace/Jenkinsfile \
+        -v $(pwd)/__tmp__/build:/build \
+        jenkins/jenkinsfile-runner --httpPort 8080

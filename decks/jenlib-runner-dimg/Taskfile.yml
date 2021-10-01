@@ -1,0 +1,84 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+  DIMAGE: jenlib-runner-dimg
+
+  plugins_txt: |-
+    htmlpublisher
+
+  jenkins_yaml: |-
+    jenkins:
+      systemMessage: |-
+        Welcome to CICD
+      agentProtocols:
+        - "JNLP4-connect"
+      securityRealm:
+        local:
+          allowsSignup: false
+          users:
+          - id: tester
+            password: ${tester_password:-tester123}
+    unclassified:
+      location:
+        url: "http://localhost:8080/"
+      globalLibraries:
+        libraries:
+        - defaultVersion: "master"
+          name: "JenkinsLib_Jenlib"
+          retriever:
+            legacySCM:
+              scm:
+                git:
+                  branches:
+                  - name: "*/master"
+                  buildChooser: "default"
+                  userRemoteConfigs:
+                  - url: "file:///usr/share/shared_libs/jenlibrepo"
+
+  _dockerfile_cont_: |-
+    FROM jenkins/jenkinsfile-runner
+    RUN cat /etc/os-release
+    COPY install_taskgo.sh /deps/install_taskgo.sh
+    COPY install_yq3.sh /deps/install_yq3.sh
+    RUN bash /deps/install_taskgo.sh && bash /deps/install_yq3.sh
+    COPY Taskfile.yml /opt/tctrl/Taskfile.yml
+  
+    RUN cd /opt/tctrl \
+        && task write-var var=plugins_txt to_file=/usr/share/jenkins/ref/plugins.txt \
+        && task write-var var=jenkins_yaml to_file=/usr/share/jenkins/ref/casc/jenkins.yaml \
+        && task write-var var=jenkins_yaml to_file=/usr/share/jenkins/ref/userContent/jenkins.yaml
+    ENV CASC_JENKINS_CONFIG=/usr/share/jenkins/ref/userContent/jenkins.yaml
+    RUN cd /app/jenkins && jar -cvf jenkins.war *
+    RUN java -jar /app/bin/jenkins-plugin-manager.jar \
+        --war /app/jenkins/jenkins.war \
+        --plugin-file /usr/share/jenkins/ref/plugins.txt \
+        && rm /app/jenkins/jenkins.war
+    RUN apt-get update && apt-get install git -y
+    COPY __tmp__/jenlibrepo /usr/share/shared_libs/jenlibrepo
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  write-var:
+    desc: _
+    cmds:
+      - |-
+        mkdir -p $(dirname {{.to_file}})
+        cat <<EOF > {{.to_file}}
+        $(yq read Taskfile.yml vars.{{.var}})
+        EOF
+        cat {{.to_file}}
+
+  build:
+    desc: _
+    cmds:
+      - |-
+        docker build -t {{.DIMAGE}} -f- . <<FOQ
+        {{._dockerfile_cont_}}
+        FOQ
