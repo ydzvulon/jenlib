@@ -19,17 +19,18 @@ job("_new_ci") {
 // https://www.iditect.com/how-to/51308400.html
 
 path_parts = "\${seed_job_name}".split('/')
+println(path_parts)
 nparts = path_parts.size()
 if( nparts == 1 ){
 	println("Should Provide Jobname")
 } else {
-	folder("\${path_parts[1]}"){
+	folder("\${path_parts[0]}"){
 	if ( nparts > 2 ){
-		folder("\${path_parts[2]}"){
+		folder("\${path_parts[1]}"){
 		if ( nparts > 3 ){	
-	   		folder("\${path_parts[3]}"){
+	   		folder("\${path_parts[2]}"){
 			if ( nparts > 4 ){	
-	   			folder("\${path_parts[4]}"){
+	   			folder("\${path_parts[3]}"){
 				}
 			}
 			}

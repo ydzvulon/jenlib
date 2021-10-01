@@ -56,7 +56,7 @@ tasks:
     cmds:
       - task: resolve-dimgs
       - task: test-all-clean
-      - task: stop
+      # - task: stop
   
   test-all-clean:
     desc: _
