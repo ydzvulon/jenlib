@@ -3,7 +3,7 @@
 
 def kws = [
 	//
-	jenlib_name: 'JenkinsLib_jenlib',
+	jenlib_name: 'JenkinsLib_Jenlib',
 	jenlib_version: "${seed_job_branch}",
 	// jenlib_remote: 'https://github.com/ydzvulon/jenlib.git',
 	jenlib_remote: "file:///repo",

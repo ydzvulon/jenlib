@@ -1,5 +1,5 @@
 
-FROM jenmaster
+FROM jenmaster:latest
 
 USER root
 

@@ -14,21 +14,16 @@ unclassified:
   location:
     url: "http://localhost:8080/"
 
-  # globalLibraries:
-  #   libraries:
-  #   - name: "Sandbox"
-  #   - defaultVersion: "master"
-  #     implicit: true
-  #     name: "sandbox"
-  #     retriever:
-  #       modernSCM:
-  #         scm:
-  #           git:
-  #             id: "sandbox-repo"
-  #             remote: "https://github.com/tomasbjerre/jenkins-configuration-as-code-sandbox.git"
-  #             traits:
-  #             - cloneOptionTrait:
-  #                 extension:
-  #                   depth: 1
-  #                   noTags: true
-  #                   shallow: true
+  globalLibraries:
+    libraries:
+    - defaultVersion: "master"
+      name: "JenkinsLib_Jenlib"
+      retriever:
+        legacySCM:
+          scm:
+            git:
+              branches:
+              - name: "*/yairdar.v0.8.3.pushes"
+              buildChooser: "default"
+              userRemoteConfigs:
+              - url: "https://github.com/ydzvulon/jenlib.git"

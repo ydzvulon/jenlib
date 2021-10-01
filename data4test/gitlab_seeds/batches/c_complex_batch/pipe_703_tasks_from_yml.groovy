@@ -1,5 +1,5 @@
 
-@Library('JenkinsLib_jenlib') _
+@Library('JenkinsLib_Jenlib') _
 
 // library identifier: 'jenlib@0.7.5', retriever: http(
 // credentialsId: 'asd',

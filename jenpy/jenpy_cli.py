@@ -13,7 +13,7 @@ import time
 class JenCli:
 
     def __init__(self):
-        self.server = jenkins.Jenkins('http://jencondadev.samexample.com:8080', username='tester', password='tester')
+        self.server = jenkins.Jenkins('http://jencondadev.samexample.com:8080', username='tester', password='tester123')
 
     def info_sample(self):
         server = self.server
@@ -79,7 +79,7 @@ class JenCli:
         import waiting
         waiting.wait(
             lambda: server.get_job_info('_new_ci'),
-            timeout_seconds=15,
+            timeout_seconds=60,
             expected_exceptions=(jenkins.JenkinsException,)
         )
 
@@ -104,7 +104,7 @@ class JenCli:
         print("@@act=wait stage=start topic='job created'")
         waiting.wait(
             lambda: server.get_job_info(seed_job),
-            timeout_seconds=10,
+            timeout_seconds=60,
             expected_exceptions=(jenkins.JenkinsException,)
         )
         print("@@act=wait stage=over topic='job created'")

@@ -5,7 +5,7 @@ version: "3"
 services:
   jencondadev.samexample.com:
     hostname: 'jencondadev.samexample.com'
-    image: jenconda
+    image: ${jenconda_fulltag}
     ports:
       - "5000"
       - "12080:8080"
@@ -24,11 +24,11 @@ services:
     volumes:
       # - "jupconda.samexample.com"
       - "../..:/home/jovyan/repo"
-      - "/run/snapd.socket:/run/snapd.socket"
+      # - "/run/snapd.socket:/run/snapd.socket"
     networks:
       ntjendev:
   # https://itsfoss.com/install-chromium-ubuntu/
-  
+
 networks:
   ntjendev:
     driver: bridge

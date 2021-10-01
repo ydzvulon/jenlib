@@ -86,6 +86,7 @@ tasks:
           -f Dockerfile.jenconda.Dockerfile  \
           -t {{.fulltag}} \
           .
+        docker tag {{.fulltag}} {{.DIMAGE}}:latest
       - |-
         # size=docker image inspect -f "{{._l}}{{._l}} .Size {{._r}}{{._r}}" {{.fulltag}}
         over_ts=$(date +"%s")
@@ -220,8 +221,8 @@ tasks:
   ci-flow:
     desc: _
     cmds:
-      - task docker:build
-      - task docker:run:test:full
+      - task docker:build -o prefixed
+      - task docker:run:test:full -o prefixed
 
   docker:clean:data:
     desc: _
@@ -301,14 +302,4 @@ tasks:
       - cd /tmp && wget https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/3.23/swarm-client-3.23.jar
       - mkdir -p /data/tools/
       - mv /tmp/swarm-client-3.23.jar /data/tools/
-      
-  run-jenw-on-host:
-    desc: running jenkins on host
-    cmds:
-      - |
-        java -jar /data/tools/swarm-client-3.23.jar \
-        -master http://blade2:8080 \
-        -labels 'sw-agent' \
-        -fsroot '.' \
-        -username jenworker \
-        -password jenpassword
+
