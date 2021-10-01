@@ -36,6 +36,12 @@ tasks:
     cmds:
       - docker-compose down || true
 
+  remove:
+    desc: _
+    cmds:
+      - task: stop
+      - docker-compose rm || true
+
   run:
     desc: _
     cmds:
@@ -47,16 +53,17 @@ tasks:
     desc: _
     cmds:
       - task: stop
-      - docker-compose rm
+      - task: remove
       - task: run
       - task: info
 
   ci-flow:
     desc: _
     cmds:
+      - task: stop
       - task: resolve-dimgs
       - task: test-all-clean
-      # - task: stop
+      - task: stop
   
   test-all-clean:
     desc: _
