@@ -96,10 +96,10 @@ tasks:
   test:
     desc: _
     cmds:
-      - task -d tests run-all-tests
+      - task -d tests run-all-tests -o prefixed
 
   ci-flow:
     desc: _
     cmds:
-      - task build
-      - task test
+      - task build -o prefixed
+      - task test -o prefixed

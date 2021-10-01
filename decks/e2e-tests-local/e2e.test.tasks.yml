@@ -23,17 +23,17 @@ tasks:
   test-plain-groovy-in-docker:
     desc: run plain groovy tests in docker
     cmds:
-      - task run
+      # - task run
       - docker run --rm -v {{._repo_root_}}:/repo --workdir /repo jupconda_img task -d src test
 
   test-plain-groovy-in-jup:
     desc: run plain groovy tests in jupyter
     cmds:
-      - task run
+      # - task run
       - docker-compose exec -T jupcondadev.samexample.com task -d /home/jovyan/repo/src test
 
   test-new-ci-bootstrap:
     desc: use jenpy cli to trigger builds
     cmds:
-      - task run
+      # - task run
       - docker-compose exec -T jupcondadev.samexample.com python /home/jovyan/repo/jenpy/jenpy_cli.py test_bootstrap
