@@ -89,12 +89,22 @@ class JenCli:
         seed_job_branch = 'yairdar.v0.8.3.pushes'
         seed_job = f'_test_seed_{dt}'
         seed_job_path = 'file:///repo'
+        seed_job_pipe = "data4test/gitlab_seeds/jobs-registrator.pipe.groovy"
+        jobs_def_dir = "data4test/gitlab_seeds/jobs-defs"
+
+		# stringParam("seed_job_name", "_seed_job", "seed_job_name")
+		# stringParam("seed_job_path", "file:///repo", "seed_job_path")
+		# stringParam("seed_job_pipe", "data4test/gitlab_seeds/jobs-registrator.pipe.groovy", "seed_job_pipe")
+		# stringParam("seed_job_branch", "master", "seed_job_branch")
+		# stringParam("jobs_def_dir", "data4test/gitlab_seeds/jobs-defs", "jobs_def_dir")
 
         _ret = self.build_job_block(
             '_new_ci',
             parameters=dict(
                 seed_job_branch=seed_job_branch,
                 seed_job_path=seed_job_path,
+                jobs_def_dir=jobs_def_dir,
+                seed_job_pipe=seed_job_pipe,
                 seed_job_name=seed_job),
             show_log=show_log,
         )

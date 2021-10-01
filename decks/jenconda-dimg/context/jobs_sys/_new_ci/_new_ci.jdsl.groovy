@@ -2,11 +2,18 @@ job("_new_ci") {
 	description()
 	keepDependencies(false)
 	parameters {
-		stringParam("seed_job_name", "_seed_job", "seed_job_name")
-		stringParam("seed_job_path", "file:///repo", "seed_job_path")
-		stringParam("seed_job_pipe", "data4test/gitlab_seeds/jobs-registrator.pipe.groovy", "seed_job_pipe")
-		stringParam("seed_job_branch", "master", "seed_job_branch")
-		stringParam("jobs_def_dir", "data4test/gitlab_seeds/jobs-defs", "jobs_def_dir")
+		stringParam("seed_job_name", "ydzvulon_ci/_seed_job", "seed_job_name")
+		stringParam("seed_job_path", "https://github.com/ydzvulon/ci-config-jenlib.git", "seed_job_path")
+		stringParam("seed_job_pipe", "_cicd/jobs-registrator.pipe.groovy", "seed_job_pipe")
+		stringParam("seed_job_branch", "main", "seed_job_branch")
+		stringParam("jobs_def_dir", "_cicd/jobs-defs", "jobs_def_dir")
+	// parameters {
+	// 	stringParam("seed_job_name", "_seed_job", "seed_job_name")
+	// 	stringParam("seed_job_path", "file:///repo", "seed_job_path")
+	// 	stringParam("seed_job_pipe", "data4test/gitlab_seeds/jobs-registrator.pipe.groovy", "seed_job_pipe")
+	// 	stringParam("seed_job_branch", "master", "seed_job_branch")
+	// 	stringParam("jobs_def_dir", "data4test/gitlab_seeds/jobs-defs", "jobs_def_dir")
+	// }
 	}
 	disabled(false)
 	concurrentBuild(false)
