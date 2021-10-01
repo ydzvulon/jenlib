@@ -75,10 +75,31 @@ tasks:
         EOF
         cat {{.to_file}}
 
+  prepare-jenlibrepo:
+    desc: _
+    dir: __tmp__/jenlibrepo
+    cmds:
+      - rm -rf * .*
+      - git init
+      - unzip ../../../../__localbuild__/jenbuild/jenlib_v0.8.3_linux_amd64.zip
+      - git add --all && git commit -am"init"
+
   build:
     desc: _
     cmds:
+      - task prepare-jenlibrepo
       - |-
         docker build -t {{.DIMAGE}} -f- . <<FOQ
         {{._dockerfile_cont_}}
         FOQ
+
+  test:
+    desc: _
+    cmds:
+      - task -d tests run-all-tests
+
+  ci-flow:
+    desc: _
+    cmds:
+      - task build
+      - task test

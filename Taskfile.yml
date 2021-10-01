@@ -74,9 +74,9 @@ tasks:
   ci-flow:
     desc: 1-level block. main entry point.
     cmds:
-      - task build-stage
-      - task test-stage
-      - task report-stage
+      - task build-stage -o prefixed
+      - task test-stage -o prefixed
+      - task report-stage -o prefixed
 
   build-stage:
     desc: 2-level block. build phase
@@ -91,13 +91,21 @@ tasks:
 
   test-stage:
     desc: test new product
+    deps:
+      - task: test-e2e
+      - task: test-jl-runner
     cmds:
-      - task test-e2e
+      - echo '[{{.TASK}} is OK]'
 
   test-e2e:
     desc: Run E2E tests with build
     cmds:
-      - task -d decks apply task=ci-flow targets=e2e-tests-local
+      - task -d decks apply task='ci-flow -o prefixed'  targets=e2e-tests-local
+
+  test-jl-runner:
+    desc: Build jenlibrunner and run headless tests
+    cmds:
+      - task -d decks/jenlib-runner-dimg ci-flow -o prefixed
 
   report-stage:
     desc: 2-level block. produces stam report about a build

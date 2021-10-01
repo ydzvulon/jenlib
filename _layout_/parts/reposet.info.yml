@@ -35,7 +35,13 @@ vars:
       dirname: ./jenkins-configuration-as-code-sandbox
       branch: main
       remote_origin_url: https://github.com/tomasbjerre/jenkins-configuration-as-code-sandbox.git
-  
+
+    jenlib_public_repo:
+      name: jenlib_public_repo
+      subdir: .
+      dirname: ./jenlib_public_repo
+      branch: main
+      remote_origin_url: https://github.com/ydzvulon/jenlib_public_repo.git
       
 tasks:
   default:

@@ -7,6 +7,12 @@ vars:
 
 tasks:
 
+  run-all-tests:
+    desc: _
+    cmds:
+      - task: test-jenrunner-portable-minimal
+      - task: test-jenrunner-portable-jenlib
+
   test-jenrunner-portable-minimal:
     desc: '{{.TASK}}'
     cmds:
@@ -16,6 +22,7 @@ tasks:
         -v $(pwd)/pipe_500_cmds_minimal.groovy:/workspace/Jenkinsfile \
         -v $(pwd)/__tmp__/jenkinsHome:/jenkinsHome  \
         jenlib-runner-dimg:latest --runHome /jenkinsHome --httpPort 8080
+
   test-jenrunner-portable-jenlib:
     desc: '{{.TASK}}'
     cmds:
