@@ -1,8 +1,8 @@
-// @Library('JenkinsLib_jenlib') _
+@Library('JenkinsLib_jenlib') _
 
-library identifier: 'jenlib@0.7.5', retriever: http(
-credentialsId: 'asd',
-httpURL: 'http://httpit:8043/__localbuild__/jenbuild/jenlib.zip')
+// library identifier: 'jenlib@0.7.5', retriever: http(
+// credentialsId: 'asd',
+// httpURL: 'http://httpit:8043/__localbuild__/jenbuild/jenlib.zip')
 
 def kwj = [
     'scmvars': null,
@@ -10,6 +10,7 @@ def kwj = [
 ]
 
 node {
+    
 
     stage('start'){
         sh 'echo START'

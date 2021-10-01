@@ -9,4 +9,26 @@ jenkins:
       users:
       - id: tester
         password: ${tester_password:-tester123}
-          
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+
+  globalLibraries:
+    libraries:
+    - name: "Sandbox"
+    - defaultVersion: "master"
+      implicit: true
+      name: "sandbox"
+      retriever:
+        modernSCM:
+          scm:
+            git:
+              id: "sandbox-repo"
+              remote: "https://github.com/tomasbjerre/jenkins-configuration-as-code-sandbox.git"
+              traits:
+              - cloneOptionTrait:
+                  extension:
+                    depth: 1
+                    noTags: true
+                    shallow: true

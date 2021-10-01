@@ -28,7 +28,15 @@ vars:
       dirname: ./jencoda_dimg
       branch: main
       remote_origin_url: git@github.com:ydzvulon/jencoda.dimg.git
+
+    jenkins-configuration-as-code-sandbox:
+      name: jenkins-configuration-as-code-sandbox
+      subdir: .
+      dirname: ./jenkins-configuration-as-code-sandbox
+      branch: main
+      remote_origin_url: https://github.com/tomasbjerre/jenkins-configuration-as-code-sandbox.git
   
+      
 tasks:
   default:
     silent: true

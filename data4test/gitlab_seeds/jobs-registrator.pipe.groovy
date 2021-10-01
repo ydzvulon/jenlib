@@ -6,7 +6,16 @@
 def jobs_def_dir = env.jobs_def_dir ?: 'data4test/gitlab_seeds/jobs-defs'
 
 // kw.jnode_label
-node() { timestamps {
+node() { 
+
+properties([
+    parameters([
+        string(name: 'seed_job_repo', defaultValue: 'file:///repo'),
+        string(name: 'seed_job_branch', defaultValue: 'main')
+    ])
+])
+
+timestamps {
 
     stage('fetch') {
         deleteDir()
