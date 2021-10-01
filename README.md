@@ -6,6 +6,15 @@ Jenlib is a bridge to top-level automation
 
 Get Started With Local Development
 
+```
+# minimalistic run with ui
+docker run -d -p 8080:8080 yairdar/jenconda:0.8.4-1633116582 
+
+docker run -d yairdar/jenconda:0.8.4-1633116582 
+
+
+```
+
 ### Links
 
 - [see more live](./links.html)
