@@ -21,6 +21,9 @@ node() {timestamps {
         def more = "repo_validate"
         jen.set_build_name(currentBuild, scmvars, more)
         jg['scmvars'] = scmvars
+
+        echo "hach for docker"
+        sh " sudo chmod 777 /var/run/docker.sock"
     }
 
     stage('commits'){

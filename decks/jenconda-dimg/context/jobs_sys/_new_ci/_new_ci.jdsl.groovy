@@ -21,22 +21,15 @@ job("_new_ci") {
 path_parts = "\${seed_job_name}".split('/')
 println(path_parts)
 nparts = path_parts.size()
-if( nparts == 1 ){
-	println("Should Provide Jobname")
-} else {
+if( nparts > 1 ){
 	folder("\${path_parts[0]}"){
-	if ( nparts > 2 ){
-		folder("\${path_parts[1]}"){
-		if ( nparts > 3 ){	
-	   		folder("\${path_parts[2]}"){
-			if ( nparts > 4 ){	
-	   			folder("\${path_parts[3]}"){
-				}
-			}
-			}
-		}
-		}
+		println(path_parts[0])
 	}
+} 
+if( nparts > 2 ){
+  	def fldname = "\${path_parts[0]}/\${path_parts[1]}"
+	folder(fldname){
+		println(path_parts[0])
 	}
 }
 
