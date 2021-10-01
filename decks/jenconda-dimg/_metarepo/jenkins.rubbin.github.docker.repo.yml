@@ -14,7 +14,7 @@
   target:
     git: https://github.com/gzvulon/metacicd.git
     kind: repo-copy
-    subpath: tutorials/jenlib/01-jenlib/parallel_tasks_jen/repo_refs/jenlib/e2e/jenkins-master
+    subpath: tutorials/jenlib/01-jenlib/parallel_tasks_jen/repo_refs/jenlib/e2e/jenconda-dimg
     content:
         commit: db12a53849f585352d2020223644d413d904e249
         Author: Yair Dar

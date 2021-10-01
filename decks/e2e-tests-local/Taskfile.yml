@@ -26,7 +26,7 @@ tasks:
   build:
     desc: _
     cmds:
-      - docker-compose build
+      - task: ci-flow
 
   stop:
     desc: _
@@ -71,7 +71,7 @@ tasks:
 
   build-jenconda: |-
     task build \
-    -d {{._repo_root_}}/decks/jenkins-master
+    -d {{._repo_root_}}/decks/jenconda-dimg
       
   build-dev-editor: |-
     task build \

@@ -9,7 +9,7 @@ git clone https://github.com/ydzvulon/jenlib.git
 cd jenlib
 
 # build Jenkins Docker Image
-task -d decks/jenkins-master docker:build
+task -d decks/jenconda-dimg docker:build
 
 # run build and tests
 task ci-flow

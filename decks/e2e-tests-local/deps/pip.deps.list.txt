@@ -1,9 +1,0 @@
-fire
-loguru
-python-jenkins
-python-gitlab
-waiting
-coverage
-pytest
-pytest-cov
-pytest-xdist

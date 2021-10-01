@@ -87,7 +87,7 @@ tasks:
   jenconda:build-jenconda:
     desc: 3-level block. build jenconda docker image
     cmds:
-      - task -d decks/jenkins-master build
+      - task -d decks/jenconda-dimg build
 
   test-stage:
     desc: test new product

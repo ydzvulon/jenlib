@@ -27,7 +27,7 @@ node() {timestamps {
         jen.desc_from_commits(currentBuild, jg)
     }
 
-    catchError { dir('decks/jenkins-master'){
+    catchError { dir('decks/jenconda-dimg'){
         jen.step_stages_from_tasks(
             jg, jg.prj_dir,
             'Taskfile.yml', 'ci-flow')
