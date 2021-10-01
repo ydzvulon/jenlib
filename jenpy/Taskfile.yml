@@ -1,17 +1,13 @@
 # https://taskfile.dev
 
 version: '3'
+# https://pypi.org/project/junit-xml//
 
 includes:
-  pyinst: ../tools/pyinst.tasks.yml
-
-vars:
-  GREETING: Hello, World!
+  pyinst: pyinst.part.tasks.yml
 
 tasks:
   default:
-    cmds:
-      - echo "{{.GREETING}}"
-      - task -l
     silent: true
-# https://pypi.org/project/junit-xml//
+    cmds:
+      - task -l

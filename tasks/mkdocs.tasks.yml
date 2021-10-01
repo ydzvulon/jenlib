@@ -1,0 +1,56 @@
+# https://taskfile.dev
+version: '3'
+
+vars:
+  DIMAGE: "dev-docs-dimg"
+  DSERVE_PORT: 8690:8690
+  DARGS: "-v ${PWD}:/repo"
+
+tasks:
+  _denv: &run_in_docker
+    desc: '{{.TASK}} in docker environment'
+    args:
+      flags: additinal flags for docker
+      cmd: command to execute in docker
+    cmds:
+      - mkdir -p __localbuild__/site && chmod 777 __localbuild__/site
+      - |-
+        docker run {{default "--rm" .restart_rm}} \
+        {{ .DARGS }} {{.flags}} {{ .DIMAGE }} \
+        {{.cmd}}
+
+  build:
+    <<: *run_in_docker
+    desc: build docs in docker
+    vars:
+      cmd: docs:build-docs
+      local_dest: "$(yq read mkdocs.yml site_dir)"
+    source:
+      - '**/*.md'
+    generates:
+      - ''
+
+  serve:
+    <<: *run_in_docker
+    desc: render docs in browser, keep shoing logs.
+    vars:
+      cmd: docs:serve-docs
+      flags: -p {{.DSERVE_PORT}}
+
+  serve-bg:
+    <<: *run_in_docker
+    desc: serve docs, keep container in background.
+    vars:
+      cmd: docs:serve-docs
+      restart_rm: --restart=always 
+      flags: >-
+        -p {{.DSERVE_PORT}} 
+        -d
+
+  shell:
+    <<: *run_in_docker
+    desc: login to docs docker in shell
+    vars:
+      flags: |
+        -p {{.DSERVE_PORT}} \
+        -it --entrypoint /bin/bash \

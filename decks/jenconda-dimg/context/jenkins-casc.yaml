@@ -1,0 +1,29 @@
+jenkins:
+  systemMessage: |-
+    Welcome to CICD
+  agentProtocols:
+    - "JNLP4-connect"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+      - id: tester
+        password: ${tester_password:-tester123}
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+
+  globalLibraries:
+    libraries:
+    - defaultVersion: "master"
+      name: "JenkinsLib_Jenlib"
+      retriever:
+        legacySCM:
+          scm:
+            git:
+              branches:
+              - name: "*/yairdar.v0.8.3.pushes"
+              buildChooser: "default"
+              userRemoteConfigs:
+              - url: "https://github.com/ydzvulon/jenlib.git"

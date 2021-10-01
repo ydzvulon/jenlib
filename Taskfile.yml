@@ -3,95 +3,124 @@
 version: '3'
 
 includes:
-  mkdocs: _infra/mkdocs_pack/mkdocs.tasks.yml
-  # jenconda:
-  #   taskfile: dockers/jenkins-master/Taskfile.yml
-  #   dir: dockers/jenkins-master
-  e2e: ./tasks/e2e.tasks.yml
-  # docker: _infra/jenlib_lib/tasks/docker.tasks.yml
-  # tests: _infra/jenlib_lib/tasks/tests.tasks.yml
-  # ci: _infra/jenlib_lib/tasks/ci.tasks.yml
+  reposet: _infra/reposet_pack/reposet.tasks.yml
+  mkdocs: tasks/mkdocs.tasks.yml
+  jenlib: tasks/jenlib.product.tasks.yml
+  decks: 
+    dir: decks
+    taskfile: decks
+  # jenconda: tasks/jenconda.product.tasks.yml
 
+parts:
+  reposet:
+    items:
+      jenlib.config.ci:
+        name: ci-config-jenlib
+        subdir: _cicd/
+        dirname: __subrepos/ci-config-jenlib
+        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
 vars:
-  GREETING: Jenlib repo actions
-
+  # reposet__conf_map: __subdirs:Taskfile.yml@parts.reposet.items
+  # reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
+  reposet__conf_map: __subrepos:_layout_/parts/reposet.info.yml@vars.reposet_items_yaml
 tasks:
   default:
     cmds:
-      - echo "{{.GREETING}}"
-      - task -l
+      - task info
+      - echo "for task list use 'task list' "
     silent: true
+
+  list:
+    desc: list of avilable tasks. filter with [part=reposet part=mkdocs part=PROJ_PART]]
+    vars:
+      part: '{{ default "" .part}}'
+      part_opt: '{{if .part}}| grep {{.part}} {{else}}{{end}}'
+    cmds: 
+      - |-
+        task -l {{.part_opt}}
 
   info:
     desc: Information about this dir
+    silent: true
+    vars:
+      title: Jenlib repo actions
+      content: |
+        --- usefull tasklist ---
+        * task info            * show info about this project
+        * task resolve         * resolve dependancies
+        * task mkdocs:serve    * start live docs server (serve-bg for deattached mode)
+        * task ci-flow         * run ci pipeline [build, test, local_publish]
+        * task list            * list public tasks
+        for more tasks:        * task list #desc:# list public tasks
+        ------------------------
+        {{.title}}
+        
     cmds:
-      - |
-        echo '
-        # Jenlib taskfile
-
-        ## Layout
-
-        - `src` - jenkins shared lib 'jenlib'
-        - `jenpy` (jenlib) - python cli for jenkins, jenlib, gitlab, s3/http access
-
-        ## Command Groups
-
-        This repo is multi product repo
-        Each product have it's own taskfile
-        Taskfiles are copied to tasks dir from different ci-libs
-        Each taskfile express one group
-
-        > Available Groups
-
-        - jenlib - jenkins shared lib tasks
-        - docker - jenconda docker build
-        - mkdocs - documentation
-        - deps - environment tasks
-
-        ## Group Commands
-
-        Most Groups are
-
-
-  build:
-    desc: _
+      - echo '{{.content}}'
+  
+  resolve:
+    desc: resolve dependancies
     cmds:
-      - task -d dockers/jenkins-master docker:build:jenconda
+      - task: reposet:resolve
+          
+  ci-full:
+    desc: 0-level block. build and publish. requires --force flag.
+    cmds:
+    - task: ci-flow
+    - task: publish-flow
+    status:
+    - true # -prevent accidental run-
+
+  ci-flow:
+    desc: 1-level block. main entry point.
+    cmds:
+      - task build-stage -o prefixed
+      - task test-stage -o prefixed
+      - task report-stage -o prefixed
+
+  build-stage:
+    desc: 2-level block. build phase
+    deps:
+      - task: jenlib:build-jenlib
+      - task: jenconda:build-jenconda
+  
+  jenconda:build-jenconda:
+    desc: 3-level block. build jenconda docker image
+    cmds:
+      - task -d decks/jenconda-dimg build
+
+  test-stage:
+    desc: test new product
+    deps:
+      - task: test-e2e
+      - task: test-jl-runner
+    cmds:
+      - echo '[{{.TASK}} is OK]'
+
+  test-e2e:
+    desc: Run E2E tests with build
+    cmds:
+      - task -d decks apply task='ci-flow -o prefixed'  targets=e2e-tests-local
+    prefix: 'task ci-flow -d decks/2e-tests-local'
+
+  test-jl-runner:
+    desc: Build jenlibrunner and run headless tests
+    cmds:
+      - task -d decks/jenlib-runner-dimg ci-flow -o prefixed
+
+  report-stage:
+    desc: 2-level block. produces stam report about a build
+    cmds:
+      - echo "Not Yet Implemented"
+
+  publish-flow:
+    desc: 1-level block. publishes products to the world
+    status: ['true']
+    cmds:
+      - task -d decks/jenconda-dimg docker:publish -o prefixed
 
   readme:
     desc: _
     cmds:
       - cat README.md | less
 
-  build:prepare:
-    desc: _
-    cmds:
-      - rm -rf __localbuild__/jenbuild
-      - mkdir -p __localbuild__/jenbuild/jenlib
-      - rclone copyto vars  __localbuild__/jenbuild/jenlib/vars
-      - rclone copyto version/version_prefix.txt __localbuild__/jenbuild/jenlib/version.txt
-
-  build:do:
-    desc: _
-    dir: __localbuild__/jenbuild/jenlib
-    cmds:
-      - zip -r ../jenlib.zip .
-
-  publish:build:
-    desc: _
-    cmds:
-      - rclone copyto  __localbuild__/jenbuild/jenlib.zip mts3:moneytime-http/buildx/jenlib/jenlib.zip
-
-  build:full:
-    desc: _
-    cmds:
-      - task: build:prepare
-      - task: build:do
-
-  full:cycle:
-    decs: _
-    cmds:
-      - task: build:full
-      - task: publish:build
-    status:
-      - true # prevent accidental run

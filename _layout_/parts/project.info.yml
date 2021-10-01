@@ -1,0 +1,30 @@
+apiVersion: projects/v1
+kind: ProjectDescriptor
+
+metadata:
+  name: jenlib
+parts:
+  project:
+    items:
+      descriptor:
+        path: version/descriptor.yml
+        desc: |
+          this file gives logical names real values
+
+      version_prefix:
+        path: version/version_prefix.txt
+        desc: |
+          first character of version
+          usually 3 first parts of semver
+          example: 0.3.41
+
+      project_prefix:
+        path: version/project_prefix.txt
+        desc: |
+          project public name
+
+      git_tag_prefix:
+        path: version/git_tag_prefix.txt
+        desc: |
+          prefix for git tags
+          existed for monorepos with multiple projects

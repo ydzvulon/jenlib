@@ -1,0 +1,100 @@
+#!/usr/local/bin/task --taskfile
+
+
+version: "3"
+
+tasks:
+
+  test-all:
+    desc: _
+    cmds:
+      - |-
+        echo '{ "a" : {"b":"r"}}' | jq .a | grep '"b"'
+        echo '{ "a" : {"b":"r"}}' | jq .a.b | grep r
+
+  install-all:
+    desc: install all tools
+    cmds:
+      - task: install/jq
+      - task: install/yq3
+      - task: install/rclone
+    # cmds:
+      - cmd: echo "done {{.TASK}}"
+
+  _install_exe_:
+    dir: __tmp__
+    vars:
+      usr_local_bin: /usr/local/bin
+      local_path: '{{ splitList "/" .url | last }}'
+      ext: '{{ splitList "." .url | last }}'
+      exe_name: '{{ default .name .exe_name}}'
+    cmds:
+      - |-
+        {{.intro}}
+      - wget -N {{.url}} -O {{.local_path}}
+      - |-
+        if [[ "{{.ext}}" == "zip" ]]; then
+          unzip -o {{.local_path}}
+          mv {{trimSuffix ".zip" .local_path}}/{{.exe_name}} ./{{.exe_name}}
+        else
+          mv {{.local_path}} {{.name}}
+        fi
+      - chmod +x {{.name}}
+      - |-
+        _SUDO=$(which sudo &> /dev/null && echo "sudo" || echo "")
+        {{._SUDO}} mv {{.name}} {{.usr_local_bin}}
+      # support alias (two names)
+      - |-
+        if [[ "{{.alias}}" != "" ]]; then
+          pushd {{.usr_local_bin}}
+            sudo cp {{.name}} {{.alias}}
+          popd
+        fi
+      - |-
+        {{.outro}}
+
+  __install_exe: &__install_exe
+    cmds:
+    - task: _install_exe_
+      vars:
+        url: '{{.url}}'
+        name: '{{.name}}'
+        exe_name: '{{.exe_name}}'
+        alias: '{{.alias}}'
+
+  install/jq:
+    desc: install jq tool
+    vars: 
+      name: jq
+      version: "1.6"
+      os_suff: '{{if eq OS "darwin"}}osx-amd{{else}}{{trimSuffix "dows" OS}}{{end}}64'
+      url: 'https://github.com/stedolan/jq/releases/download/jq-{{.version}}/jq-{{.os_suff}}'
+    <<: *__install_exe
+
+  install/yq3:
+    <<: *__install_exe
+    desc: install jq tool
+    vars: 
+      name: yq3
+      alias: yq
+      version: "3.0.1"
+      url: https://github.com/mikefarah/yq/releases/download/{{.version}}/yq_{{OS}}_{{ARCH}}
+
+  install/yq4:
+    <<: *__install_exe
+    desc: install yq4 tool
+    vars: 
+      name: yq4
+      alias: yq
+      version: "4.13.2"
+      url: https://github.com/mikefarah/yq/releases/download/{{.version}}/yq_{{OS}}_{{ARCH}}
+
+  install/rclone:
+    <<: *__install_exe
+    desc: install yq4 tool
+    vars: 
+      name: rclone
+      version: "1.56.1"
+      exe_name: rclone
+      url: https://downloads.rclone.org/v{{.version}}/rclone-v{{.version}}-{{OS}}-{{ARCH}}.zip
+

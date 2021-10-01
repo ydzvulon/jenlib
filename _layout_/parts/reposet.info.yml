@@ -1,0 +1,57 @@
+#!/usr/local/bin/task --taskfile
+
+apiVersion: projects/v1
+kind: mxk:ydt.reposet.items
+
+metadata:
+  name: reposet
+
+# --- task include part
+version: "3"
+includes:
+  reposet: ../../_infra/reposet_pack/reposet.tasks.yml
+
+vars:
+  _taskfile_: reposet.info.yml
+  # reposet__conf_map: __subrepos:reposet.info.yml@vars.reposet_items_yaml
+  reposet_items_yaml: |-
+    ci-config-jenlib:
+      name: ci-config-jenlib
+      subdir: .
+      dirname: ./ci-config-jenlib
+      branch: main
+      remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
+    
+    jencoda_dimg:
+      name: jencoda_dimg
+      subdir: .
+      dirname: ./jencoda_dimg
+      branch: main
+      remote_origin_url: git@github.com:ydzvulon/jencoda.dimg.git
+
+    jenkins-configuration-as-code-sandbox:
+      name: jenkins-configuration-as-code-sandbox
+      subdir: .
+      dirname: ./jenkins-configuration-as-code-sandbox
+      branch: main
+      remote_origin_url: https://github.com/tomasbjerre/jenkins-configuration-as-code-sandbox.git
+
+    jenlib_public_repo:
+      name: jenlib_public_repo
+      subdir: .
+      dirname: ./jenlib_public_repo
+      branch: main
+      remote_origin_url: https://github.com/ydzvulon/jenlib_public_repo.git
+    
+    sample-cicd-jenlib:
+      name: sample-cicd-jenlib
+      subdir: .
+      dirname: ./sample-cicd-jenlib
+      branch: main
+      remote_origin_url: https://gitlab.com/metapath/sample-cicd-jenlib
+      
+      
+tasks:
+  default:
+    silent: true
+    cmds: [{task: reposet:info}]

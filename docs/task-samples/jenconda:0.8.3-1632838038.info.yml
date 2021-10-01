@@ -1,0 +1,52 @@
+kind: mxk.docker-build.info
+version: "3"
+
+vars: &_vars_
+  name: jenconda
+  target_type: docker
+  local_key:  jenconda:v0.8.2rc-2021.09.27rc  # <<<@ :fulltag:
+  remote_repo: yairdar
+  remote_key: '{{.remote_repo}}/{{.local_key}}'
+  meta: |-
+    user: yairdar
+    host: macbook
+    ts: 1632829075
+  events: |-
+    - { act: init, name: build, state: started.ok, ts.init: 1632829075 }
+    - { act: over, name: build, state: finished.ok, ts.over: 1632839075, 
+        duration: 10000, size="30Mb", rescost: "12cpu*0.2h"}
+
+env: *_vars_
+
+tasks:
+  
+  resolve: 
+    desc: resolve artefact from remote
+    cmds: ['docker pull {{.remote_key}}']
+    status: ['docker image inspect {{.remote_key}}']
+  
+  start:
+    desc: start jenconda
+    cmds: ['docker run -d --name jennconda-w {{.remote_key}}']
+
+  stop:
+    desc: start jenconda
+    cmds: ['docker stop --name jennconda-w | true']
+    ignore: true
+
+  restart:
+    desc: restart
+    cmds:
+      - task: stop
+      - task: start
+
+  kill:
+    desc: remove container jenconda
+    cmds: ['docker rm -f jennconda-w']
+    ignore: true
+
+  remove:
+    desc: remove image jenconda
+    cmds: ['docker rmi -f jennconda-w']
+    ignore: true
+

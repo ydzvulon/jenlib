@@ -9,3 +9,7 @@ _out/*
 __pycache__
 .cache
 .minio.sys
+__tmp__
+__build_info
+__subrepos
+__subdirs

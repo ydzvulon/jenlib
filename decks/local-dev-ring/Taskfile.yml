@@ -14,7 +14,8 @@ tasks:
     desc: _
     cmds:
       - docker-compose -f {{.target_dest_file}} restart
-  show:urls:
+
+  show-urls:
     desc: prints services ui urls
     silent: yes
     cmds:
@@ -25,3 +26,9 @@ tasks:
            GitLab: 'http://localhost:38080'
            RepoHttp: 'http://localhost:8043'
         '
+  spin-down:
+    desc: _
+    vars:
+      rest_suff: '{{if .safe_run}}| true{{else}} {{end}}'
+    cmds: 
+      - docker-compose -f {{.target_dest_file}} down {{.rest_suff}}

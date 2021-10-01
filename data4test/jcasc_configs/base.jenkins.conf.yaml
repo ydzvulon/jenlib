@@ -1,0 +1,7 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+        - id: "jenkins"

@@ -1,0 +1,102 @@
+# https://taskfile.dev
+
+version: '3'
+includes:
+  reposet: reposet.tasks.yml
+  # - ydtask: ydpack.tasks.yml
+
+parts:
+  reposet:
+    items:
+      ci-config-jenlib.parts_reposet_items:
+        name: ci-config-jenlib.parts_reposet_items
+        subdir: _cicd/
+        dirname: __subrepos/ci-config-jenlib
+        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
+
+vars:
+  reposet__conf_map__parts__repost__items: __subdirs:Taskfile.yml@parts.reposet.items
+  reposet__conf_map__reposet__items_yaml: __subdirs:Taskfile.yml@vars.reposet__items_yaml
+  reposet__conf_map__default: '{{.reposet__conf_map__reposet__items_yaml}}'
+  direct_yaml: '0'
+  reposet__conf_map: >-
+    {{ if eq "1" .direct_yaml}}{{.reposet__conf_map__parts__repost__items}}{{else}}{{.reposet__conf_map__default}}{{end}}
+  reposet__items_yaml: |-
+    ci-config-jenlib.reposet__items_yaml:
+      name: ci-config-jenlib.reposet__items_yaml
+      apitags: [reposet]
+      subdir: _cicd/
+      dirname: __subrepos/ci-config-jenlib
+      remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
+
+tasks:
+  default:
+    silent: true
+    cmds: [task info]
+
+  info:
+    desc: info about the reposet
+    cmds:
+      - task -l
+      - task reposet:info
+
+  # sh-invoke:
+  #   desc: invoke task via shell
+  #   vars:
+  #     inc_pref: 'trimSuffix "test" {{.TASK}}'
+  #     _taskcmd: 'task {{'
+  #   cmds:
+  #     - task {{list-items direct=1
+  #     - task list-items
+
+  test:
+    desc: _
+    cmds:
+      - task: tests:test-config-approach
+  
+  tests:test-config-approach:
+    desc: _
+    cmds:
+      - task: tests:diff-text-yaml-assert
+        vars:
+          left: 'task reposet:list-items direct_yaml=1 --silent'
+          right: 'task reposet:list-items --silent'
+          expected: |-
+            2c2
+            < place_key: Taskfile.yml@parts.reposet.items 
+            ---
+            > place_key: Taskfile.yml@vars.reposet__items_yaml 
+            4c4
+            < - ci-config-jenlib.parts_reposet_items: mkx:repo.key.name
+            ---
+            > - ci-config-jenlib.reposet__items_yaml: mkx:repo.key.name
+
+  tests:diff-text-yaml:
+    desc: _
+    cmds:
+      - diff <({{.left}}) <({{.right}})
+
+  tests:diff-text-yaml-assert:
+    desc: _
+    env:
+      _the_diff:
+        sh: 'diff <({{.left}}) <({{.right}}) || true'
+      _expected: '{{.expected}}'
+    cmds:
+      - |-
+        # echo @@@---_the_diff
+        # echo "$_the_diff"
+        # echo @@@---_expected
+        # echo "$_expected"
+        # echo @@@#---result
+        diff <(echo "$_the_diff") <(echo "$_expected")
+
+        
+
+
+  update-this-pack:
+    desc: update this pack by copy full new version of the pack
+    # cmds:
+    #   - task: ydpack:update
+    #     vars:
+          

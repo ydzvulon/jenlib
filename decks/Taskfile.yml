@@ -1,0 +1,31 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+  targets: >-
+    dev-docs-local
+    dev-editor-local
+    local-dev-ring
+
+tasks:
+  apply:
+    desc: |-
+      goal: apply sematic task to target decks.
+      sample: task apply task='show-urls'
+    args: 
+      task: taskname to dispatch 
+      opts: taskgo runner options(--silent, etc) 
+      params: task parameters
+    vars:
+      _spread_: true
+      _with_items_: '{{.targets}}'
+      _with_cmd_: task {{.opts}} {{.task}} {{.params}} -d
+    cmds: 
+      - echo '{{ regexReplaceAll " +" .targets "\n" }}' | xargs -I% {{._with_cmd_}} %
+
+  stop-all:
+    desc: stop all decks
+    cmds: [{task: apply, vars: {task: spin-down }}]
+        

@@ -1,0 +1,30 @@
+@Library('JenkinsLib_Jenlib') _
+
+// library identifier: 'jenlib@0.7.5', retriever: http(
+// credentialsId: 'asd',
+// httpURL: 'http://httpit:8043/__localbuild__/jenbuild/jenlib.zip')
+
+def kwj = [
+    'scmvars': null,
+    'task_parse_result': [:],
+]
+
+node {
+    
+
+    stage('start'){
+        sh 'echo START'
+        kwj.scmvars = checkout scm
+    }
+
+    dir('.'){
+        sh 'ls -l; pwd'
+        jen.step_stages_from_tasks(
+            kwj, '.' ,'Taskfile.yml', 'ci-flow'
+        )
+    }
+
+    stage('finis'){
+        sh 'echo FINSH'
+    }
+}

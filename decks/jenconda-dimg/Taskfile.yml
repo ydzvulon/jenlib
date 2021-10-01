@@ -1,0 +1,305 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  GREETING: JenkinsDockers
+  jentest_machine: jentest
+  DIMAGE: jenconda
+  _l: '{'
+  _r: '}'
+  # Size: '"{{._l}}{{._l}} .Size {{._r}}{{._r}}"'
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+      - task -l
+    silent: true
+
+  info:
+    desc: show info about this project
+    silent: true
+    vars:
+      info_bar: |-
+        * task info               * show info
+        * task build              * build docker jenconda
+        * task test               * test jenconda bootstrap (outside repo with tester)
+    cmds:
+      - echo "{{.info_bar}}"
+
+  docker:publish:
+    desc: publish jenconda
+    cmds:
+      - task: docker-retag-local-remote
+      - task: docker-push-remote
+
+  docker-retag-local-remote:
+    desc: _
+    vars:
+      remote_prefix: yairdar
+      local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+    cmds:
+      - |-
+        local_fulltag=$({{.local_fulltag}})
+        local_tag=$(echo :${local_fulltag} | sed 's@.*:@@g')
+        docker tag ${local_fulltag} {{.remote_prefix}}/${local_fulltag}
+        docker images | grep {{.remote_prefix}} | grep ${local_tag}
+
+  docker-push-remote:
+    decs:
+    vars:
+      remote_prefix: yairdar
+      local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+    cmds:
+      - |-
+        local_fulltag=$({{.local_fulltag}})
+        local_tag=$(echo :${local_fulltag} | sed 's@.*:@@g')
+        docker push {{.remote_prefix}}/${local_fulltag}
+
+  docker:build:jenmaster:
+    desc: _
+    cmds:
+      - docker build -f Dockerfile.jenmaster.Dockerfile -t jenmaster .
+
+  docker:build:jenconda:
+    desc: _
+    deps:
+      - docker:build:jenmaster
+    vars:
+      requested_ts: {sh: date +"%s"}
+      vers: '$(cat ../../version/version_prefix.txt)'
+      fulltag: '{{.DIMAGE}}:{{.vers}}-{{.requested_ts}}'
+    cmds:
+      - mkdir -p __build_info/docker-build/jenconda
+      - |-
+        cat <<EOF > __build_info/docker-build/jenconda.build.init.info.yml
+        ---
+        key: docker-build.{{.fulltag}}-init
+        act: init
+        stage: build
+        part: docker
+        fulltag: {{.fulltag}}
+        EOF
+      - |-
+        docker build \
+          -f Dockerfile.jenconda.Dockerfile  \
+          -t {{.fulltag}} \
+          .
+        docker tag {{.fulltag}} {{.DIMAGE}}:latest
+      - |-
+        # size=docker image inspect -f "{{._l}}{{._l}} .Size {{._r}}{{._r}}" {{.fulltag}}
+        over_ts=$(date +"%s")
+        cat <<EOF > __build_info/docker-build/jenconda.build.over.info.yml
+        ---
+        key: docker-build.{{.fulltag}}-over
+        act: init
+        stage: build
+        part: docker
+        fulltag: {{.fulltag}}
+        init_ts: {{.requested_ts}}
+        over_ts: $over_ts
+        duration: $(echo "$over_ts - {{.requested_ts}}" | bc)
+        EOF
+        cat __build_info/docker-build/jenconda.build.over.info.yml
+  docker:build:
+    desc: _
+    deps: [docker:build:jenconda]
+
+  build:
+    desc: _
+    deps: [docker:build]
+
+  spin:up:bash:
+    desc: _
+    cmds:
+      - docker rm -f {{.DIMAGE}}_lc || true
+      - mkdir -p $(realpath ~)/shared/jenkins_c
+      - |
+        docker run \
+        --name {{.DIMAGE}}_lc \
+        -d \
+        -p 8080:8080 \
+        -p 50000:50000 \
+        -p 5000:5000 \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
+        {{.DIMAGE}}
+
+  spin:up:
+    desc: _
+    cmds:
+      - mkdir -p /tmp/GITLAB_HOME
+      - chmod 777 /tmp/GITLAB_HOME
+      - docker-compose up -d
+
+  spin:down:
+    desc: _
+    cmds:
+      - docker-compose down
+
+  spin:up:dev:
+    desc: _
+    cmds:
+      - docker-compose up -d
+
+  status:
+    desc: _
+    cmds:
+      - docker-compose ps
+
+  docker:run:local:
+    desc: _
+    cmds:
+      - docker rm -f {{.DIMAGE}}
+      - mkdir -p $(realpath ~)/shared/jenkins_c
+      - |
+        docker run \
+        --name {{.DIMAGE}}
+        -d \
+        -p 8080:8080 \
+        -p 50000:50000 \
+        -p 5000:5000 \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $(realpath ~)/shared/jenkins_c:/shared/jenkins_c \
+        {{.DIMAGE}}
+
+  docker:run:dev:
+    desc: _
+    cmds:
+      - docker rm -f {{.DIMAGE}}
+      - test -d /opt/dockers-data || (sudo mkdir -p /opt/dockers-data && (sudo chmod -R 777 /opt/dockers-data || true))
+      - test -d /opt/dockers-data/jenkins_home_dev || (sudo mkdir -p /opt/dockers-data/jenkins_home_dev && (sudo chmod -R 777 /opt/dockers-data/jenkins_home_dev || true))
+      - |
+        docker run \
+        --name {{.DIMAGE}}
+        -d \
+        -p 8830:8080 \
+        -p 58300:50000 \
+        -v /opt/dockers-data/jenkins_home_dev:/var/jenkins_home:rw \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v $(realpath ~):/var/userhome:ro \
+        -v $(realpath ../..):/var/jenlib_repo:ro \
+        jenconda
+
+  docker:run:test:init:
+    desc: _
+    vars:
+      VOLUME_NAME: 
+        sh: echo '{{.DIMAGE}}'
+      DEMONIZE: -d
+    cmds:
+      # - docker volume rm {{.VOLUME_NAME}}|| true
+      - docker rm -f jenconda
+      - docker volume create {{.VOLUME_NAME}} || true
+      # -d \
+      - |
+        docker run \
+        --name jenconda
+        -d \
+        -p 18808:8080 \
+        -p 18500:50000 \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v {{.VOLUME_NAME}}:/var/jenkins_home:rw \
+        -v $(realpath ~):/var/userhome:ro \
+        -v $(realpath ../..):/var/jenlib_repo:ro \
+        jenconda
+      - ./wait-for-it.sh localhost:18808
+      - echo access "http://localhost:18808"
+
+  docker:run:test:flow:
+    desc: _
+    cmds:
+      - ./wait-for-it.sh localhost:18808
+
+  docker:run:test:full:
+    desc: _
+    cmds:
+      - task docker:run:test:init
+      - task docker:run:test:flow
+
+  ci-flow:
+    desc: _
+    cmds:
+      - task docker:build -o prefixed
+      - task docker:run:test:full -o prefixed
+
+  docker:clean:data:
+    desc: _
+    cmds:
+      - rm -rf ~/jenkins_home/* ~/jenkins_home/.*
+
+  install:jcli:
+    # desc: _
+    cmds:
+      - which brew && brew install jcli || true
+      - |
+        which brew \
+        || curl -L https://github.com/jenkins-zh/jenkins-cli/releases/latest/download/jcli-linux-amd64.tar.gz|tar xzv \
+        && sudo mv jcli /usr/local/bin/
+
+  shapshot:update:
+    desc: _
+    cmds:
+      - jcli plugin list > install.snapshots/snapshot_2020-05-20--00-40-45/jcli_plugin_list.org.tsv
+
+  dm:sync:
+    desc: _
+    cmds:
+      - |
+        docker-machine scp -r . {{.jentest_machine}}:/home/docker/_jm
+
+  dm:ssh:
+    desc: _
+    cmds:
+      - |
+        docker-machine ssh {{.jentest_machine}}
+
+  show-plugins-from:
+    desc: _
+    vars:
+      target: install.snapshots/snapshot_2020-05-20--00-40-45
+    cmds:
+      # - |
+      #   cat "{{.target}}/jcli_plugin_list.org.tsv" \
+      #   | python -c "
+      #   import fileinput
+      #   for line in fileinput.input():print(':'.join(line.split()[:2]))
+      #   "
+      - |
+        cat "{{.target}}/jcli_plugin_list.org.tsv" \
+        | python -c "import fileinput; \
+        set(map( \
+          lambda x: print(':'.join(x.split()[:2])), \
+          list(fileinput.input())[1:])) \
+        "
+    silent: yes
+
+  gen-plugins-from:
+    desc: _
+    cmds:
+      - task show-plugins-from > plugins.txt 2>&1
+
+      # - cat "{{.target}}/jcli_plugin_list.org.tsv" | sed 's/ false/blas/'
+      # - cat "{{.target}}/jcli_plugin_list.org.tsv" | python -c "print(x.split()"
+
+  dm:list:
+    desc: _
+    cmds:
+      - docker-machine ls
+
+  tpa:
+    desc: _
+    cmds:
+      - curl http://192.168.99.100:8880/
+      - curl http://192.168.99.100:8880/ | grep 'Please wait while Jenkins is getting ready to work'
+
+
+  get-swarm-agent:
+    desc: _
+    cmds:
+      - mkdir -p /tmp
+      - cd /tmp && wget https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/3.23/swarm-client-3.23.jar
+      - mkdir -p /data/tools/
+      - mv /tmp/swarm-client-3.23.jar /data/tools/
+

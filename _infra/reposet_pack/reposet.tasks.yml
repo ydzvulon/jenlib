@@ -1,0 +1,292 @@
+#!/usr/local/bin/task --taskfile
+# https://taskfile.dev
+
+version: '3'
+## url_from=https://mohitgoyal.co/2019/01/20/checkout-only-selected-paths-from-git-repository/
+parts:
+  reposet:
+    items:
+      jenlib_main:
+        name: jenlib_main
+        branch: main.ydzvulon
+        subdir: __subrepos
+        dirname: __subrepos/jenlib_main
+        remote_origin_url: git@github.com:ydzvulon/jenlib.git
+vars:
+  __args__:
+    reposet__parallel: |-
+      desc: limit parallelisation to specific expression
+      examples:
+        - 4
+    reposet__conf_map: |-
+      desc: install in TARGETDIR repos from REPOSET-CONFIG-YML at YPATH
+      pattern: TARGETDIR:REPOSET-CONFIG-YML@YPATH
+      examples:
+        - ..:_layout_/subrepos.conf.yml@items: |-
+            will read repos config from file _layout_/subrepos.conf.yml at key items
+            repos will be sibblings of current repo
+        - subrepos:_layout_/reposet.conf.yml@items: |-
+            will read repos config from file _layout_/subrepos.conf.yml at key items
+            repos will be placed under subrepos dir of current repo
+  
+  # reposet__conf_map__def: |-
+  #   __subdirs:reposet.tasks.yml@parts.reposet.items
+
+  # reposet__conf_map: '{{ default "__subdirs:reposet.tasks.yml@parts.reposet.items" .reposet__conf_map}}'
+  # reposet__conf_map: '{{ default .reposet__conf_map__def .reposet__conf_map}}'
+  repos_root: '{{splitList ":" .reposet__conf_map | first }}'
+  repos_root_pref: "{{.repos_root}}:"
+  items_addr_token: '{{trimPrefix  .repos_root_pref .reposet__conf_map }}'
+  _items_exp: 'yq read {{ .items_addr_token | replace "@" " " }} | yq read - '
+  repos_conf_file: '{{splitList "@" .items_addr_token | first }}'
+  reposet__parallel_exp: 'yq read {{.repos_conf_file}} vars.reposet__parallel || echo ""'
+  repos: "$(echo $({{._items_exp}} | yq r - --tojson | jq -r '. | keys[]'))"
+  taskpath_arg: "{{if ._taskfile_}} -t {{._taskfile_}}{{else}}{{end}}"
+  task_opt: "-o prefixed"
+
+tasks:
+  # -- initial repo
+  default: echo "reposet tasks use -l for list"
+  info:
+    desc: info
+    cmds:
+     - echo "_expected_args='{{._expected_args}}'"
+     - echo "repos_conf_file='{{.repos_conf_file}}'"
+     - echo "reposet__parallel_exp='{{.reposet__parallel_exp}}'"
+     - echo '@@act=report kind=actual repos_root="{{.repos_root}}" repos="{{.repos}}" _items_exp="{{._items_exp}}"'
+     - task: list-items
+    silent: true
+
+  # init:
+  #   desc: initialize this dir with current reposet
+  #   cmds:
+  #     - task: list-git-repos
+  #       vars:
+  #         last_suffix: '| tee > reposet.conf.yml'
+  #   # "{{.items_addr_token}}" '
+
+  list-cmds:
+    desc: list available commands
+    cmds:
+      - task {{.taskpath_arg}} -l
+
+  list-items:
+    desc: list reposets
+    silent: true
+    cmds:
+      - |- 
+        echo "\
+        file_key: {{.repos_conf_file}}
+        place_key: {{.items_addr_token}} 
+        items_key: '{{._items_exp}}'
+        items: 
+        $(echo {{.repos}} | xargs -I% echo '-' %: mkx:repo.key.name)
+        "
+
+  # list-git-repos:
+  #   desc: _
+  #   arg:
+  #     last_suffix: default='' desc=''
+  #   vars:
+  #     path: '{{.repos_root}}'
+  #     to_yaml: "| jq -s '.'|  jq  'reduce .[] as $i ({}; .[$i.dirname] = $i)' | yq r - -P"
+  #     rest_choice: "{{ if .tojson }}{{else}}{{.to_yaml}}{{end}}"
+  #   cmds:
+  #     - echo {{.path}}
+  #     - |
+  #       ls -1 {{.path}} \
+  #       | xargs -n1 -I{} bash -c \
+  #       "test -e {{.path}}/{}/.git && echo {} || true" \
+  #       | xargs -n1 -I{} bash -c \
+  #       'echo \
+  #       -  {"dirname": "{}", \
+  #         "branch": "$(git -C {{.path}}/{} rev-parse --abbrev-ref HEAD)", \
+  #         "remote_origin_url": "$(git -C {{.path}}/{} config --get remote.origin.url)", \
+  #         "commit": "$(git -C {{.path}}/{} rev-parse --short HEAD)"} \
+  #       ' | yq r - '[*]' \
+  #       --tojson {{.rest_choice}} {{.last_suffix}}
+
+  #   silent: true
+
+  # --- multicast task implementation ---
+  multi-bash:
+    _desc: run multiple inputs in parallel
+    args:
+      cmd: command
+      with_items: '[cmd({}) for {} in with_items]'
+    jenlib:
+      parallel: with_items
+      item: '{}'
+    vars:
+      count_items_def: "$(echo {{.with_items}} | wc -w)"
+      # count_items: "$(echo {{.with_items}} | wc -w)"
+      reposet__parallel: "$( {{.reposet__parallel_exp}} )"
+
+      count_items: '{{if .reposet__parallel}}{{.reposet__parallel}}{{else}}{{.count_items_def}}{{end}}'
+    cmds:
+      - echo "{{.with_items}}"
+      - echo "count_items={{.count_items}}"
+      - |-
+        echo "{{.with_items}}" \
+        | xargs -n 1 \
+        | xargs \
+          -I {} \
+          -P {{.count_items}} \
+        {{.cmd}}
+    prefix: "par:{{.count_items}}"
+    silent: true
+
+  do-many:
+    jenlib: {multitask: true, items: with_items, parallel: unfold, subseq: unfold}
+    args:
+      taskname: install-src:one
+      params_tail: custom parames
+    cmds:
+      - task: multi-bash
+        vars:
+          with_items: "{{.repos}}"
+          cmd: "task {{.task_opt}} {{.taskpath_arg}} {{.taskname}} repo='{}' {{.params_tail}}"
+
+  many-by-one: &_ref_many_by_one
+    desc: _
+    cmds:
+      - task: do-many
+        vars:
+          taskname: "{{.TASK}}:one"
+          params_tail: "name={{.name}}"
+          # params_tail: "{{.params_tail}}"
+    silent: true
+
+  # --- ones ---
+  _repo_vars:one: &_ref_one
+    vars:
+      var_dirname: "$({{._items_exp}} {{.repo}}.dirname)"
+      dirname: '{{.repos_root}}/{{.var_dirname}}'
+      remote_origin_url: "$({{._items_exp}} {{.repo}}.remote_origin_url)"
+      branch: "$({{._items_exp}} {{.repo}}.branch)"
+    prefix: "{{.TASK}}:{{.repo}}"
+    cmds:
+      - echo var_dirname={{.var_dirname}}
+      - echo dirname={{.dirname}}
+      - echo remote_origin_url={{.remote_origin_url}}
+      - echo branch={{.branch}}
+    # silent: true
+
+  install-src:one:
+    <<: *_ref_one
+    cmds:
+      - echo task -d {{.dirname}} dev:install-here
+  install-src: *_ref_many_by_one
+
+  status:one:
+    <<: *_ref_one
+    # silent: yes
+    cmds:
+      - echo {{.dirname}}
+      - test -e {{.dirname}} && echo "{{.repo}}=present" || echo "{{.repo}}=missing"
+      - git -C {{.dirname}} diff HEAD && echo "{{.repo}}:modified=false" || echo "{{.repo}}:modified=true"
+      - "[[ -z $(git -C {{.dirname}} status -s) ]] && echo '{{.repo}}:dirty=false' || echo '{{.repo}}:dirty=true'"
+      - |-
+        if [[ "{{.name}}" == "full" ]]; then
+          git -C {{.dirname}} status -s
+        fi
+
+  status: *_ref_many_by_one
+
+  clone:one:
+    <<: *_ref_one
+    cmds:
+      - git clone {{.remote_origin_url}} {{.dirname}}
+
+    status:
+      - test -d {{.dirname}}
+    silent: off
+  clone: *_ref_many_by_one
+
+  checkout:one:
+    <<: *_ref_one
+    cmds:
+      - git -C {{.dirname}} checkout {{.branch}}
+    status:
+      - |
+        [[ "$(git -C {{.dirname}} rev-parse --abbrev-ref HEAD)" == "{{.branch}}" ]]
+  checkout: *_ref_many_by_one
+
+  update-submodules:one:
+    <<: *_ref_one
+    cmds:
+      - git -C {{.dirname}} submodule update --init --recursive
+  update-submodules: *_ref_many_by_one
+
+  pull:one:
+    <<: *_ref_one
+    cmds:
+      - echo .dirname={{.dirname}}
+      - mkdir -p $(dirname {{.dirname}})
+      - git -C {{.dirname}} pull --rebase
+  pull: *_ref_many_by_one
+
+  push:one:
+    <<: *_ref_one
+    cmds:
+      - git -C {{.dirname}} push
+  push: *_ref_many_by_one
+
+  push-new:one:
+    <<: *_ref_one
+    cmds:
+      - git -C {{.dirname}} push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)
+  push-new: *_ref_many_by_one
+
+  sync:one:
+    <<: *_ref_one
+    env:
+      dirname: "{{.dirname}}"
+    cmds:
+      - mkdir -p $(dirname {{.dirname}})
+      - task: pull:one
+      - task: push:one
+  sync: *_ref_many_by_one
+
+  resolve:one:
+    <<: *_ref_one
+    env:
+      dirname: "{{.dirname}}"
+    cmds:
+      - mkdir -p $(dirname {{.dirname}})
+      - task: clone:one
+      - task: pull:one
+      - task: checkout:one
+      - task: update-submodules:one
+      - task: pull:one
+  resolve: *_ref_many_by_one
+
+  acommit:one:
+    <<: *_ref_one
+    cmds:
+      - git -C {{.dirname}} commit -am"${M}"
+  acommit: *_ref_many_by_one
+
+  _require_name_arg: |-
+    if [[ "{{.name}}" == "" ]]
+    then
+      echo "name arg is required ={{.name}}"
+      exit 1
+    fi
+
+  new-branch:one:
+    <<: *_ref_one
+    args: {name: name of new branch}
+    deps: [_require_name_arg]
+    cmds: ['git -C {{.dirname}} checkout -b {{.name}}']
+  new-branch: *_ref_many_by_one
+
+  remove:one:
+    <<: *_ref_one
+    cmds:
+    - rm -rf {{.dirname}}
+  remove:
+    <<: *_ref_many_by_one
+    desc: Remove all linked repos. Requires --force flag
+    status: [true]
+#   # --- reposet generation ---

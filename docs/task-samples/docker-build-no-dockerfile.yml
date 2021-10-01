@@ -1,0 +1,49 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  build-dimg:
+    desc: build image as test
+    vars:
+      _part__header: |-
+        FROM ubuntu:20.04
+        ENV IN_DOCKER 1
+      __part_install__: |-
+        COPY _INSTALER /_install/_INSTALER
+        RUN _EXECUTOR /_install/_INSTALER 
+      _content: |-
+        {{._part__header}}
+        {{ .__part_install__ | replace "_INSTALER" "_init_tools.sh"         | replace "_EXECUTOR" "bash"}}
+        {{ .__part_install__ | replace "_INSTALER" "_taskgo-install.sh"     | replace "_EXECUTOR" "bash"}}
+        {{ .__part_install__ | replace "_INSTALER" "ydtools.base.tasks.yml" | replace "_EXECUTOR" "task -t"}}
+    cmds:
+      - |-
+        # build an image using the current directory as context, 
+        # and a Dockerfile passed through stdin
+        docker build {{.opt}} -t test-install-base:latest -f- . <<EOF
+        {{._content}}
+        EOF
+
+
+     
+
+# _part___init_tools: |-
+#   COPY _init_tools.sh /_install/_init_tools.sh
+#   RUN /_install/_init_tools.sh
+
+# _part__taskgo: |-
+#   COPY _taskgo-install.sh /_install/_taskgo-install.sh
+#   RUN /_install/_taskgo-install.sh
+
+# _part__taskgo: |-
+#   COPY ydtools.base.tasks.yml /_install/ydtools.base.tasks.yml
+#   RUN bash _taskgo-install.sh
