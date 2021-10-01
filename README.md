@@ -34,3 +34,10 @@ Each taskfile express one group
 ## More Distributions
 
 - https://github.com/odavid/my-bloody-jenkins
+- https://hub.docker.com/r/eeacms/jenkins-slave
+- https://github.com/ydtools/eea.docker.jenkins.slave-dind
+- https://github.com/arminc/clair-scanner
+
+## Security
+
+- https://github.com/arminc/clair-scanner

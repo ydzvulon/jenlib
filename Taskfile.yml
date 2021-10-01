@@ -101,6 +101,7 @@ tasks:
     desc: Run E2E tests with build
     cmds:
       - task -d decks apply task='ci-flow -o prefixed'  targets=e2e-tests-local
+    prefix: 'task ci-flow -d decks/2e-tests-local'
 
   test-jl-runner:
     desc: Build jenlibrunner and run headless tests

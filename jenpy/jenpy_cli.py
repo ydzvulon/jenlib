@@ -3,6 +3,7 @@
 import fire
 import jenkins
 import time
+import json
 # https://myopswork.com/trigger-multiple-jenkins-jobs-from-json-api-with-python-script-244ea85557a9
 # https://wiki.jenkins.io/display/JENKINS/Remote+access+API/
 
@@ -127,7 +128,6 @@ class JenCli:
 
         print("@@act=init stage=build.samples")
         _ret = self.build_job_block('samples/pipe_503_tasks_from_yml.groovy', show_log=show_log)
-        import json
         assert 'SUCCESS' == _ret['jobinfo']['result'], json.dumps(_ret, indent=2, sort_keys=True)
 
 if __name__ == '__main__':

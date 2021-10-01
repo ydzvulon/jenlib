@@ -59,12 +59,13 @@ pipelineJob("\${seed_job_name}") {
 	parameters {
 		stringParam('seed_job_branch',"\${seed_job_branch}", 'seed_job_branch')
 		stringParam('seed_job_repo',"\${seed_job_path}", 'seed_job_repo')
+		stringParam('jobs_def_dir',"\${jobs_def_dir}", 'jobs_def_dir')
 		stringParam('seed_job_pcustom',"seed_job_pcustom", 'seed_job_pcustom')
 	}
-	environmentVariables {
-		envs(jobs_def_dir: "\${jobs_def_dir}")
-		keepBuildVariables(true)
-	}
+	//  environmentVariables {
+	//    envs(jobs_def_dir: "\${jobs_def_dir}")
+	//    keepBuildVariables(true)
+	//  }
 	disabled(false)
 	configure {
 		it / 'properties' / 'com.sonyericsson.rebuild.RebuildSettings' {

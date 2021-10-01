@@ -14,7 +14,8 @@ private boolean isSandbox() {
 List<Map> gitlab = []
 if (isSandbox()) {
   gitlab = [
-    [name: 'tests', displayName: 'Jenkins Tests', group: 'jenkins/tests'],
+    // [name: 'tests', displayName: 'Jenkins Tests', group: 'jenkins/tests'],
+    [name: 'metapath']
   ]
 } else {
 
