@@ -82,11 +82,18 @@ class JenCli:
             timeout_seconds=15,
             expected_exceptions=(jenkins.JenkinsException,)
         )
+
+        seed_job_branch = subprocess.check_output(
+            "git rev-parse --abbrev-ref HEAD".split()
+            ).decode().strip() 
         seed_job = f'_test_seed_{dt}'
+        seed_job_path = 'file:///repo'
+
         _ret = self.build_job_block(
             '_new_ci',
             parameters=dict(
-                seed_job_branch='master',
+                seed_job_branch=seed_job_branch,
+                seed_job_path=seed_job_path,
                 seed_job_name=seed_job),
             show_log=show_log,
         )
@@ -103,6 +110,9 @@ class JenCli:
         _ret = self.build_job_block(seed_job, parameters={"con": "w"}, show_log=show_log)
         print(_ret)
 
+        print("@@act=init stage=build.samples")
+        _ret = self.build_job_block('samples/pipe_503_tasks_from_yml.groovy', show_log=show_log)
+        print(_ret)
 
 if __name__ == '__main__':
     # jc = JenCli()
