@@ -115,6 +115,8 @@ tasks:
   publish-flow:
     desc: 1-level block. publishes products to the world
     status: ['true']
+    cmds:
+      - task -d decks/jenconda-dimg docker:publish -o prefixed
 
   readme:
     desc: _
