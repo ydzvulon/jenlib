@@ -98,7 +98,8 @@ class JenCli:
                 seed_job_name=seed_job),
             show_log=show_log,
         )
-        print(_ret)
+        assert 'SUCCESS' == _ret['jobinfo']['result'], json.dumps(_ret, indent=2, sort_keys=True)
+
         # wait until job is created
         print("@@act=wait stage=start topic='job created'")
         waiting.wait(
@@ -112,11 +113,12 @@ class JenCli:
             "seed_job_repo": seed_job_path,
             "seed_job_branch": seed_job_branch,
         }, show_log=show_log)
-        print(_ret)
+        assert 'SUCCESS' == _ret['jobinfo']['result'], json.dumps(_ret, indent=2, sort_keys=True)
 
         print("@@act=init stage=build.samples")
         _ret = self.build_job_block('samples/pipe_503_tasks_from_yml.groovy', show_log=show_log)
-        print(_ret)
+        import json
+        assert 'SUCCESS' == _ret['jobinfo']['result'], json.dumps(_ret, indent=2, sort_keys=True)
 
 if __name__ == '__main__':
     # jc = JenCli()

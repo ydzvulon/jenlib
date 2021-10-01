@@ -24,9 +24,11 @@ services:
     volumes:
       # - "jupconda.samexample.com"
       - "../..:/home/jovyan/repo"
+      - "/run/snapd.socket:/run/snapd.socket"
     networks:
       ntjendev:
-
+  # https://itsfoss.com/install-chromium-ubuntu/
+  
 networks:
   ntjendev:
     driver: bridge
