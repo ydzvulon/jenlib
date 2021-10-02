@@ -24,7 +24,7 @@ tasks:
     desc: run plain groovy tests in docker
     cmds:
       # - task run
-      - docker run --rm -v {{._repo_root_}}:/repo --workdir /repo jupconda_img task -d src test
+      - docker run --rm -v {{._repo_root_}}:/repo --workdir /repo dev-editor-dimg task -d src test
 
   test-plain-groovy-in-jup:
     desc: run plain groovy tests in jupyter
