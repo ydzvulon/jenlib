@@ -172,7 +172,7 @@ tasks:
       - test -d /opt/dockers-data/jenkins_home_dev || (sudo mkdir -p /opt/dockers-data/jenkins_home_dev && (sudo chmod -R 777 /opt/dockers-data/jenkins_home_dev || true))
       - |
         docker run \
-        --name {{.DIMAGE}}
+        --name {{.DIMAGE}} \
         -d \
         -p 8830:8080 \
         -p 58300:50000 \
@@ -195,7 +195,7 @@ tasks:
       # -d \
       - |
         docker run \
-        --name jenconda
+        --name jenconda \
         -d \
         -p 18808:8080 \
         -p 18500:50000 \
@@ -204,13 +204,13 @@ tasks:
         -v $(realpath ~):/var/userhome:ro \
         -v $(realpath ../..):/var/jenlib_repo:ro \
         jenconda
-      - ./wait-for-it.sh localhost:18808
+      - max_attempts=12 timeout_s=10 ./wait-for-it.sh localhost:18808
       - echo access "http://localhost:18808"
 
   docker:run:test:flow:
     desc: _
     cmds:
-      - ./wait-for-it.sh localhost:18808
+      - max_attempts=12 timeout_s=10 ./wait-for-it.sh localhost:18808
 
   docker:run:test:full:
     desc: _

@@ -8,3 +8,10 @@
 ## app with pyinstaller on jenkins
 
 - https://www.jenkins.io/doc/tutorials/build-a-python-app-with-pyinstaller/
+
+## Testing
+
+Amaining pytest
+
+- take a look on steps https://smarie.github.io/python-pytest-steps/#a-basics
+- and harvesting. https://smarie.github.io/python-pytest-harvest/
