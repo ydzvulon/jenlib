@@ -4,7 +4,7 @@
 
 - [ ] implement self build on slave dnd
 - [ ] implenet  
-- []  
+- []  0.8.4-1633187061
 
 ## jenlib-v0.8.4-2021.09.29rc1
 

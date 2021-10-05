@@ -8,6 +8,7 @@ vars:
 
   plugins_txt: |-
     htmlpublisher
+    && task write-var var=plugins_txt to_file=/usr/share/jenkins/ref/plugins.txt \
 
   jenkins_yaml: |-
     jenkins:
@@ -47,7 +48,6 @@ vars:
     COPY Taskfile.yml /opt/tctrl/Taskfile.yml
   
     RUN cd /opt/tctrl \
-        && task write-var var=plugins_txt to_file=/usr/share/jenkins/ref/plugins.txt \
         && task write-var var=jenkins_yaml to_file=/usr/share/jenkins/ref/casc/jenkins.yaml \
         && task write-var var=jenkins_yaml to_file=/usr/share/jenkins/ref/userContent/jenkins.yaml
     ENV CASC_JENKINS_CONFIG=/usr/share/jenkins/ref/userContent/jenkins.yaml
