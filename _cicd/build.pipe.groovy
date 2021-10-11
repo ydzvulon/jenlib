@@ -23,7 +23,7 @@ node() {timestamps {
         jg['scmvars'] = scmvars
 
         echo "hach for docker"
-        sh " sudo chmod 777 /var/run/docker.sock"
+        // sh " sudo chmod 777 /var/run/docker.sock"
     }
 
     stage('commits'){
