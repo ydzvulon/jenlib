@@ -62,6 +62,13 @@ tasks:
     desc: resolve dependancies
     cmds:
       - task: reposet:resolve
+
+  deps-resolve:
+    desc: _
+    vars:
+      apt_get_list: zip
+    cmds:
+      - sudo apt-get install -y {{.apt_get_list}}
           
   ci-full:
     desc: 0-level block. build and publish. requires --force flag.

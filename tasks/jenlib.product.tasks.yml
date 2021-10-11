@@ -20,7 +20,7 @@ tasks:
     cmds:
       - |-
         echo @@act=init step=build.prepare task={{.TASK}}
-        rm -rf {{.tmp_place}} mkdir -p {{.tmp_place}}
+        rm -rf {{.tmp_place}} && mkdir -p {{.tmp_place}}
         rclone copyto vars  {{.tmp_place}}/vars
         rclone copyto version/version_prefix.txt {{.tmp_place}}/version.txt
         echo @@act=over step=build.prepare task={{.TASK}}
