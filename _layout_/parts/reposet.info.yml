@@ -50,6 +50,15 @@ vars:
       branch: main
       remote_origin_url: https://gitlab.com/metapath/sample-cicd-jenlib
       
+    task-intellij-plugin:
+      name: task-intellij-plugin
+      subdir: .
+      dirname: ./task-intellij-plugin
+      branch: master
+      remote_origin_url: https://github.com/lechuckroh/task-intellij-plugin.git
+      
+    
+      
       
 tasks:
   default:
