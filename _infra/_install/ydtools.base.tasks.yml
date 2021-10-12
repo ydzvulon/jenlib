@@ -42,7 +42,7 @@ tasks:
       - chmod +x {{.name}}
       - |-
         _SUDO=$(which sudo &> /dev/null && echo "sudo" || echo "")
-        {{._SUDO}} mv {{.name}} {{.usr_local_bin}}
+        $_SUDO mv {{.name}} {{.usr_local_bin}}
       # support alias (two names)
       - |-
         if [[ "{{.alias}}" != "" ]]; then
