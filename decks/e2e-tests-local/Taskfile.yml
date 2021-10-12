@@ -12,6 +12,8 @@ env:
 vars:
   _repo_root_: "$(realpath ../..)"
   jenkins_url: http://localhost:12080
+  JEN_MASTER_NETWORK: e2e-tests-local_ntjendev
+  jen_dnd_worker_DIMAGE: jen_dnd_worker
 
 tasks:
   default:
@@ -128,3 +130,55 @@ tasks:
         print("host is back. {{.host}}")
         '
         echo --
+
+  append-dnd-server:
+    desc: _
+    cmds:
+      - |-
+        docker run -d --name=docker17 --hostname docker17 \
+        --network {{.JEN_MASTER_NETWORK}} \
+        -p "2375" \
+        --privileged=true \
+        docker:1.13-dind
+
+  append-dnd-worker:
+    desc:
+    cmds:
+      - |-
+        docker run --rm \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        --privileged=true \
+        --network {{.JEN_MASTER_NETWORK}} \
+        --link docker17 \
+        -e DOCKER_HOST=tcp://docker17:2375 \
+        -e JAVA_OPTS="-Xmx2048m" \
+        -e JENKINS_MASTER="http://jencondadev.samexample.com:8080" \
+        -e JENKINS_NAME="dnd-worker" \
+        -e JENKINS_USER=tester \
+        -e JENKINS_PASS=tester123 \
+        -e JENKINS_RETRY="10" \
+        {{.jen_dnd_worker_DIMAGE}}
+  
+  gen-worker-docker:
+    desc: _
+    vars:
+      content: |-
+        FROM eeacms/jenkins-slave-dind:19.03-3.26-2
+        ENV IN_DOCKER 1
+        RUN apt update && apt install -y git sudo curl wget zip unzip
+        RUN git clone https://github.com/ydzvulon/setup-ubuntu-dev.git /home/setup-ubuntu-dev
+        RUN bash /home/setup-ubuntu-dev/install_all.sh
+    cmds:
+    - |-
+      docker build -t {{.jen_dnd_worker_DIMAGE}} -f - . <<EOF
+      {{.content}}
+      EOF
+  # - |-
+  #   cat <<EOF > Dockerfile.jen_dnd_worker
+  #   {{.content}}
+  #   EOF
+  # build-woker-docker:
+  #   desc: _
+  #   cmds:
+  #     - do
+        
