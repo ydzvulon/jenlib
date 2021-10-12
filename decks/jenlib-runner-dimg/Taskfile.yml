@@ -7,8 +7,7 @@ vars:
   DIMAGE: jenlib-runner-dimg
 
   plugins_txt: |-
-    htmlpublisher
-    && task write-var var=plugins_txt to_file=/usr/share/jenkins/ref/plugins.txt \
+    git
 
   jenkins_yaml: |-
     jenkins:
@@ -54,10 +53,11 @@ vars:
     RUN cd /app/jenkins && jar -cvf jenkins.war *
     RUN java -jar /app/bin/jenkins-plugin-manager.jar \
         --war /app/jenkins/jenkins.war \
-        --plugin-file /usr/share/jenkins/ref/plugins.txt \
         && rm /app/jenkins/jenkins.war
     RUN apt-get update && apt-get install git -y
     COPY __tmp__/jenlibrepo /usr/share/shared_libs/jenlibrepo
+  # --plugin-file /usr/share/jenkins/ref/plugins.txt \
+        # && task write-var var=plugins_txt to_file=/usr/share/jenkins/ref/plugins.txt \
 
 tasks:
   default:
@@ -81,7 +81,7 @@ tasks:
     cmds:
       - rm -rf * .*
       - git init
-      - unzip ../../../../__localbuild__/jenbuild/jenlib_v0.8.3_linux_amd64.zip
+      - unzip ../../../../__localbuild__/jenbuild/jenlib_v0.8.6_linux_amd64.zip
       - git add --all && git commit -am"init"
 
   build:

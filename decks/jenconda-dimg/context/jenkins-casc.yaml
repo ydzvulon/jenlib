@@ -23,7 +23,7 @@ unclassified:
           scm:
             git:
               branches:
-              - name: "*/yairdar.v0.8.3.pushes"
+              - name: "*/main.ydzvulon"
               buildChooser: "default"
               userRemoteConfigs:
               - url: "https://github.com/ydzvulon/jenlib.git"
