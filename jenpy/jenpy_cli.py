@@ -87,7 +87,7 @@ class JenCli:
         # seed_job_branch = subprocess.check_output(
         #     "git -C /home/jovyan/repo rev-parse --abbrev-ref HEAD".split()
         #     ).decode().strip() 
-        seed_job_branch = 'yairdar.v0.8.3.pushes'
+        seed_job_branch = 'main.ydzvulon'
         seed_job = f'_test_seed_{dt}'
         seed_job_path = 'file:///repo'
         seed_job_pipe = "data4test/gitlab_seeds/jobs-registrator.pipe.groovy"
