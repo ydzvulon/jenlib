@@ -28,4 +28,8 @@ tasks:
   stop-all:
     desc: stop all decks
     cmds: [{task: apply, vars: {task: spin-down }}]
-        
+
+    
+  build-dev-dockers:
+    desc: stop all decks
+    cmds: [{task: apply, vars: {task: spin-down }}]

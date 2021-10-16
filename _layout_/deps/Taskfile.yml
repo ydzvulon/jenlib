@@ -1,0 +1,17 @@
+# https://taskfile.dev
+
+version: '3'
+includes:
+  dimg: 
+    taskfile: dimg.jenlib.tasks.yml
+    dir: ../..
+
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
