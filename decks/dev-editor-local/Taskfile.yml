@@ -21,6 +21,11 @@ tasks:
 
   build:
     desc: build docker
+    cmds:
+      - task: docker:build
+
+  docker:build:
+    desc: build docker
     deps:
       - task: generate/Dockerfile
     cmds:

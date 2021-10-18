@@ -32,4 +32,33 @@ tasks:
     
   build-dev-dockers:
     desc: stop all decks
-    cmds: [{task: apply, vars: {task: spin-down }}]
+    deps: 
+  
+    - task: apply
+      # dev-docs-dimg:latest
+      vars: 
+        task: build
+        targets:  dev-docs-local
+  
+    - task: apply
+      vars: 
+        task: build
+        targets: dev-editor-local
+  
+    - task: apply
+      vars: 
+        task: ci-flow
+        targets: >-
+          jenconda-dimg
+    cmds:
+    - task: apply
+      vars: 
+        task: build
+        targets: >-
+          dev-editor-local
+          jenlib-runner-dimg
+          e2e-tests-local
+    - |-
+      echo '
+      dockers are ready
+      '
