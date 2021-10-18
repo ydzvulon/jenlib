@@ -123,3 +123,12 @@ tasks:
     cmds:
       - cat README.md | less
 
+  ci-docs-build-and-publish-full:
+    desc: build documentation prepublish-local and publish remote
+    vars:
+      tasklist: >-
+        docs-builder:build-site
+        docs-publisher:publish-site-flow
+    cmds:
+      - task -o prefixed {{.tasklist}}
+
