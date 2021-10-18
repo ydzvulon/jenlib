@@ -1,5 +1,10 @@
 # Get Started
 
+Jenlib is small groovy lib.
+Challange is testing of this lib
+
+## Componets
+
 ## Build And Test
 
 ```bash

@@ -5,6 +5,7 @@ version: '3'
 vars:
   GREETING: Hello, World!
   DIMAGE: jenlib-runner-dimg
+  # jenlib_version: $(cat ../../version/version_prefix.txt)
 
   plugins_txt: |-
     git
@@ -78,10 +79,12 @@ tasks:
   prepare-jenlibrepo:
     desc: _
     dir: __tmp__/jenlibrepo
+    vars:
+      vers: "$(cat ../../../../version/version_prefix.txt)"
     cmds:
       - rm -rf * .*
       - git init
-      - unzip ../../../../__localbuild__/jenbuild/jenlib_v0.8.6_linux_amd64.zip
+      - unzip ../../../../__localbuild__/jenbuild/jenlib_v{{.vers}}_linux_amd64.zip
       - git add --all && git commit -am"init"
 
   build:
