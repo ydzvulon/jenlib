@@ -55,7 +55,6 @@ tasks:
       vars: 
         task: build
         targets: >-
-          dev-editor-local
           jenlib-runner-dimg
           e2e-tests-local
     - |-
