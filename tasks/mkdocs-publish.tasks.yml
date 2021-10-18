@@ -1,0 +1,28 @@
+version: "3"
+vars:
+  publish_rootdir_name: "$(yq read  _layout_/docs-publisher.conf_v4.yaml vars.publish_rootdir_name)"
+
+tasks:
+  prepublish-to-local-mirror:
+    desc: copy from __localbuild__/docs/site to {{.pub_dir}}
+    vars:       
+      site_dir: '$(yq read ./mkdocs.yml site_dir)'
+      pub_dir: relrepos/yairdar.github.io/{{.publish_rootdir_name}}
+    cmds:
+      # - task repo='"yairdar.github.io"' reposet:resolve:one reposet:pull:one 
+      # - rm -rf relrepos/yairdar.github.io/aguide
+      - rclone copy {{.site_dir}} {{.pub_dir}}
+
+  publish-from-local-to-remote:
+    desc: publish (git push) from local repo to remote
+    cmds:
+      - task -d relrepos/yairdar.github.io git:publish-changes
+
+  publish-site-flow:
+    desc: _
+    cmds:
+      - git -C relrepos/yairdar.github.io clean -fdx || true
+      - git -C relrepos/yairdar.github.io git checkout . || true
+      - task -d relrepos/yairdar.github.io git:pull
+      - task: prepublish-to-local-mirror
+      - task: publish-from-local-to-remote

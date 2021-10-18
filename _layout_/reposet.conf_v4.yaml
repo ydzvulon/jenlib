@@ -1,0 +1,14 @@
+apiVersion: projects/v1
+kind: mxk:ydt.reposet.items
+
+metadata:
+  name: reposet
+
+vars:
+  reposet_items_yaml: |-
+    yairdar.github.io:
+      name: yairdar.github.io
+      subdir: .
+      dirname: relrepos/yairdar.github.io
+      branch: main
+      remote_origin_url: git@github.com:yairdar/yairdar.github.io.git

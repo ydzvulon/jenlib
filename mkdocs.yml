@@ -21,6 +21,11 @@ plugins:
         - "projects"
         - "jenpy"
         - "__tmp__"
+        - "_infra"
+        - "_cicd"
+        - "_layout_"
+        - "tasks"
+        - "relrepos"
       merge_docs_dir: true
       include_extensions:
         - ".txt"
