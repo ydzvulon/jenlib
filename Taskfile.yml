@@ -10,19 +10,11 @@ includes:
     dir: decks
     taskfile: decks
   # jenconda: tasks/jenconda.product.tasks.yml
+  docs-builder: _infra/mkdocs-basic-pack/mkdocs-build-basic.tasks.yml
+  docs-publisher: tasks/mkdocs-publish.tasks.yml
 
-parts:
-  reposet:
-    items:
-      jenlib.config.ci:
-        name: ci-config-jenlib
-        subdir: _cicd/
-        dirname: __subrepos/ci-config-jenlib
-        remote_origin_url: git@github.com:ydzvulon/ci-config-jenlib.git
 vars:
-  # reposet__conf_map: __subdirs:Taskfile.yml@parts.reposet.items
-  # reposet__conf_map: __subdirs:_layout_/parts/reposet.info.yml@parts.reposet.items
-  reposet__conf_map: __subrepos:_layout_/parts/reposet.info.yml@vars.reposet_items_yaml
+  reposet__conf_map: .:_layout_/reposet.conf_v4.yaml@vars.reposet_items_yaml
 tasks:
   default:
     cmds:
