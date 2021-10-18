@@ -21,6 +21,11 @@ plugins:
         - "projects"
         - "jenpy"
         - "__tmp__"
+        - "_infra"
+        - "_cicd"
+        - "_layout_"
+        - "tasks"
+        - "relrepos"
       merge_docs_dir: true
       include_extensions:
         - ".txt"
@@ -78,14 +83,13 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-  - pymdownx.tasklist:
-      custom_checkbox: true
   - pymdownx.superfences:
-      # KEEP it commented.  Those lines break mermaid
       custom_fences:
         - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_div_format
+          class: mermaid-experimental
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.betterem:
@@ -98,7 +102,9 @@ theme:
   features:
     # - navigation.expand
     # - navigation.tabs
-    - navigation.instant
+    # - navigation.instan
+    - content.tabs.link
+
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
@@ -115,8 +121,8 @@ theme:
       primary: blue grey
       # accent: teal
 
-extra_css:
-  - assets/stylesheets/extra.css
+# extra_css:
+#   - assets/stylesheets/extra.css
 
 extra_javascript:
   - "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" # for math

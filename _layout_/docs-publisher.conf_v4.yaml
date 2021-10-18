@@ -1,0 +1,8 @@
+apiVersion: projects/v1
+kind: mxk:ydt.docs-publisher.items
+
+metadata:
+  name: docs-publisher
+
+vars:
+  publish_rootdir_name: jenlib

@@ -145,7 +145,8 @@ tasks:
       - task: multi-bash
         vars:
           with_items: "{{.repos}}"
-          cmd: "task {{.task_opt}} {{.taskpath_arg}} {{.taskname}} repo='{}' {{.params_tail}}"
+          cmd: |-
+            task {{.task_opt}} {{.taskpath_arg}} {{.taskname}} repo='{}' {{.params_tail}}
 
   many-by-one: &_ref_many_by_one
     desc: _
@@ -160,11 +161,13 @@ tasks:
   # --- ones ---
   _repo_vars:one: &_ref_one
     vars:
-      var_dirname: "$({{._items_exp}} {{.repo}}.dirname)"
+      _repo_gr: '"{{.repo}}"'
+      var_dirname: |-
+        $({{._items_exp}} '{{._repo_gr}}.dirname')
       dirname: '{{.repos_root}}/{{.var_dirname}}'
-      remote_origin_url: "$({{._items_exp}} {{.repo}}.remote_origin_url)"
-      branch: "$({{._items_exp}} {{.repo}}.branch)"
-    prefix: "{{.TASK}}:{{.repo}}"
+      remote_origin_url: "$({{._items_exp}} '{{._repo_gr}}.remote_origin_url' )"
+      branch: "$({{._items_exp}} '{{._repo_gr}}.branch' )"
+    prefix: "{{.TASK}}:{{._repo_gr}}"
     cmds:
       - echo var_dirname={{.var_dirname}}
       - echo dirname={{.dirname}}

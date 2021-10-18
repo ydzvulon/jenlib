@@ -1,0 +1,38 @@
+version: "3"
+vars:
+  dimg_local__dev_docs_dimg: dev-docs-dimg
+  remote_hub: yairda
+
+  dimgset__items_yaml: |-
+    jenconda:
+      build: decks/jencoda-dimg
+      local: jenconda-dmg
+      remote_prefix: yairda
+
+tasks:
+  dev-docs-dimg.build:
+    desc: build dev-docs-dimg Image for Documentation build and render
+    env: 
+      DIMAGE: '{{.dimg_local__dev_docs_dimg}}'
+    cmds:
+      - task -d decks/dev-docs-local docker:build
+
+  dev-docs-dimg.push:
+    desc: build dev-docs-dimg Image for Documentation build and render
+    env: 
+      DIMAGE: '{{.dimg_local__dev_docs_dimg}}'
+    cmds:
+      - task -d decks/dev-docs-local docker:build
+
+  # resolve-with-build:
+  #   desc: resolve image by shtoolcmd='docker build'
+  #   vars:
+  #     local_name: 
+  #   cmds:
+  #     - task docker:build tag=jenconda-dimg
+      
+  # resolve-with-pull:
+  #   desc: reslove image by shtoolcmd='docker pull'
+  #   cmds:
+  #     -
+  

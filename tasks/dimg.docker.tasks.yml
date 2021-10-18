@@ -1,0 +1,9 @@
+version: "3"
+tasks:
+  dev-docs-dimg:
+    desc: Docker Image {{.TASKS}} controll
+    args:
+      action: ""
+      hint: ""
+    cmds:
+      - ""

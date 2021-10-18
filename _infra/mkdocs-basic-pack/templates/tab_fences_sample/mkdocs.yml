@@ -1,0 +1,112 @@
+site_name:  Servises Docs
+# @info.todo: fill your gitlab repo URL + Name
+# https://chrieke.medium.com/the-best-mkdocs-plugins-and-customizations-fc820eb19759
+repo_name: reporepo
+edit_uri: "-/edit/master/docs/"
+site_dir: __localbuild__/docs/site
+plugins:
+  - simple:
+      # merge_docs_dir: false
+      include_extensions:
+        - ".txt"
+        - ".yaml"
+        - ".yml"
+        - ".ico"
+        - ".png"
+        - ".json"
+        - ".xml"
+        - ".coverage"
+        - "coverage"
+        - ".html"
+        - ".js"
+        - ".css"
+  - search
+#  - macros:
+#      verbose: true
+  - autorefs
+#   - mkdocstrings:
+#       default_handler: python
+#       handlers:
+#         python:
+#           rendering:
+#             show_source: false
+#       custom_templates: templates
+
+  - awesome-pages:
+      # to change all pages partial settings:
+      #   find -name '.pages' | xargs -I% bash -c 'mv % $(dirname %)/.mkdocs.pages.yaml'
+      # collapse_single_pages: true
+      filename: .mkdocs.pages.yaml
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - mdx_truly_sane_lists
+  - mdx_math:
+      use_gitlab_delimiters: True # for $`...`$ style math
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.smartsymbols
+  - pymdownx.tilde
+  - pymdownx.mark
+  - pymdownx.highlight
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed  # see: https://squidfunk.github.io/mkdocs-material/reference/content-tabs/
+  - pymdownx.superfences:
+      # KEEP it commented.  Those lines break mermaid
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.betterem:
+      smart_enable: all
+
+
+theme:
+  name: material
+  logo: assets/logo-ico.ico
+  favicon: assets/logo-ico.ico
+  features:
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - navigation.expand
+#  logo: assets/dora_bw_fat2_png_qdb_icon.ico
+#  favicon: assets/dora_bw_fat2_png_qdb_icon.ico
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" # for math
+
+# nav:
+#   - Home:
+#      - ... | README.md
+#   - ...
+# nav:
+
+#   - Home:
+#     - ... | *.md
+
+#   - Infra:
+#     - ... | _infra/**/*
+#     - ... | _deps/**/*
+#     - ... | _tasks/**/*
+#     - ... | decks/**/*
+
+#   - ...
+
