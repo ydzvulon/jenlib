@@ -80,11 +80,13 @@ tasks:
     desc: _
     dir: __tmp__/jenlibrepo
     vars:
-      vers: "$(cat ../../../../version/version_prefix.txt)"
+      
     cmds:
       - rm -rf * .*
       - git init
-      - unzip ../../../../__localbuild__/jenbuild/jenlib_v{{.vers}}_linux_amd64.zip
+      - |-
+        vers=$(cat ../../../../version/version_prefix.txt)
+        unzip ../../../../__localbuild__/jenbuild/jenlib_v${vers}_linux_amd64.zip
       - git add --all && git commit -am"init"
 
   build:
