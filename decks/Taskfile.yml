@@ -29,7 +29,19 @@ tasks:
     desc: stop all decks
     cmds: [{task: apply, vars: {task: spin-down }}]
 
-    
+  pull-proto-base-dockers:
+    desc: _
+    vars:
+      with_items: >-
+        ubuntu:20.04
+        jupyter/pyspark-notebook
+        continuumio/miniconda3
+        eeacms/jenkins-slave-dind:19.03-3.26-2
+        jenkins/jenkins:2.272
+        jenkins/jenkinsfile-runner
+    cmds:
+      - echo {{.with_items}}  | xargs -n1 -P4 docker pull 
+     
   build-dev-dockers:
     desc: stop all decks
     deps: 
