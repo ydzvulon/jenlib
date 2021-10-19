@@ -75,11 +75,10 @@ tasks:
 
   resolve-dimgs:
     desc: _
-    deps:
+    cmds:
       - task: build-jenconda
       - task: build-dev-editor
       - task: gen-worker-docker
-    cmds:
       - echo "resolved jenconda,dev-editor"
 
   build-jenconda: |-
@@ -167,6 +166,9 @@ tasks:
         FROM eeacms/jenkins-slave-dind:19.03-3.26-2
         ENV IN_DOCKER 1
         RUN apt update && apt install -y git sudo curl wget zip unzip
+        RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
+          && apt-get update && apt-get install git-lfs
+
         RUN git clone https://github.com/ydzvulon/setup-ubuntu-dev.git /home/setup-ubuntu-dev
         RUN bash /home/setup-ubuntu-dev/install_all.sh
     cmds:

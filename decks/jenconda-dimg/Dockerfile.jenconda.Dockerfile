@@ -14,6 +14,9 @@ RUN apt-get update -y \
  && apt-get install -y libglib2.0-0 libsm6 libxext6 libxrender-dev \
  && rm -rf /var/lib/apt/lists/*
 
+RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
+    && apt-get update && apt-get install git-lfs
+
 ENV PATH="/opt/jenkins_tools/miniconda3/bin:${PATH}"
 RUN mkdir -p /opt/jenkins_tools && chown jenkins:jenkins -R /opt/jenkins_tools
 RUN sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
@@ -37,7 +40,7 @@ RUN task -t /opt/jenkins_tools/setup-ubuntu-dev/vparts/install_conda_mini.tasks.
 ENV PATH="/opt/jenkins_tools/miniconda3/bin:${PATH}"
 RUN conda --version
 
-# Create a jencenv 3.6 environment
+# Create a default pythonenvironment
 RUN conda install -y conda-build \
  && conda create -y --name jencenv python=3.9 ipython \
  && conda clean -ya
