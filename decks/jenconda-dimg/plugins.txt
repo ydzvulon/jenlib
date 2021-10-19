@@ -103,3 +103,7 @@ configuration-as-code-groovy
 pipeline-config-history
 rebuild
 envinject
+swarm
+permissive-script-security
+greenballs
+ansicolor
