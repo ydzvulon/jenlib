@@ -79,7 +79,7 @@ tasks:
 
   build-stage:
     desc: 2-level block. build phase
-    deps:
+    cmds:
       - task: jenlib:build-jenlib
       - task: build-dev-dockers
       - task: jenconda:build-jenconda
@@ -87,12 +87,12 @@ tasks:
   build-dev-dockers:
     desc: build all docker images
     cmds:
-      - task -d decks  build-dev-dockers
+      - task -o prefixed -d decks  build-dev-dockers 
 
   jenconda:build-jenconda:
     desc: 3-level block. build jenconda docker image
     cmds:
-      - task -d decks/jenconda-dimg build
+      - task -o prefixed -d decks/jenconda-dimg build
 
   test-stage:
     desc: test new product

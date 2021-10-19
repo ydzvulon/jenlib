@@ -82,11 +82,11 @@ tasks:
       - echo "resolved jenconda,dev-editor"
 
   build-jenconda: |-
-    task build \
+    task -o prefixed build \
     -d {{._repo_root_}}/decks/jenconda-dimg
       
   build-dev-editor: |-
-    task build \
+    task -o prefixed build \
     -d {{._repo_root_}}/decks/dev-editor-local 
       
 
