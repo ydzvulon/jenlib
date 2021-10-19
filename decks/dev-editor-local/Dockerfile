@@ -1,5 +1,6 @@
-ARG BASE_CONTAINER=jupyter/pyspark-notebook
-FROM $BASE_CONTAINER
+FROM jupyter/pyspark-notebook
+# ARG BASE_CONTAINER=jupyter/pyspark-notebook
+# FROM $BASE_CONTAINER
 # Install task rclone yq jq
 # https://taskfile.dev/#/installation
 USER root
