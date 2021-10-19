@@ -53,6 +53,8 @@ tasks:
         docker tag jenlib-runner-dimg:latest {{.remote_prefix}}/jenlib-runner-dimg:${local_shorttag}
         docker tag dev-editor-dimg:latest    {{.remote_prefix}}/dev-editor-dimg:${local_shorttag}
         docker tag jenmaster:latest          {{.remote_prefix}}/jenmaster:${local_shorttag}
+        docker tag jen_dnd_worker:latest     {{.remote_prefix}}/jen_dnd_worker:${local_shorttag}
+
 
   docker-push-remote:
     decs:
@@ -70,6 +72,7 @@ tasks:
         docker push {{.remote_prefix}}/jenlib-runner-dimg:${local_shorttag}
         docker push {{.remote_prefix}}/dev-editor-dimg:${local_shorttag}
         docker push {{.remote_prefix}}/jenmaster:${local_shorttag}
+        docker push {{.remote_prefix}}/jen_dnd_worker:${local_shorttag}
 
   docker:build:jenmaster:
     desc: _

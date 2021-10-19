@@ -1,0 +1,32 @@
+
+vars:
+  _dimg_items_: |-
+    jenlib-runner-dimg:
+      name: jenlib-runner-dimg
+      shorttag: 0.8.7-1634602016
+      dimg_id: fdbb23a862e3
+      size: 695MB
+
+    dev-editor-dimg:
+      name: dev-editor-dimg
+      shorttag: 0.8.7-1634602016
+      dimg_id: eefaa938489e
+      size: 4.69GB
+
+    jenconda:
+      name: jenconda
+      shorttag: 0.8.7-1634602016
+      dimg_id: 775feca22322
+      size: 2.92GB
+
+    jenmaster:
+      name: jenmaster
+      shorttag: 0.8.7-1634602016
+      dimg_id: b321d0787c41
+      size: 1.99GB
+
+    jen_dnd_worker:
+      name: jen_dnd_worker
+      shorttag: 0.8.7-1634602016
+      dimg_id: 1b177b866188
+      size: 1.81GB

@@ -66,4 +66,3 @@ tasks:
     desc: publish docker images
     cmds:
       - task -d jenconda-dimg docker:publish
-      - task -d e2e-tests-local gen-worker-docker

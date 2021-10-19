@@ -1,10 +1,16 @@
 # Changelog 
 
+
+## jenlib-v0.8.7-2021.10.2rc2
+
+- full ci-flow with dockers from zero
+- documentation
+
 ## jenlib-v0.8.5-2021.10.2rc2
 
-- [ ] implement self build on slave dnd
-- [ ] implenet  
-- []  0.8.4-1633187061
+- [v] implement self build on slave dnd
+- [v] implenet push for all dockers 
+- [v]  0.8.4-1633187061
 
 ## jenlib-v0.8.4-2021.09.29rc1
 

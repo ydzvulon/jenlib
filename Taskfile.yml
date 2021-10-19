@@ -132,3 +132,12 @@ tasks:
     cmds:
       - task -o prefixed {{.tasklist}}
 
+  build-dev-dockers:
+    desc: build all docker images
+    cmds:
+      - task -d decks  build-dev-dockers
+
+  publish-dimgs:
+    desc: publish docker images
+    cmds:
+      - task -d decks  publish-dimgs
