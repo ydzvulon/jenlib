@@ -79,8 +79,6 @@ tasks:
   prepare-jenlibrepo:
     desc: _
     dir: __tmp__/jenlibrepo
-    vars:
-      
     cmds:
       - rm -rf * .*
       - git init
