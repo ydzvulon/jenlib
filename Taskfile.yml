@@ -81,8 +81,14 @@ tasks:
     desc: 2-level block. build phase
     deps:
       - task: jenlib:build-jenlib
+      - task: build-dev-dockers
       - task: jenconda:build-jenconda
-  
+
+  build-dev-dockers:
+    desc: build all docker images
+    cmds:
+      - task -d decks  build-dev-dockers
+
   jenconda:build-jenconda:
     desc: 3-level block. build jenconda docker image
     cmds:
@@ -90,10 +96,10 @@ tasks:
 
   test-stage:
     desc: test new product
-    deps:
+    # deps:
+    cmds:
       - task: test-e2e
       - task: test-jl-runner
-    cmds:
       - echo '[{{.TASK}} is OK]'
 
   test-e2e:
@@ -110,7 +116,8 @@ tasks:
   report-stage:
     desc: 2-level block. produces stam report about a build
     cmds:
-      - echo "Not Yet Implemented"
+      - task: mkdocs:build
+      - echo "here will be link to report"
 
   publish-flow:
     desc: 1-level block. publishes products to the world
@@ -132,10 +139,6 @@ tasks:
     cmds:
       - task -o prefixed {{.tasklist}}
 
-  build-dev-dockers:
-    desc: build all docker images
-    cmds:
-      - task -d decks  build-dev-dockers
 
   publish-dimgs:
     desc: publish docker images

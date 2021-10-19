@@ -29,6 +29,12 @@ tasks:
     desc: stop all decks
     cmds: [{task: apply, vars: {task: spin-down }}]
 
+  build-dev-dockers:
+    desc: _
+    cmds:
+      - task: pull-proto-base-dockers
+      - task: _build-dev-dockers
+
   pull-proto-base-dockers:
     desc: _
     vars:
@@ -42,12 +48,11 @@ tasks:
     cmds:
       - echo {{.with_items}}  | xargs -n1 -P4 docker pull 
      
-  build-dev-dockers:
+  _build-dev-dockers:
     desc: stop all decks
     deps: 
   
     - task: apply
-      # dev-docs-dimg:latest
       vars: 
         task: build
         targets:  dev-docs-local
@@ -56,24 +61,10 @@ tasks:
       vars: 
         task: build
         targets: dev-editor-local
-  
-    - task: apply
-      vars: 
-        task: ci-flow
-        targets: >-
-          jenconda-dimg
     cmds:
-    - task: apply
-      vars: 
-        task: build
-        targets: >-
-          jenlib-runner-dimg
-          e2e-tests-local
     - |-
-      echo '
-      dockers are ready
-      '
-  
+      echo "dockers are ready"
+
   publish-dimgs:
     desc: publish docker images
     cmds:
