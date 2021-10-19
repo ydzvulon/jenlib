@@ -39,23 +39,37 @@ tasks:
     vars:
       remote_prefix: yairdar
       local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+      local_shorttag: "yq read __build_info/docker-build/jenconda.build.over.info.yml shorttag"
     cmds:
       - |-
         local_fulltag=$({{.local_fulltag}})
+        local_shorttag=$({{.local_shorttag}})
+        
         local_tag=$(echo :${local_fulltag} | sed 's@.*:@@g')
         docker tag ${local_fulltag} {{.remote_prefix}}/${local_fulltag}
         docker images | grep {{.remote_prefix}} | grep ${local_tag}
+
+        echo "tag sattelits"
+        docker tag jenlib-runner-dimg:latest {{.remote_prefix}}/jenlib-runner-dimg:${local_shorttag}
+        docker tag dev-editor-dimg:latest    {{.remote_prefix}}/dev-editor-dimg:${local_shorttag}
+        docker tag jenmaster:latest          {{.remote_prefix}}/jenmaster:${local_shorttag}
 
   docker-push-remote:
     decs:
     vars:
       remote_prefix: yairdar
       local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+      local_shorttag: "yq read __build_info/docker-build/jenconda.build.over.info.yml shorttag"
     cmds:
       - |-
         local_fulltag=$({{.local_fulltag}})
+        local_shorttag=$({{.local_shorttag}})
         local_tag=$(echo :${local_fulltag} | sed 's@.*:@@g')
         docker push {{.remote_prefix}}/${local_fulltag}
+        echo "push sattelits"
+        docker push {{.remote_prefix}}/jenlib-runner-dimg:${local_shorttag}
+        docker push {{.remote_prefix}}/dev-editor-dimg:${local_shorttag}
+        docker push {{.remote_prefix}}/jenmaster:${local_shorttag}
 
   docker:build:jenmaster:
     desc: _
@@ -69,7 +83,8 @@ tasks:
     vars:
       requested_ts: {sh: date +"%s"}
       vers: '$(cat ../../version/version_prefix.txt)'
-      fulltag: '{{.DIMAGE}}:{{.vers}}-{{.requested_ts}}'
+      shorttag: '{{.vers}}-{{.requested_ts}}'
+      fulltag: '{{.DIMAGE}}:{{.shorttag}}'
     cmds:
       - mkdir -p __build_info/docker-build/jenconda
       - |-
@@ -80,6 +95,7 @@ tasks:
         stage: build
         part: docker
         fulltag: {{.fulltag}}
+        shorttag: {{.shorttag}}
         EOF
       - |-
         docker build \
@@ -97,6 +113,7 @@ tasks:
         stage: build
         part: docker
         fulltag: {{.fulltag}}
+        shorttag: {{.shorttag}}
         init_ts: {{.requested_ts}}
         over_ts: $over_ts
         duration: $(echo "$over_ts - {{.requested_ts}}" | bc)

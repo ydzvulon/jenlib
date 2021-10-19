@@ -78,6 +78,7 @@ tasks:
     deps:
       - task: build-jenconda
       - task: build-dev-editor
+      - task: gen-worker-docker
     cmds:
       - echo "resolved jenconda,dev-editor"
 
