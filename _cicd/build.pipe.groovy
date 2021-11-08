@@ -13,7 +13,7 @@ def jg = [
     ]
 ]
 
-node() {timestamps {
+node("docker-builder") {timestamps {
 
     stage('fetch'){
         echo 'Fetch source'
