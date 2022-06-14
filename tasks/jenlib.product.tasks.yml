@@ -3,7 +3,8 @@ version: "3"
 vars: 
   src_place: var
   tmp_place: __tmp__/jenbuild/jenlib
-  version: "$(cat version/version_prefix.txt)"
+  version: 
+    sh: cat version/version_prefix.txt
   arc_name: "jenlib_v{{.version}}_{{OS}}_{{ARCH}}.zip"
   local_dest: __localbuild__/jenbuild/{{.arc_name}}
   remote_dest_def: "/tmp/{{.local_dest}}"
@@ -26,6 +27,7 @@ tasks:
         echo @@act=over step=build.prepare task={{.TASK}}
       - |-
         echo @@act=init step=build.perform task={{.TASK}}
+
         pushd {{.tmp_place}}
           zip -r ../{{.arc_name}} .
         popd
