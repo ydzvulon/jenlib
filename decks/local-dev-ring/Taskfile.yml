@@ -6,6 +6,15 @@ vars:
 includes:
   tut: "tut.tasks.yml"
 tasks:
+
+  resolve-deps:
+    desc: install required dependancies
+    vars:
+      _deps_: |-
+        tool: os.tool.docker-compose
+    cmds:
+    - pip install docker-compose
+
   spin-up:
     desc: _
     cmds: 

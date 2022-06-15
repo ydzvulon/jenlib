@@ -1,5 +1,16 @@
 # Changelog 
 
+## jenlib-v0.10.2332002-2022.06.??
+
+- WIP
+
+## jenlib-v0.10.2332001-2022.06.15
+
+- > immediate fixes for sturtup
+
+## jenlib-v0.9.1-????
+
+- > TODO: fill from git commits
 
 ## jenlib-v0.8.7-2021.10.2rc2
 

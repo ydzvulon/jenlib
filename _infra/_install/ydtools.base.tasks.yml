@@ -31,7 +31,7 @@ tasks:
     cmds:
       - |-
         {{.intro}}
-      - wget -N {{.url}} -O {{.local_path}}
+      - curl -L {{.url}} -o {{.local_path}}
       - |-
         if [[ "{{.ext}}" == "zip" ]]; then
           unzip -o {{.local_path}}

@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.272
+FROM jenkins/jenkins:2.332
 # https://medium.com/the-devops-ship/custom-jenkins-dockerfile-jenkins-docker-image-with-pre-installed-plugins-default-admin-user-d0107b582577
 
 ENV JENKINS_USER admin
@@ -28,11 +28,11 @@ RUN  /context/install.base.tools/install_taskgo.sh
 
 # or 3.4.1
 RUN cd /tmp \
-    && wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 \
+    && curl -L https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 -o yq_linux_amd64 \
     && mv yq_linux_amd64 /usr/bin/yq
 
 RUN cd /tmp \
-    && wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 \
+    && curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -o jq-linux64 \
     && mv jq-linux64 /usr/bin/jq
 
 USER jenkins
