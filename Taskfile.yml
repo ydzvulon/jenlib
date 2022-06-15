@@ -94,11 +94,6 @@ tasks:
     cmds:
       - task -o prefixed -d decks/jenconda-dimg build
 
-  # .@-verty-wired syntax !!I cannton belive:
-  #   desc: hoho
-  #   cmds:
-  #     - echo '{{.TASK}}'
-
   test-stage:
     desc: test new product
     # deps:
