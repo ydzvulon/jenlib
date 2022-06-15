@@ -6,7 +6,8 @@ env:
 
 vars:
   # --- Tasker Variables ---
-  _dcomment_: "$(echo '$_vcomment')"
+  _dcomment_: 
+    sh: echo '$_vcomment'
   docker_compose_yaml: docker-compose.yml
   network_name: local-dev-ring_test
   DIMAGE: dev-docs-dimg
