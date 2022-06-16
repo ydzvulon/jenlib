@@ -27,7 +27,7 @@ tasks:
     desc: _
     cmds:
       - |
-        DC_IMAGE=$(yq r docker-compose.yml \
+        DC_IMAGE=$(yq_3 r docker-compose.yml \
           "services[{{.DC_SERVICE}}].image") \
         && docker pull ${DC_IMAGE}
 

@@ -7,7 +7,7 @@ includes:
     dir: .
 env: 
   jenconda_fulltag: |-
-    $(yq read ../jenconda-dimg/__build_info/docker-build/jenconda.build.over.info.yml fulltag)
+    $(yq_3 read ../jenconda-dimg/__build_info/docker-build/jenconda.build.over.info.yml fulltag)
 
 vars:
   _repo_root_: "$(realpath ../..)"

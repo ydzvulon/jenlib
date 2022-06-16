@@ -38,8 +38,8 @@ tasks:
     desc: _
     vars:
       remote_prefix: yairdar
-      local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
-      local_shorttag: "yq read __build_info/docker-build/jenconda.build.over.info.yml shorttag"
+      local_fulltag: "yq_3 read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+      local_shorttag: "yq_3 read __build_info/docker-build/jenconda.build.over.info.yml shorttag"
     cmds:
       - |-
         local_fulltag=$({{.local_fulltag}})
@@ -60,8 +60,8 @@ tasks:
     decs:
     vars:
       remote_prefix: yairdar
-      local_fulltag: "yq read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
-      local_shorttag: "yq read __build_info/docker-build/jenconda.build.over.info.yml shorttag"
+      local_fulltag: "yq_3 read __build_info/docker-build/jenconda.build.over.info.yml fulltag"
+      local_shorttag: "yq_3 read __build_info/docker-build/jenconda.build.over.info.yml shorttag"
     cmds:
       - |-
         local_fulltag=$({{.local_fulltag}})

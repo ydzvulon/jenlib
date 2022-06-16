@@ -72,7 +72,7 @@ tasks:
       - |-
         mkdir -p $(dirname {{.to_file}})
         cat <<EOF > {{.to_file}}
-        $(yq read Taskfile.yml vars.{{.var}})
+        $(yq_3 read Taskfile.yml vars.{{.var}})
         EOF
         cat {{.to_file}}
 

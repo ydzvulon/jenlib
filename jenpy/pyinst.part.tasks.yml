@@ -6,9 +6,9 @@ version: '3'
 vars:
   GREETING: Hello, World!
 
-  repo_root_dir: "$(yq read _version/paths_config.yml repo_root_dir)"
-  proj_root_dir: "$(yq read _version/paths_config.yml proj_root_dir)"
-  proj_deps_dir: "$(yq read _version/paths_config.yml proj_deps_dir)"
+  repo_root_dir: "$(yq_3 read _version/paths_config.yml repo_root_dir)"
+  proj_root_dir: "$(yq_3 read _version/paths_config.yml proj_root_dir)"
+  proj_deps_dir: "$(yq_3 read _version/paths_config.yml proj_deps_dir)"
 
   MX_VERSION_PREFIX__TXT: "{{.repo_root_dir}}/version/version_prefix.txt"
   MX_PROJECT_PREFIX__TXT: "{{.repo_root_dir}}/version/project_prefix.txt"
@@ -19,17 +19,17 @@ vars:
 
   DEPS_CONDA_BASE: "$(cat {{.DEPS_DIR}}/conda.base.deps.list.txt |  tr '\n' ' ')"
   DEPS_CONDA_RUN: "$(cat {{.DEPS_DIR}}/conda.run.deps.list.txt |  tr '\n' ' ')"
-  # yq read - {{.YQ_PATH}} --tojson | jq '.[]' | tr '\n' ' '
+  # yq_3 read - {{.YQ_PATH}} --tojson | jq '.[]' | tr '\n' ' '
   # DEPS_PIP:  "$(cat {{.DEPS_DIR}}/pip.deps.list.txt |  tr '\n' ' ')"
   DEPS_PIP_PATH: "{{.DEPS_DIR}}/pip.deps.list.txt"
 
-  tools_json: "$(yq read {{.repo_root_dir}}/version/tools_settings.yml tool --tojson)"
+  tools_json: "$(yq_3 read {{.repo_root_dir}}/version/tools_settings.yml tool --tojson)"
   conda_pm: "$(echo '{{.tools_json}}' | jq '.conda_pm' -r)"
   conda_ac: "$(echo '{{.tools_json}}' | jq '.conda_ac' -r)"
 
   distpath: __localbuild__/pyinstaller/dist
   workpath: __localbuild__/pyinstaller/build
-  exe_name: "$(yq read _version/pyinstaller_config.json exe_name)"
+  exe_name: "$(yq_3 read _version/pyinstaller_config.json exe_name)"
 
   # venv_run: "{"
 

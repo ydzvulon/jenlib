@@ -55,7 +55,7 @@ vars:
   # ### override those settings when used as included-tasker
   # mkd_es__pip_env_conf_file: mkdocs-build-basic.tasks.yml # path to file with deps list
   mkd_es__pip_env_conf_loc: vars.deps_pip_mkdocs # path to deps list inside the file
-  # mkd_es__pip_items_exp: yq r {{.mkd_es__pip_env_conf_file}} '{{.mkd_es__pip_env_conf_loc}}'  # get-value expression
+  # mkd_es__pip_items_exp: yq_3 r {{.mkd_es__pip_env_conf_file}} '{{.mkd_es__pip_env_conf_loc}}'  # get-value expression
 # ```
 #
 # ## Config Entries
@@ -138,7 +138,7 @@ tasks:
     vars:
       site_port: '{{ default "15558" .site_port }}'
       source_root: '{{ default .source_root .dir }}'
-      site_dir: '$(yq read {{.source_root}}/mkdocs.yml site_dir)'
+      site_dir: '$(yq_3 read {{.source_root}}/mkdocs.yml site_dir)'
     dir: '{{.source_root}}/{{.site_dir}}'
     cmds:
       - echo "Exposing at $(pwd)"

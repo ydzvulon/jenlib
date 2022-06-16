@@ -116,7 +116,7 @@ tasks:
       - task: resolve-stream
         vars:
           task: fmt
-          item_from: yq read test-basic.tasks.yml tasks
+          item_from: yq_3 read test-basic.tasks.yml tasks
           item_type: list-entry
           item_convert: task-vars
       - task with-items task=fmt items="echo 'one two three'"

@@ -37,10 +37,10 @@ vars:
   repos_root: '{{splitList ":" .reposet__conf_map | first }}'
   repos_root_pref: "{{.repos_root}}:"
   items_addr_token: '{{trimPrefix  .repos_root_pref .reposet__conf_map }}'
-  _items_exp: 'yq read {{ .items_addr_token | replace "@" " " }} | yq read - '
+  _items_exp: 'yq_3 read {{ .items_addr_token | replace "@" " " }} | yq_3 read - '
   repos_conf_file: '{{splitList "@" .items_addr_token | first }}'
-  reposet__parallel_exp: 'yq read {{.repos_conf_file}} vars.reposet__parallel || echo ""'
-  repos: "$(echo $({{._items_exp}} | yq r - --tojson | jq -r '. | keys[]'))"
+  reposet__parallel_exp: 'yq_3 read {{.repos_conf_file}} vars.reposet__parallel || echo ""'
+  repos: "$(echo $({{._items_exp}} | yq_3 r - --tojson | jq -r '. | keys[]'))"
   taskpath_arg: "{{if ._taskfile_}} -t {{._taskfile_}}{{else}}{{end}}"
   task_opt: "-o prefixed"
 
@@ -89,7 +89,7 @@ tasks:
   #     last_suffix: default='' desc=''
   #   vars:
   #     path: '{{.repos_root}}'
-  #     to_yaml: "| jq -s '.'|  jq  'reduce .[] as $i ({}; .[$i.dirname] = $i)' | yq r - -P"
+  #     to_yaml: "| jq -s '.'|  jq  'reduce .[] as $i ({}; .[$i.dirname] = $i)' | yq_3 r - -P"
   #     rest_choice: "{{ if .tojson }}{{else}}{{.to_yaml}}{{end}}"
   #   cmds:
   #     - echo {{.path}}
@@ -103,7 +103,7 @@ tasks:
   #         "branch": "$(git -C {{.path}}/{} rev-parse --abbrev-ref HEAD)", \
   #         "remote_origin_url": "$(git -C {{.path}}/{} config --get remote.origin.url)", \
   #         "commit": "$(git -C {{.path}}/{} rev-parse --short HEAD)"} \
-  #       ' | yq r - '[*]' \
+  #       ' | yq_3 r - '[*]' \
   #       --tojson {{.rest_choice}} {{.last_suffix}}
 
   #   silent: true
