@@ -63,8 +63,8 @@ tasks:
       - sudo apt-get install -y {{.apt_get_list}}
       - curl https://rclone.org/install.sh | sudo bash || true
       - task os.tool.install.yq_3
-      - ./devpod/setup.os.docker.yaml install-all
-      - ./devpod/setup.os.conda.yaml install-all
+      - task -t ./devpod/setup.os.docker.yaml install-all
+      - task -t ./devpod/setup.os.conda.yaml install-all
       - pip install docker-compose
   
   deps-resolve:
