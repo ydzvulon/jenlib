@@ -1,0 +1,25 @@
+name: ci-flow
+
+on:
+  push:
+    branches: [ main, main.ydzvulon ]
+  pull_request:
+    branches: [ main, main.ydzvulon ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Install Task
+        uses: arduino/setup-task@v1
+
+      - run: 'task resolve-deps'
+        name: 'resolve-deps'
+      
+      - run: 'task ci-flow'
+        name: 'ci-flow'
