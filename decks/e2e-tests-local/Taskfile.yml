@@ -6,8 +6,8 @@ includes:
     taskfile: e2e.test.tasks.yml
     dir: .
 env: 
-  jenconda_fulltag: |-
-    $(yq_3 read ../jenconda-dimg/__build_info/docker-build/jenconda.build.over.info.yml fulltag)
+  jenconda_fulltag:
+    sh: yq_3 read ../jenconda-dimg/__build_info/docker-build/jenconda.build.over.info.yml fulltag
 
 vars:
   _repo_root_: "$(realpath ../..)"
