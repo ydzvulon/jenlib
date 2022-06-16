@@ -15,6 +15,7 @@ tasks:
     desc: "install docker"
     from_url: https://phoenixnap.com/kb/how-to-install-docker-on-ubuntu-18-04
     status:
+      - docker ps
       - test -v IN_DOCKER
 
     cmds:
