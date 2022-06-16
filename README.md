@@ -2,6 +2,8 @@
 
 Jenlib is a bridge to top-level automation
 
+> Develop on [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/from-referrer/) 
+
 ## Content
 
 Get Started With Local Development
