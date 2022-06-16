@@ -52,6 +52,9 @@ vars:
         && task write-var var=jenkins_yaml to_file=/usr/share/jenkins/ref/userContent/jenkins.yaml
     ENV CASC_JENKINS_CONFIG=/usr/share/jenkins/ref/userContent/jenkins.yaml
     RUN cd /app/jenkins && jar -cvf jenkins.war *
+    
+    RUN bash -c "echo >> /usr/share/jenkins/ref/plugins.txt && echo sshd >>  /usr/share/jenkins/ref/plugins.txt && echo git-server:1.11 >> /usr/share/jenkins/ref/plugins.txt"
+
     RUN java -jar /app/bin/jenkins-plugin-manager.jar \
         --war /app/jenkins/jenkins.war \
         && rm /app/jenkins/jenkins.war
@@ -72,7 +75,7 @@ tasks:
       - |-
         mkdir -p $(dirname {{.to_file}})
         cat <<EOF > {{.to_file}}
-        $(yq read Taskfile.yml vars.{{.var}})
+        $(yq_3 read Taskfile.yml vars.{{.var}})
         EOF
         cat {{.to_file}}
 

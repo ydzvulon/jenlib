@@ -1,12 +1,12 @@
 version: "3"
 vars:
-  publish_rootdir_name: "$(yq read  _layout_/docs-publisher.conf_v4.yaml vars.publish_rootdir_name)"
+  publish_rootdir_name: "$(yq_3 read  _layout_/docs-publisher.conf_v4.yaml vars.publish_rootdir_name)"
 
 tasks:
   prepublish-to-local-mirror:
     desc: copy from __localbuild__/docs/site to {{.pub_dir}}
     vars:       
-      site_dir: '$(yq read ./mkdocs.yml site_dir)'
+      site_dir: '$(yq_3 read ./mkdocs.yml site_dir)'
       pub_dir: relrepos/yairdar.github.io/{{.publish_rootdir_name}}
     cmds:
       # - task repo='"yairdar.github.io"' reposet:resolve:one reposet:pull:one 

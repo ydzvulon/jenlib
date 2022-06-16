@@ -6,7 +6,7 @@
 
   vars:
     runconf_path: reposet.conf.yml
-    repos: "$(echo $(yq r {{.runconf_path}} --tojson | jq -r '.|keys[]'))"
+    repos: "$(echo $(yq_3 r {{.runconf_path}} --tojson | jq -r '.|keys[]'))"
     # taskpath_arg: "-t ./rgc.yml"
     taskpath_arg: ""
     task_opt: '-o prefixed'
@@ -26,7 +26,7 @@
         last_suffix: default='' desc=''
       vars:
         path: "."
-        to_yaml: "| jq -s '.'|  jq  'reduce .[] as $i ({}; .[$i.dirname] = $i)' | yq r - -P"
+        to_yaml: "| jq -s '.'|  jq  'reduce .[] as $i ({}; .[$i.dirname] = $i)' | yq_3 r - -P"
         rest_choice: "{{ if .tojson }}{{else}}{{.to_yaml}}{{end}}"
       cmds:
         - echo {{.path}}
@@ -40,7 +40,7 @@
             "branch": "$(git -C {{.path}}/{} rev-parse --abbrev-ref HEAD)", \
             "remote_origin_url": "$(git -C {{.path}}/{} config --get remote.origin.url)", \
             "commit": "$(git -C {{.path}}/{} rev-parse --short HEAD)"} \
-          ' | yq r - '[*]' \
+          ' | yq_3 r - '[*]' \
           --tojson {{.rest_choice}} {{.last_suffix}}
 
       silent: true
@@ -88,9 +88,9 @@
     # --- ones ---
     _repo_vars:one: &_ref_one
       vars:
-        dirname: "$(yq read {{ .runconf_path }} {{.repo}}.dirname)"
-        remote_origin_url: "$(yq read {{ .runconf_path }} {{.repo}}.remote_origin_url)"
-        branch: "$(yq read {{ .runconf_path }} {{.repo}}.branch)"
+        dirname: "$(yq_3 read {{ .runconf_path }} {{.repo}}.dirname)"
+        remote_origin_url: "$(yq_3 read {{ .runconf_path }} {{.repo}}.remote_origin_url)"
+        branch: "$(yq_3 read {{ .runconf_path }} {{.repo}}.branch)"
       prefix: "{{.TASK}}:{{.repo}}"
       silent: true
 

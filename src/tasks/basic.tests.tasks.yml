@@ -5,7 +5,7 @@ version: '3'
 vars:
   GREETING: Hello, World!
   _out_dir: _out/grv_tests
-  _read_cfg: yq r basic.tests.tasks.yml ${YQPATH} | sed 's/:[ ]/=/'
+  _read_cfg: yq_3 r basic.tests.tasks.yml ${YQPATH} | sed 's/:[ ]/=/'
 
 confs:
   check-output:

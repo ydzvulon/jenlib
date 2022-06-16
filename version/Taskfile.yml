@@ -10,7 +10,7 @@ vars:
   to_file: '{{ default "" .to_file }}'
 
   _write_suff: |-
-    {{if eq "json" .format }} | yq read - --tojson {{else}}{{end}} \
+    {{if eq "json" .format }} | yq_3 read - --tojson {{else}}{{end}} \
     {{if eq "true" .pretty }} | jq . {{else}}{{end}} \
     {{if .to_file}} > {{.to_file}}{{else}}{{end}}
 

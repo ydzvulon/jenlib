@@ -24,7 +24,7 @@ tasks:
     desc: build docs in docker
     vars:
       cmd: docs:build-docs
-      local_dest: "$(yq read mkdocs.yml site_dir)"
+      local_dest: "$(yq_3 read mkdocs.yml site_dir)"
     source:
       - '**/*.md'
     generates:
