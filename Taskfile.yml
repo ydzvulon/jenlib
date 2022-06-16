@@ -55,7 +55,7 @@ tasks:
     cmds:
       - task: reposet:resolve
 
-  deps-resolve:
+  resolve-deps:
     desc: _
     vars:
       apt_get_list: zip unzip jq wget curl
@@ -66,8 +66,10 @@ tasks:
       - ./devpod/setup.os.docker.yaml install-all
       - ./devpod/setup.os.conda.yaml install-all
       - pip install docker-compose
-
   
+  deps-resolve:
+    cmds:
+      - task: resolve-deps
   
   os.tool.install.yq_3:
     desc: install yq version 3
