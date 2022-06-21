@@ -1,0 +1,18 @@
+
+services:
+  nginx:
+      image: nginx:1.17-alpine
+      container_name: nginx-docker
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - ./data/nginx:/etc/nginx/conf.d
+        - ./data/html:/etc/nginx/html
+  jenkins:
+    image: "jenkins/jenkins:lts"
+    container_name: jenkins-docker
+    volumes:
+      - ./data/jenkins:/var/jenkins_home
+    expose:
+      - "8080"
