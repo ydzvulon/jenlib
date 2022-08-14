@@ -1,0 +1,36 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  default:
+    cmds:
+      - tasl -l
+    silent: true
+
+  ensure_volume:
+    desc: _
+    status:
+    - docker volume ls | grep jenkins_volume
+    cmds:
+    - docker volume create jenkins_volume
+
+  spin-up-master:
+    desc: _
+    status:
+    - docker inspect jenconda-master-w
+    deps:
+    - task: ensure_volume
+    cmds:
+    - |-
+      docker run \
+      -d \
+      --name jenconda-master-w \
+      --restart unless-stopped  \
+      -p 8080:8080 \
+      -p 50000:50000 \
+      -v jenkins_volume:/var/jenkins_home \
+      jenconda:0.10.2332002-1660503834

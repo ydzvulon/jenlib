@@ -1,0 +1,4 @@
+# curl -s "https://get.sdkman.io" | bash    
+# source "/home/ubuntu/.sdkman/bin/sdkman-init.sh"
+# sdk install java 8.0.332-tem
+# sdk install groovy 3.0.7   

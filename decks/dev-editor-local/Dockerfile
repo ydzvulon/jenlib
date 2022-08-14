@@ -31,7 +31,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
 
 EXPOSE 8888
 
-WORKDIR /root
+WORKDIR /home/ubuntu
 # mount point for kubeflow
 VOLUME /home/jovyan
 
